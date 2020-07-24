@@ -21,6 +21,8 @@ namespace Xjp2Backend.Controllers
         public WeatherForecastController(ILogger<WeatherForecastController> logger)
         {
             _logger = logger;
+            _logger.LogInformation("message in WeatherForecastController");
+             
         }
 
         [HttpGet]

@@ -28,8 +28,9 @@ namespace Xjp2Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<XjpContext>(opt =>
-               opt.UseInMemoryDatabase("XjpDB"));
+            //services.AddDbContext<XjpContext>(opt =>
+            //   opt.UseInMemoryDatabase("XjpDB"));
+            services.AddDbContext<XjpContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
 
             services.AddControllers();
         }
