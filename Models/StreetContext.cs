@@ -21,7 +21,8 @@ namespace Models
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
             string cs = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True");
+            //string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
+            optionsBuilder.UseSqlServer(cs);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
