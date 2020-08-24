@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Models.StreetUnit" Collapsed="true">
+    <Position X="7.25" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAACAAAAAAAAAAQAAAAAAAAAAAEAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.Community" Collapsed="true">
+    <Position X="7.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAACIAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.NetGrid" Collapsed="true">
+    <Position X="9" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.Subdivision" Collapsed="true">
+    <Position X="9" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAAAAAAAAAAAAAAAAQAAAAAAAAAAAIAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.Building" Collapsed="true">
+    <Position X="5.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAIAAAAAAAAAAAQCAAAAAAAAAAEAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.Room" Collapsed="true">
+    <Position X="5.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAACABAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>StreetUnit.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Models.Person" Collapsed="true">
+    <Position X="5.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAADgAAAAAAQAAAEAhAAIAQAAEAwAAACAAQAZAkAAAA=</HashCode>
+      <FileName>Person.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Microsoft YaHei UI" Size="9" />
+</ClassDiagram>

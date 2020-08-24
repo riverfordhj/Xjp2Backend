@@ -20,8 +20,8 @@ namespace Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
-            string cs = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            //string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
+            //string cs = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
+            string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
             optionsBuilder.UseSqlServer(cs);
         }
 

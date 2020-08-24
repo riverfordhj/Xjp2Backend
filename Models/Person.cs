@@ -26,6 +26,7 @@ namespace Models
         public bool IsMerried { get; set; }
         public string PopulationCharacter { get; set; }
         public string LodgingReason { get; set; }
+        //备注
         public string Note { get; set; }
 
         //导航属性
