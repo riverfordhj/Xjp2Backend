@@ -45,6 +45,8 @@ namespace Models
         //导航属性
         public List<Building> Buildings { get; set; }
         public Community Community { get; set; }
+        //网格员用户
+        public User User { get; set; }
     }
     /// <summary>
     /// 小区

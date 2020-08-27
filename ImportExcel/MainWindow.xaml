@@ -11,6 +11,7 @@
         <TextBox x:Name="tbPath" Margin="21,66,19,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="33" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto"/>
         <Button x:Name="bn_Add" Content="添加数据" HorizontalAlignment="Left" Margin="118,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_Add_Click" />
         <TextBox x:Name="tbInfo" Margin="21,112,19,36" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top" VerticalAlignment="Stretch"/>
+        <Button x:Name="bnAddInitData" Content="添加初始数据" HorizontalAlignment="Left" Margin="693,19,0,0" VerticalAlignment="Top" Height="26" Width="88" Click="bnAddInitData_Click"/>
 
     </Grid>
 </Window>

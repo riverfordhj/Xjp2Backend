@@ -8,7 +8,7 @@ namespace Models
     /// <summary>
     /// 特殊人群
     /// </summary>
-    class SpecialGroup
+    public class SpecialGroup
     {
         [Key]
         public int Id { get; set; }
@@ -23,7 +23,7 @@ namespace Models
     /// <summary>
     /// 困难人群
     /// </summary>
-    class PoorPeople
+    public class PoorPeople
     {
         [Key]
         public int Id { get; set; }
@@ -43,7 +43,7 @@ namespace Models
 
 
     ///服役状况        
-    class MilitaryService
+    public class MilitaryService
     {
         [Key]
         public int Id { get; set; }
@@ -55,10 +55,10 @@ namespace Models
         public string Note { get; set; }
     }
 
-    
-    
+
+
     ///残疾        
-    class Disability
+    public class Disability
     {
         [Key]
         public int Id { get; set; }
@@ -73,7 +73,7 @@ namespace Models
     }
 
     ///其他信息    
-    class OtherInfos
+    public class OtherInfos
     {
         [Key]
         public int Id { get; set; }

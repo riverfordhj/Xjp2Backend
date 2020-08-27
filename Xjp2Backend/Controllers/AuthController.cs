@@ -11,6 +11,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
+using Models.DataHelper;
 using Xjp2Backend.Models;
 
 namespace Xjp2Backend.Controllers
@@ -24,12 +25,16 @@ namespace Xjp2Backend.Controllers
         private readonly IUserService _userService;
         private readonly IMemoryCache _cache;
 
+        private XjpRepository _repository = null;
+
         public AuthController(IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUserService userService, IMemoryCache cache)
         {
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
             _userService = userService;
             _cache = cache;
+
+            _repository = new XjpRepository();
         }
 
         /// <summary>
@@ -40,7 +45,9 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]LoginRequest request)
         {
-            var user = _userService.GetUserByName(request.UserName);
+            //var user = _userService.GetUserByName(request.UserName);
+            var user = _repository.GetUserByName(request.UserName);
+
             if (user == null)
             {
                 ModelState.AddModelError("login_failure", "Invalid username.");
@@ -81,7 +88,8 @@ namespace Xjp2Backend.Controllers
                 return BadRequest(ModelState);
             }
 
-            var user = _userService.GetUserByName(request.UserName);
+            //var user = _userService.GetUserByName(request.UserName);
+            var user = _repository.GetUserByName(request.UserName);
             string newRefreshToken = Guid.NewGuid().ToString();
             var claimsIdentity = _jwtFactory.GenerateClaimsIdentity(user);
 

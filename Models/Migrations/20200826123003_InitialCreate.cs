@@ -7,6 +7,100 @@ namespace Models.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Disability",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    Class = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Disability", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MilitaryService",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MilitaryService", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OtherInfos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Key = table.Column<string>(nullable: true),
+                    Value = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OtherInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PoorPeoples",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    Child = table.Column<string>(nullable: true),
+                    Youngsters = table.Column<string>(nullable: true),
+                    SpecialHelp = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PoorPeoples", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpecialGroups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Type = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpecialGroups", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Streets",
                 columns: table => new
                 {
@@ -18,6 +112,22 @@ namespace Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Streets", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserName = table.Column<string>(nullable: true),
+                    Password = table.Column<string>(nullable: true),
+                    phone = table.Column<string>(nullable: true),
+                    PicPath = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -63,6 +173,32 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "RoleUsers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RoleUsers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RoleUsers_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RoleUsers_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "NetGrids",
                 columns: table => new
                 {
@@ -70,7 +206,8 @@ namespace Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
-                    CommunityId = table.Column<int>(nullable: true)
+                    CommunityId = table.Column<int>(nullable: true),
+                    UserId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -79,6 +216,12 @@ namespace Models.Migrations
                         name: "FK_NetGrids_Communitys_CommunityId",
                         column: x => x.CommunityId,
                         principalTable: "Communitys",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_NetGrids_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -201,6 +344,11 @@ namespace Models.Migrations
                 column: "CommunityId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_NetGrids_UserId",
+                table: "NetGrids",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_PersonId",
                 table: "Persons",
                 column: "PersonId",
@@ -211,6 +359,16 @@ namespace Models.Migrations
                 name: "IX_Persons_RoomId",
                 table: "Persons",
                 column: "RoomId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleUsers_RoleId",
+                table: "RoleUsers",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RoleUsers_UserId",
+                table: "RoleUsers",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Rooms_BuildingId",
@@ -226,10 +384,31 @@ namespace Models.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Disability");
+
+            migrationBuilder.DropTable(
+                name: "MilitaryService");
+
+            migrationBuilder.DropTable(
+                name: "OtherInfos");
+
+            migrationBuilder.DropTable(
                 name: "Persons");
 
             migrationBuilder.DropTable(
+                name: "PoorPeoples");
+
+            migrationBuilder.DropTable(
+                name: "RoleUsers");
+
+            migrationBuilder.DropTable(
+                name: "SpecialGroups");
+
+            migrationBuilder.DropTable(
                 name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Buildings");
@@ -242,6 +421,9 @@ namespace Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "Communitys");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Streets");

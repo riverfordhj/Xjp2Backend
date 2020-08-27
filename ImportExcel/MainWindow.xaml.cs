@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using Models;
+using Models.DataHelper;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
@@ -211,6 +212,12 @@ namespace ImportExcel
                 }
             }
 
+        }
+
+        private void bnAddInitData_Click(object sender, RoutedEventArgs e)
+        {
+            string message = InitDataHelper.AddData();
+            tbInfo.Text = message;
         }
     }
 }

@@ -55,14 +55,14 @@ namespace Models.Authentication.JWT.AuthHelper
             return JsonConvert.SerializeObject(response, new JsonSerializerSettings { Formatting = Formatting.Indented });
         }
 
-        public ClaimsIdentity GenerateClaimsIdentity(User user)
+        public ClaimsIdentity GenerateClaimsIdentity(Models.User user)
         {
             var claimsIdentity  = new ClaimsIdentity(new GenericIdentity(user.UserName, "Token"));
             claimsIdentity.AddClaim(new Claim("id", user.Id.ToString()));
             claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, user.UserName));
             foreach (var role in user.Roles)
             {
-                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+                claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.Name));
             }
             return claimsIdentity;
         }
