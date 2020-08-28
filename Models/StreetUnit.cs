@@ -90,7 +90,7 @@ namespace Models
         public string Note { get; set; }
 
         //导航属性
-        public List<Person> Persons { get; set; }
+        public List<PersonRoom> PersonRooms { get; set; }
         public Building Building { get; set; }
     }
 }

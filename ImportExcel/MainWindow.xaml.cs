@@ -176,7 +176,7 @@ namespace ImportExcel
 
 
                     //人
-                    var person = context.Persons.SingleOrDefault(p => p.Room.Id == room.Id && p.PersonId == item[20]);
+                    var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
                     if (person == null)
                     {
                         person = new Person
@@ -186,22 +186,30 @@ namespace ImportExcel
                             PersonId = item[20],
                             Phone = item[21],
                             Address = item[22],
-                            IsHouseholder = (item[23] == "是"),
-                            RelationWithHouseholder = item[24],
-                            IsOwner = (item[25] == "是"),
-                            IsLiveHere = (item[26] == "是"),
+
                             Company = item[27],
                             PoliticalState = item[27],
                             OrganizationalRelation = item[28],
                             IsOverseasChinese = (item[29] == "是"),
                             IsMerried = (item[30] == "已婚"),
-                            PopulationCharacter = item[31],
-                            LodgingReason = item[32]
                         };
-                        person.Room = room;
                         context.Persons.Add(person);
                     }
 
+                    var personHouse = new PersonRoom
+                    {
+                        PersonId = item[20],
+                        IsHouseholder = (item[23] == "是"),
+                        RelationWithHouseholder = item[24],
+                        IsOwner = (item[25] == "是"),
+                        IsLiveHere = (item[26] == "是"),
+                        PopulationCharacter = item[31],
+                        LodgingReason = item[32]
+                    };
+
+                    personHouse.Person = person;
+                    personHouse.Room = room;
+                    context.PersonRooms.Add(personHouse);
 
                     //context.Streets.Add(blog);
 

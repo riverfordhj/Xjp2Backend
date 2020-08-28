@@ -44,11 +44,14 @@ namespace Models
 
         //人员信息
         public DbSet<Person> Persons { get; set; }
+        public DbSet<OtherInfos> OtherInfos { get; set; }
+        public DbSet<PersonRoom> PersonRooms { get; set; }
+
         public DbSet<PoorPeople> PoorPeoples { get; set; }
         public DbSet<SpecialGroup> SpecialGroups { get; set; }
         public DbSet<MilitaryService> MilitaryService { get; set; }
         public DbSet<Disability> Disability { get; set; }
-        public DbSet<OtherInfos> OtherInfos { get; set; }
+        
 
         //权限
         public DbSet<User> Users { get; set; }
