@@ -12,7 +12,6 @@ using Microsoft.Extensions.Options;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
 using Models.DataHelper;
-using Xjp2Backend.Models;
 
 namespace Xjp2Backend.Controllers
 {
