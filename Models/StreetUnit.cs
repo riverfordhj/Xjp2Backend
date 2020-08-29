@@ -75,12 +75,13 @@ namespace Models
 
         //导航属性
         public List<Room> Rooms { get; set; }
-        public Community Community { get; set; }
+        public NetGrid NetGrid { get; set; }
+        //public Community Community { get; set; }
         public Subdivision Subdivision { get; set; }
     }
 
     /// <summary>
-    /// 楼栋
+    /// 房间
     /// </summary>
     public class Room
     {

@@ -62,7 +62,8 @@ namespace ImportExcel
             }
             catch (Exception err)
             {
-                tbInfo.Text = err.Message;
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                //tbInfo.Text = err.Message;
             }
             //using (var db = new ImportContext())
             //{
@@ -91,9 +92,9 @@ namespace ImportExcel
                     for (int col = 1; col <= ColCount; col++)
                     {
                         if (worksheet.Cells[row, col].Value == null)
-                            sbRow.Append("空值, ");
+                            sbRow.Append(",");
                         else
-                            sbRow.Append(worksheet.Cells[row, col].Value.ToString() + ", ");
+                            sbRow.Append(worksheet.Cells[row, col].Value.ToString() + ",");
                     }
                     data.Add(sbRow.ToString());
                     sb.Append(sbRow.ToString() + Environment.NewLine);
@@ -104,11 +105,18 @@ namespace ImportExcel
             return sb.ToString();
         }
 
+        string _currentLine = "";
+        string _errorMessage = "";
+        int _i = 0;
+        string[] _preItem = null;
         private void Add2DB(List<string> data)
         {
-            if (data.Count > 0)
+            //if (data.Count > 0)
+            for (_i = 0; _i < data.Count; _i++)
             {
-                string[] item = data[0].Split(',');
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split(',');
+                //string[] item = data[0].Split(',');
 
                 using (var context = new StreetContext())
                 {
@@ -133,7 +141,7 @@ namespace ImportExcel
                     }
 
                     //网格
-                    var netGrid = context.NetGrids.SingleOrDefault(s => s.Name == item[1]);
+                    var netGrid = context.NetGrids.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[1]);
                     if (netGrid == null)
                     {
                         netGrid = new NetGrid { Name = item[1] };
@@ -151,14 +159,14 @@ namespace ImportExcel
                         context.Subdivisions.Add(subdivision);
                     }
 
-                    //小区
+                    //楼栋
 
                     //var building = netGrid.Buildings.SingleOrDefault(s => s.Name == item[4]);
-                    var building = context.Buildings.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[4]);
+                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4]);
                     if (building == null)
                     {
                         building = new Building { Name = item[4] };
-                        building.Community = community;
+                        building.NetGrid = netGrid;
                         building.Subdivision = subdivision;
                         context.Buildings.Add(building);
                         //subdivision.Buildings.Add(building);
@@ -179,6 +187,11 @@ namespace ImportExcel
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
                     if (person == null)
                     {
+                        if (item[18] == "" || item[20] == "")
+                        {
+                            _errorMessage += _i + 4 + "姓名或身份证不能为空" + Environment.NewLine;
+                            continue;
+                        }
                         person = new Person
                         {
                             Name = item[18],
@@ -188,12 +201,70 @@ namespace ImportExcel
                             Address = item[22],
 
                             Company = item[27],
-                            PoliticalState = item[27],
-                            OrganizationalRelation = item[28],
-                            IsOverseasChinese = (item[29] == "是"),
-                            IsMerried = (item[30] == "已婚"),
+                            PoliticalState = item[28],
+                            OrganizationalRelation = item[29],
+                            IsOverseasChinese = (item[30] == "是"),
+                            MerriedStatus = item[31],
                         };
                         context.Persons.Add(person);
+
+                        //特殊人群
+
+                        if (item[34] != "")
+                        {
+                            //var specialGroup = context.SpecialGroups.SingleOrDefault(s => s.PersonId == item[20]);
+                            //if (specialGroup == null)                           
+                            var specialGroup = new SpecialGroup { PersonId = item[20], Type = item[34] };
+                            context.SpecialGroups.Add(specialGroup);
+                        }
+
+                        // 困难人群
+                        if (item[35] != "")
+                        {
+                            var poorPeople = new PoorPeople
+                            {
+                                PersonId = item[20],
+                                Type = item[35],
+                                Child = item[36],
+                                Youngsters = item[37],
+                                SpecialHelp = item[38]
+                            };
+                            context.PoorPeoples.Add(poorPeople);
+                        }
+                        //服役状况
+                        if (item[39] != "")
+                        {
+                            var militaryService = new MilitaryService { PersonId = item[20], Type = item[39] };
+                            context.MilitaryService.Add(militaryService);
+                        }
+
+                        //残疾   
+                        //var disability = context.Disabilitys.SingleOrDefault(s => s.PersonId == item[20]);
+                        //if (disability == null)
+                        if (item[40] != "")
+                        {
+                            var disability = new Disability
+                            {
+                                PersonId = item[20],
+                                Type = item[40],
+                                Class = item[41],
+                            };
+                            context.Disability.Add(disability);
+                        }
+
+                        //其他信息 
+                        //var otherInfos = context.OtherInfos.SingleOrDefault(s => s.PersonId == item[20]);
+                        // if (otherInfos == null)
+                        if (item[42] != "")
+                        {
+                            var otherInfos = new OtherInfos
+                            {
+                                PersonId = item[20],
+                                Key = item[42],
+                                Value = item[43],
+                            };
+                            context.OtherInfos.Add(otherInfos);
+                        }
                     }
 
                     var personHouse = new PersonRoom
@@ -203,8 +274,8 @@ namespace ImportExcel
                         RelationWithHouseholder = item[24],
                         IsOwner = (item[25] == "是"),
                         IsLiveHere = (item[26] == "是"),
-                        PopulationCharacter = item[31],
-                        LodgingReason = item[32]
+                        PopulationCharacter = item[32],
+                        LodgingReason = item[33]
                     };
 
                     personHouse.Person = person;
@@ -217,9 +288,10 @@ namespace ImportExcel
 
 
                     context.SaveChanges();
+                    _preItem = item;
                 }
             }
-
+            tbInfo_err.Text += _errorMessage;
         }
 
         private void bnAddInitData_Click(object sender, RoutedEventArgs e)

@@ -20,8 +20,8 @@ namespace Models
         public string PoliticalState { get; set; }
         public string OrganizationalRelation { get; set; }
         public bool IsOverseasChinese { get; set; }
-        public bool IsMerried { get; set; }
-        
+        public string MerriedStatus { get; set; }
+
         //备注
         public string Note { get; set; }
 
