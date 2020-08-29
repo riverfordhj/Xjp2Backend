@@ -211,11 +211,6 @@ namespace ImportExcel
                     personHouse.Room = room;
                     context.PersonRooms.Add(personHouse);
 
-                    //context.Streets.Add(blog);
-
-
-
-
                     context.SaveChanges();
                 }
             }
