@@ -54,6 +54,29 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: true),
+                    EthnicGroups = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    Company = table.Column<string>(nullable: true),
+                    PoliticalState = table.Column<string>(nullable: true),
+                    OrganizationalRelation = table.Column<string>(nullable: true),
+                    IsOverseasChinese = table.Column<bool>(nullable: false),
+                    IsMerried = table.Column<bool>(nullable: false),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PoorPeoples",
                 columns: table => new
                 {
@@ -283,35 +306,32 @@ namespace Models.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "PersonRooms",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
-                    EthnicGroups = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
                     IsHouseholder = table.Column<bool>(nullable: false),
                     RelationWithHouseholder = table.Column<string>(nullable: true),
                     IsOwner = table.Column<bool>(nullable: false),
                     IsLiveHere = table.Column<bool>(nullable: false),
-                    Company = table.Column<string>(nullable: true),
-                    PoliticalState = table.Column<string>(nullable: true),
-                    OrganizationalRelation = table.Column<string>(nullable: true),
-                    IsOverseasChinese = table.Column<bool>(nullable: false),
-                    IsMerried = table.Column<bool>(nullable: false),
                     PopulationCharacter = table.Column<string>(nullable: true),
                     LodgingReason = table.Column<string>(nullable: true),
-                    Note = table.Column<string>(nullable: true),
+                    PersonId1 = table.Column<int>(nullable: true),
                     RoomId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
+                    table.PrimaryKey("PK_PersonRooms", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Persons_Rooms_RoomId",
+                        name: "FK_PersonRooms_Persons_PersonId1",
+                        column: x => x.PersonId1,
+                        principalTable: "Persons",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_PersonRooms_Rooms_RoomId",
                         column: x => x.RoomId,
                         principalTable: "Rooms",
                         principalColumn: "Id",
@@ -349,16 +369,21 @@ namespace Models.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PersonRooms_PersonId1",
+                table: "PersonRooms",
+                column: "PersonId1");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PersonRooms_RoomId",
+                table: "PersonRooms",
+                column: "RoomId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_PersonId",
                 table: "Persons",
                 column: "PersonId",
                 unique: true,
                 filter: "[PersonId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Persons_RoomId",
-                table: "Persons",
-                column: "RoomId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleUsers_RoleId",
@@ -393,7 +418,7 @@ namespace Models.Migrations
                 name: "OtherInfos");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "PersonRooms");
 
             migrationBuilder.DropTable(
                 name: "PoorPeoples");
@@ -403,6 +428,9 @@ namespace Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "SpecialGroups");
+
+            migrationBuilder.DropTable(
+                name: "Persons");
 
             migrationBuilder.DropTable(
                 name: "Rooms");

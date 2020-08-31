@@ -19,7 +19,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
-using Xjp2Backend.Models;
 
 namespace Xjp2Backend
 {

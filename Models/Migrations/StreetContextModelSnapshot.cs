@@ -188,23 +188,11 @@ namespace Models.Migrations
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsHouseholder")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsLiveHere")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsMerried")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsOverseasChinese")
                         .HasColumnType("bit");
-
-                    b.Property<bool>("IsOwner")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LodgingReason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -224,6 +212,40 @@ namespace Models.Migrations
                     b.Property<string>("PoliticalState")
                         .HasColumnType("nvarchar(max)");
 
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique()
+                        .HasFilter("[PersonId] IS NOT NULL");
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("Models.PersonRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsHouseholder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLiveHere")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LodgingReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PersonId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PersonId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("PopulationCharacter")
                         .HasColumnType("nvarchar(max)");
 
@@ -235,13 +257,11 @@ namespace Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId")
-                        .IsUnique()
-                        .HasFilter("[PersonId] IS NOT NULL");
+                    b.HasIndex("PersonId1");
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Persons");
+                    b.ToTable("PersonRooms");
                 });
 
             modelBuilder.Entity("Models.PoorPeople", b =>
@@ -456,10 +476,14 @@ namespace Models.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Models.Person", b =>
+            modelBuilder.Entity("Models.PersonRoom", b =>
                 {
+                    b.HasOne("Models.Person", "Person")
+                        .WithMany("PersonRooms")
+                        .HasForeignKey("PersonId1");
+
                     b.HasOne("Models.Room", "Room")
-                        .WithMany("Persons")
+                        .WithMany("PersonRooms")
                         .HasForeignKey("RoomId");
                 });
 
