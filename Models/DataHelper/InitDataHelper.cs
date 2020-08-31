@@ -12,7 +12,7 @@ namespace Models.DataHelper
         /// <summary>
         /// 添加初始数据
         /// </summary>
-        public static string AddData()
+        public static string AddData(string comName, string gridUser, int gridCount)
         {
             try
             {
@@ -26,10 +26,10 @@ namespace Models.DataHelper
 
                     #region 添加水岸星城社区、网格、网格员账户
                     //添加社区
-                    var saxcCommunity = AddCommunity(context, street, "水岸星城");
+                    var saxcCommunity = AddCommunity(context, street, comName);
 
                     //网格
-                    AddGrid(context, saxcCommunity, 10, roleWangGe, "sawg");
+                    AddGrid(context, saxcCommunity, gridCount, roleWangGe, gridUser);
                     #endregion
 
                     //添加管理员role，user

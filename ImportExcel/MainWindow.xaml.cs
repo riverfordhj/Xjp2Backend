@@ -186,13 +186,16 @@ namespace ImportExcel
 
                     //人
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
+
+                    //检测空名空身份证号
+                    if(!CheckItem(item))
+                        continue;
+                    //检测同身份证号不同名
+                    if (!CheckPerson(person, item))
+                        continue;
+
                     if (person == null)
-                    {
-                        if (item[18] == "" || item[20] == "")
-                        {
-                            _errorMessage += _i + 4 + "姓名或身份证不能为空" + Environment.NewLine;
-                            continue;
-                        }
+                    {                     
                         person = new Person
                         {
                             Name = item[18],
@@ -290,10 +293,44 @@ namespace ImportExcel
             tbInfo_err.Text += _errorMessage;
         }
 
+        #region check data
+        //网格数据检测，空名空身份证号，同身份证号不同名
+        private bool CheckItem(string[] item)
+        {
+            if (item[18] == "" || item[20] == "")
+            {
+                _errorMessage += _i + 4 + "姓名或身份证不能为空" + Environment.NewLine;
+                return false;
+            }
+            return true;
+        }
+        private bool CheckPerson(Person person, string[] item)
+        {
+
+            if (person != null && person.Name != item[18])
+            {
+                _errorMessage += _i + 4 + "身份证重复" + Environment.NewLine;
+                return false;
+            }
+            return true;
+        }
+        #endregion
+
         private void bnAddInitData_Click(object sender, RoutedEventArgs e)
         {
-            string message = InitDataHelper.AddData();
-            tbInfo.Text = message;
+            try
+            {              
+                string communiteName = tbCommuniteName.Text;
+                string gridUser = tbGirdUser.Text;
+                int count = int.Parse(tbGridCount.Text);
+
+                string message = InitDataHelper.AddData(communiteName, gridUser,count );
+                tbInfo.Text = message;
+            }
+            catch (Exception err)
+            {
+                tbInfo_err.Text += err.Message;
+            }
         }
     }
 }
