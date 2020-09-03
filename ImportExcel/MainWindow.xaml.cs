@@ -55,7 +55,7 @@ namespace ImportExcel
         }
 
         private void bn_Add_Click(object sender, RoutedEventArgs e)
-        {
+        {           
             try
             {
                 tbInfo.Text = ReadExcelData(tbPath.Text);
@@ -101,6 +101,7 @@ namespace ImportExcel
                     sb.Append(sbRow.ToString() + Environment.NewLine);
                 }
             }
+
             Add2DB(data);
 
             return sb.ToString();
@@ -290,6 +291,7 @@ namespace ImportExcel
                     _preItem = item;
                 }
             }
+           // tbInfo_err.Text = "";
             tbInfo_err.Text += _errorMessage;
         }
 

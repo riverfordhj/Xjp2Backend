@@ -59,8 +59,8 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<string>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
+                    PersonId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
                     EthnicGroups = table.Column<string>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
                     Address = table.Column<string>(nullable: true),
@@ -159,7 +159,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true),
                     StreetId = table.Column<int>(nullable: true)
                 },
@@ -180,7 +180,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true),
                     StreetId = table.Column<int>(nullable: true)
                 },
@@ -227,7 +227,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true),
                     CommunityId = table.Column<int>(nullable: true),
                     UserId = table.Column<int>(nullable: true)
@@ -255,7 +255,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true),
                     NetGridId = table.Column<int>(nullable: true),
                     SubdivisionId = table.Column<int>(nullable: true)
@@ -283,7 +283,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true),
                     BuildingId = table.Column<int>(nullable: true)
                 },
@@ -370,8 +370,7 @@ namespace Models.Migrations
                 name: "IX_Persons_PersonId",
                 table: "Persons",
                 column: "PersonId",
-                unique: true,
-                filter: "[PersonId] IS NOT NULL");
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_RoleUsers_RoleId",

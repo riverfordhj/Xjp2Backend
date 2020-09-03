@@ -25,6 +25,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
@@ -40,6 +41,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
         //导航属性
@@ -55,6 +57,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
@@ -70,6 +73,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
@@ -87,6 +91,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 

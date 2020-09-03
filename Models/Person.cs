@@ -10,7 +10,9 @@ namespace Models
         [Key]
         public int Id { get; set; }
         //身份证
+        [Required]
         public string PersonId { get; set; }
+        [Required]
         public string Name { get; set; }
         public string EthnicGroups { get; set; }
         public string Phone { get; set; }
