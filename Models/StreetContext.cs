@@ -22,7 +22,7 @@ namespace Models
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
             //string cs1 = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
+            string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";//
             optionsBuilder.UseSqlServer(cs);
         }
 

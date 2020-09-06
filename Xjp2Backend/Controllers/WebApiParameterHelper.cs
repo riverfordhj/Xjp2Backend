@@ -4,8 +4,15 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
+
+/// <summary>
+/// WebAPI 后端接受参数帮助类
+/// </summary>
 namespace Xjp2Backend.Controllers
 {
+    /// <summary>
+    /// 接受前段登录参数
+    /// </summary>
     public class LoginRequest
     {
         [Required(ErrorMessage = "{0} is required.")]
@@ -23,5 +30,17 @@ namespace Xjp2Backend.Controllers
 
         [Required(ErrorMessage = "{0} is required.")]
         public string RefreshToken { get; set; }
+    }
+
+    public class PersonInRoomParameter
+    {
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string CommunityName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string BuildingName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string RoomNO { get; set; }
     }
 }

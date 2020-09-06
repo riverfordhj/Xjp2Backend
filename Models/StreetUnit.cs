@@ -75,7 +75,7 @@ namespace Models
 
         //导航属性
         public List<Room> Rooms { get; set; }
-        public Community Community { get; set; }
+        //public Community Community { get; set; }
         public Subdivision Subdivision { get; set; }
     }
 
