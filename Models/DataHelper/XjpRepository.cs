@@ -76,7 +76,7 @@ namespace Models.DataHelper
         {
             Subdivision sub = GetSubdivision(subdivisionName);
             if (sub != null)
-                return _context.Buildings.Where(item => item.Subdivision.Id == sub.Id && item.Name == name).FirstOrDefault();
+                return _context.Buildings.Where(item => item.Subdivision.Id == sub.Id && (item.Name == name || item.Note == name)).FirstOrDefault();
             else
                 return null;
         }
@@ -87,7 +87,7 @@ namespace Models.DataHelper
         {
             Building building = GetBuildingInSubdivision(subdivisionName, buidlingName);
             if (building != null)
-                return _context.Rooms.SingleOrDefault(item => item.Building == building && item.Name == roomNO);
+                return _context.Rooms.SingleOrDefault(item => item.Building.Id == building.Id && item.Name == roomNO);
             else
                 return null;
         }
@@ -126,7 +126,7 @@ namespace Models.DataHelper
                 return _context.Persons.Where(item => personIDs.Contains(item.Id)).ToList();
             }
             else
-                return null;
+                return new List<Person>();
         }
         #endregion
 
