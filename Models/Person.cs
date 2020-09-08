@@ -10,7 +10,9 @@ namespace Models
         [Key]
         public int Id { get; set; }
         //身份证
+        [Required]
         public string PersonId { get; set; }
+        [Required]
         public string Name { get; set; }
         public string EthnicGroups { get; set; }
         public string Phone { get; set; }
@@ -20,8 +22,8 @@ namespace Models
         public string PoliticalState { get; set; }
         public string OrganizationalRelation { get; set; }
         public bool IsOverseasChinese { get; set; }
-        //public bool IsMerried { get; set; }
-        
+        public string MerriedStatus { get; set; }
+
         //备注
         public string Note { get; set; }
 

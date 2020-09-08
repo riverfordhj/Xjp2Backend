@@ -10,7 +10,7 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20200829093135_InitialCreate")]
+    [Migration("20200901074909_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,10 +28,8 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CommunityId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("NetGridId")
@@ -44,8 +42,6 @@ namespace Models.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CommunityId");
 
                     b.HasIndex("NetGridId");
 
@@ -62,6 +58,7 @@ namespace Models.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -133,6 +130,7 @@ namespace Models.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -190,13 +188,14 @@ namespace Models.Migrations
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsMerried")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsOverseasChinese")
                         .HasColumnType("bit");
 
+                    b.Property<string>("MerriedStatus")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -206,6 +205,7 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Phone")
@@ -217,8 +217,7 @@ namespace Models.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId")
-                        .IsUnique()
-                        .HasFilter("[PersonId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Persons");
                 });
@@ -347,6 +346,7 @@ namespace Models.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -406,6 +406,7 @@ namespace Models.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -447,11 +448,7 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Building", b =>
                 {
-                    b.HasOne("Models.Community", "Community")
-                        .WithMany()
-                        .HasForeignKey("CommunityId");
-
-                    b.HasOne("Models.NetGrid", null)
+                    b.HasOne("Models.NetGrid", "NetGrid")
                         .WithMany("Buildings")
                         .HasForeignKey("NetGridId");
 

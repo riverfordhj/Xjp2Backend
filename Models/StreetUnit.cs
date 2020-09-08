@@ -25,6 +25,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
@@ -40,6 +41,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
         //导航属性
@@ -55,6 +57,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
@@ -70,22 +73,25 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
         //导航属性
         public List<Room> Rooms { get; set; }
+        public NetGrid NetGrid { get; set; }
         //public Community Community { get; set; }
         public Subdivision Subdivision { get; set; }
     }
 
     /// <summary>
-    /// 楼栋
+    /// 房间
     /// </summary>
     public class Room
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
 
