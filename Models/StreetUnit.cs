@@ -13,6 +13,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
         public List<Community> Communities { get; set; }
         public List<Subdivision> Subdivisions { get; set; }
@@ -28,6 +29,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -44,6 +46,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
         //导航属性
         public List<Building> Buildings { get; set; }
@@ -60,6 +63,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -76,6 +80,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -94,6 +99,7 @@ namespace Models
         public int Id { get; set; }
         [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性

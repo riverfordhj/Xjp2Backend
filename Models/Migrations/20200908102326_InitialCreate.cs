@@ -130,6 +130,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -160,6 +161,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     StreetId = table.Column<int>(nullable: true)
                 },
@@ -181,6 +183,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     StreetId = table.Column<int>(nullable: true)
                 },
@@ -228,6 +231,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     CommunityId = table.Column<int>(nullable: true),
                     UserId = table.Column<int>(nullable: true)
@@ -256,6 +260,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     NetGridId = table.Column<int>(nullable: true),
                     SubdivisionId = table.Column<int>(nullable: true)
@@ -284,6 +289,7 @@ namespace Models.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
+                    Alias = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     BuildingId = table.Column<int>(nullable: true)
                 },
