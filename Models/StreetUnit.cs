@@ -11,6 +11,7 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
         public string Note { get; set; }
         public List<Community> Communities { get; set; }

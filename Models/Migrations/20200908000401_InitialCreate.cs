@@ -129,7 +129,7 @@ namespace Models.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
+                    Name = table.Column<string>(nullable: false),
                     Note = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
