@@ -321,7 +321,8 @@ namespace ImportExcel
         private void bnAddInitData_Click(object sender, RoutedEventArgs e)
         {
             try
-            {              
+            {
+                //string streetName = tbStreet.Text;
                 string communiteName = tbCommuniteName.Text;
                 string gridUser = tbGirdUser.Text;
                 int count = int.Parse(tbGridCount.Text);

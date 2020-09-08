@@ -18,8 +18,8 @@ namespace Models.DataHelper
             {
                 using (var context = new StreetContext())
                 {
-                    //添加街道
-                    var street = AddStreet(context, "徐家棚");
+                    //添加街道  var street = AddStreet(context, "徐家棚");
+                    var street = AddStreet(context, "徐家棚") ;
 
                     //add 网格员 Role
                     var roleWangGe = AddRole(context, "网格员");
@@ -52,11 +52,11 @@ namespace Models.DataHelper
         //添加街道数据
         private static StreetUnit AddStreet(StreetContext context, string name)
         {
-            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == "name");
+            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == "徐家棚");
 
             if (street == null)
             {
-                street = new StreetUnit { Name = "name" };
+                street = new StreetUnit { Name = "徐家棚" };
                 context.Streets.Add(street);
             }
 
