@@ -52,11 +52,11 @@ namespace Models.DataHelper
         //添加街道数据
         private static StreetUnit AddStreet(StreetContext context, string name)
         {
-            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == "name");
+            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == name);
 
             if (street == null)
             {
-                street = new StreetUnit { Name = "name" };
+                street = new StreetUnit { Name = name };
                 context.Streets.Add(street);
             }
 
