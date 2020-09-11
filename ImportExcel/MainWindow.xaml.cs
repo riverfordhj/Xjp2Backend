@@ -133,10 +133,10 @@ namespace ImportExcel
                     }
 
                     //社区
-                    var community = context.Communitys.SingleOrDefault(s => s.Name == item[0]);
+                    var community = context.Communitys.SingleOrDefault(s => s.Name == item[0].Replace("社区",""));
                     if (community == null)
                     {
-                        community = new Community { Name = item[0] };
+                        community = new Community { Name = item[0].Replace("社区","") };
                         community.Street = street;
                         //street.Communities.Add(community);
                         context.Communitys.Add(community);
@@ -153,10 +153,10 @@ namespace ImportExcel
 
 
                     //小区
-                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3]);
+                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区",""));
                     if (subdivision == null)
                     {
-                        subdivision = new Subdivision { Name = item[3] };
+                        subdivision = new Subdivision { Name = item[3].Replace("小区","") };
                         subdivision.Street = street;
                         context.Subdivisions.Add(subdivision);
                     }
@@ -164,10 +164,10 @@ namespace ImportExcel
                     //楼栋
 
                     //var building = netGrid.Buildings.SingleOrDefault(s => s.Name == item[4]);
-                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4]);
+                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4].Replace("栋",""));
                     if (building == null)
                     {
-                        building = new Building { Name = item[4] };
+                        building = new Building { Name = item[4].Replace("栋","") };
                         building.NetGrid = netGrid;
                         building.Subdivision = subdivision;
                         context.Buildings.Add(building);
@@ -175,7 +175,7 @@ namespace ImportExcel
                     }
 
                     //房屋
-                    string roomName = $"{item[5]}-{item[6]}";
+                    string roomName = $"{item[5].Replace("单元","")}-{item[6].Replace("号","")}";
                     var room = context.Rooms.SingleOrDefault(r => r.Building.Id == building.Id && r.Name == roomName);
                     if (room == null)
                     {
