@@ -7,6 +7,26 @@ namespace Models.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "CompanyInfos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Character = table.Column<string>(nullable: true),
+                    SocialId = table.Column<string>(nullable: true),
+                    ContactPerson = table.Column<string>(nullable: true),
+                    PersonId = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    Area = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyInfos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Disability",
                 columns: table => new
                 {
@@ -51,29 +71,6 @@ namespace Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_OtherInfos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Persons",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    PersonId = table.Column<string>(nullable: false),
-                    Name = table.Column<string>(nullable: false),
-                    EthnicGroups = table.Column<string>(nullable: true),
-                    Phone = table.Column<string>(nullable: true),
-                    Address = table.Column<string>(nullable: true),
-                    Company = table.Column<string>(nullable: true),
-                    PoliticalState = table.Column<string>(nullable: true),
-                    OrganizationalRelation = table.Column<string>(nullable: true),
-                    IsOverseasChinese = table.Column<bool>(nullable: false),
-                    MerriedStatus = table.Column<string>(nullable: true),
-                    Note = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -152,6 +149,36 @@ namespace Models.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Persons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PersonId = table.Column<string>(nullable: false),
+                    Name = table.Column<string>(nullable: false),
+                    EthnicGroups = table.Column<string>(nullable: true),
+                    Phone = table.Column<string>(nullable: true),
+                    DomicileAddress = table.Column<string>(nullable: true),
+                    Company = table.Column<string>(nullable: true),
+                    PoliticalState = table.Column<string>(nullable: true),
+                    OrganizationalRelation = table.Column<string>(nullable: true),
+                    IsOverseasChinese = table.Column<bool>(nullable: false),
+                    MerriedStatus = table.Column<string>(nullable: true),
+                    Note = table.Column<string>(nullable: true),
+                    CompanyInfoId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Persons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Persons_CompanyInfos_CompanyInfoId",
+                        column: x => x.CompanyInfoId,
+                        principalTable: "CompanyInfos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -290,6 +317,11 @@ namespace Models.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
                     Alias = table.Column<string>(nullable: true),
+                    Address = table.Column<string>(nullable: true),
+                    Category = table.Column<string>(nullable: true),
+                    Use = table.Column<string>(nullable: true),
+                    Area = table.Column<string>(nullable: true),
+                    Other = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     BuildingId = table.Column<int>(nullable: true)
                 },
@@ -373,6 +405,11 @@ namespace Models.Migrations
                 column: "RoomId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Persons_CompanyInfoId",
+                table: "Persons",
+                column: "CompanyInfoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Persons_PersonId",
                 table: "Persons",
                 column: "PersonId",
@@ -430,6 +467,9 @@ namespace Models.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "CompanyInfos");
 
             migrationBuilder.DropTable(
                 name: "Buildings");

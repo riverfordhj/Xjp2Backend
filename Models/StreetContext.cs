@@ -44,6 +44,9 @@ namespace Models
 
         //人员信息
         public DbSet<Person> Persons { get; set; }
+
+
+        public DbSet<CompanyInfo> CompanyInfos { get; set; }
         public DbSet<OtherInfos> OtherInfos { get; set; }
         public DbSet<PersonRoom> PersonRooms { get; set; }
 

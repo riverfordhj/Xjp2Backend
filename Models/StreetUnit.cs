@@ -100,6 +100,13 @@ namespace Models
         [Required]
         public string Name { get; set; }
         public string Alias { get; set; }
+        public string Address { get; set; }
+        public string Category { get; set; }
+        public string Use { get; set; }
+        public string Area { get; set; }
+        public string Other { get; set; }
+
+
         public string Note { get; set; }
 
         //导航属性

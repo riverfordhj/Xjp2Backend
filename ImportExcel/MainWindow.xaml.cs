@@ -119,6 +119,10 @@ namespace ImportExcel
                 _currentLine = data[_i];
                 string[] item = _currentLine.Split(',');
                 //string[] item = data[0].Split(',');
+                if (IsEmpty(item, 6))
+                    continue;
+
+                CheckAllValue(item, 6);
 
                 using (var context = new StreetContext())
                 {
@@ -136,6 +140,7 @@ namespace ImportExcel
                     var community = context.Communitys.SingleOrDefault(s => s.Name == item[0].Replace("社区",""));
                     if (community == null)
                     {
+                        //CheckValue(item,0);
                         community = new Community { Name = item[0].Replace("社区","") };
                         community.Street = street;
                         //street.Communities.Add(community);
@@ -146,6 +151,7 @@ namespace ImportExcel
                     var netGrid = context.NetGrids.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[1]);
                     if (netGrid == null)
                     {
+                       // CheckValue(item, 1);
                         netGrid = new NetGrid { Name = item[1] };
                         netGrid.Community = community;
                         context.NetGrids.Add(netGrid);
@@ -156,6 +162,7 @@ namespace ImportExcel
                     var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区",""));
                     if (subdivision == null)
                     {
+                        //CheckValue(item,3);
                         subdivision = new Subdivision { Name = item[3].Replace("小区","") };
                         subdivision.Street = street;
                         context.Subdivisions.Add(subdivision);
@@ -179,10 +186,37 @@ namespace ImportExcel
                     var room = context.Rooms.SingleOrDefault(r => r.Building.Id == building.Id && r.Name == roomName);
                     if (room == null)
                     {
-                        room = new Room { Name = roomName };
+                        room = new Room 
+                        { 
+                            Name = roomName ,
+                            Address = item[2],
+                            Category = item[7],
+                            Use = item[8],
+                            Area = item[10],
+                            Other = item[9],
+
+                        };
                         room.Building = building;
                         context.Rooms.Add(room);
                     }
+
+                    //单位信息
+                  //  var companyinfo = new CompanyInfo { };
+                    if (item[11] != "")
+                    {
+                        var companyinfo = new CompanyInfo
+                        {
+                            Name = item[11],
+                            Character = item[12],
+                            SocialId = item[13],
+                            ContactPerson = item[14],
+                            PersonId = item[15],
+                            Phone = item[16],
+                            Area = item[17]
+                        };
+                         context.CompanyInfos.Add(companyinfo);
+                    }
+                   
 
 
                     //人
@@ -203,7 +237,7 @@ namespace ImportExcel
                             EthnicGroups = item[19],
                             PersonId = item[20],
                             Phone = item[21],
-                            Address = item[22],
+                            DomicileAddress = item[22],
 
                             Company = item[27],
                             PoliticalState = item[28],
@@ -211,8 +245,26 @@ namespace ImportExcel
                             IsOverseasChinese = (item[30] == "是"),
                             MerriedStatus = item[31],
                         };
+                       // person.CompanyInfo = companyinfo;
                         context.Persons.Add(person);
 
+
+                        //单位信息
+                        //  var companyinfo = new CompanyInfo { };
+                        if (item[11] != "")
+                        {
+                            var companyinfo = new CompanyInfo
+                            {
+                                Name = item[11],
+                                Character = item[12],
+                                SocialId = item[13],
+                                ContactPerson = item[14],
+                                PersonId = item[15],
+                                Phone = item[16],
+                                Area = item[17]
+                            };
+                            context.CompanyInfos.Add(companyinfo);
+                        }
                         //特殊人群
 
                         if (item[34] != "")
@@ -265,13 +317,13 @@ namespace ImportExcel
                             var otherInfos = new OtherInfos
                             {
                                 PersonId = item[20],
-                                Key = item[42],
-                                Value = item[43],
+                                //Key = item[42],
+                                Value = item[42],
                             };
                             context.OtherInfos.Add(otherInfos);
                         }
                     }
-
+                    //personroom 人房信息
                     var personHouse = new PersonRoom
                     {
                         PersonId = item[20],
@@ -287,6 +339,8 @@ namespace ImportExcel
                     personHouse.Room = room;
                     context.PersonRooms.Add(personHouse);
 
+
+
                     context.SaveChanges();
                     _preItem = item;
                 }
@@ -294,6 +348,45 @@ namespace ImportExcel
            // tbInfo_err.Text = "";
             tbInfo_err.Text += _errorMessage;
         }
+
+        private void CheckAllValue(string[] items, int count)
+        {
+            if (items.Length < count)
+                count = items.Length;
+
+            for (int i = 0; i < count; i++)
+            {
+                string value = items[i].Trim();
+                if (value == "")
+                {
+                    items[i] = _preItem[i];
+                }
+                   
+            }
+
+        }
+
+        private bool IsEmpty(string[] item,int v)
+        {
+            foreach (var i in item)
+            {
+                string value = i.Trim();
+                if (value != "")
+                    return false;
+
+            }
+            return true;
+        }
+
+        //private void CheckValue(string[] item, int v)
+        //{
+        //    string value = item[v].Trim();
+        //    if (value == "")
+        //    {
+        //        item[v] = _preItem[v];
+        //    }
+              
+        //}
 
         #region check data
         //网格数据检测，空名空身份证号，同身份证号不同名
