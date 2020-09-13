@@ -189,6 +189,7 @@ namespace ImportExcel
                         room = new Room 
                         { 
                             Name = roomName ,
+                            //房屋地址
                             Address = item[2],
                             Category = item[7],
                             Use = item[8],
@@ -238,6 +239,7 @@ namespace ImportExcel
                             EthnicGroups = item[19],
                             PersonId = item[20],
                             Phone = item[21],
+                            //户籍地址
                             DomicileAddress = item[22],
 
                             Company = item[27],

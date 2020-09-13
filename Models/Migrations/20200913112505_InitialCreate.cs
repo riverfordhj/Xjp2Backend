@@ -271,6 +271,8 @@ namespace Models.Migrations
                     Category = table.Column<string>(nullable: true),
                     Use = table.Column<string>(nullable: true),
                     Area = table.Column<string>(nullable: true),
+                    Longitude = table.Column<double>(nullable: false),
+                    Latitude = table.Column<double>(nullable: false),
                     Other = table.Column<string>(nullable: true),
                     Note = table.Column<string>(nullable: true),
                     BuildingId = table.Column<int>(nullable: true)

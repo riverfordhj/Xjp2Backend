@@ -56,7 +56,7 @@ namespace Models.DataHelper
 
             if (street == null)
             {
-                street = new StreetUnit { Name = name };
+                street = new StreetUnit { Name = "徐家棚" };
                 context.Streets.Add(street);
             }
 

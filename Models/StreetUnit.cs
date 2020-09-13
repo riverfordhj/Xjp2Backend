@@ -104,6 +104,9 @@ namespace Models
         public string Category { get; set; }
         public string Use { get; set; }
         public string Area { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+
         public string Other { get; set; }
 
 
