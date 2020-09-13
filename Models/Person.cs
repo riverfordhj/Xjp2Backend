@@ -53,5 +53,7 @@ namespace Models
         public string Area { get; set; }
         //备注
         public string Note { get; set; }
+        //导航属性
+        public Room Room { get; set; }
     }
 }

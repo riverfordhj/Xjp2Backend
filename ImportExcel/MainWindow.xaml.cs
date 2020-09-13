@@ -122,7 +122,7 @@ namespace ImportExcel
                 if (IsEmpty(item, 6))
                     continue;
 
-                CheckAllValue(item, 6);
+                CheckAllValue(item, 8);
 
                 using (var context = new StreetContext())
                 {
@@ -214,7 +214,8 @@ namespace ImportExcel
                             Phone = item[16],
                             Area = item[17]
                         };
-                         context.CompanyInfos.Add(companyinfo);
+                        companyinfo.Room = room;
+                        context.CompanyInfos.Add(companyinfo);
                     }
                    
 
@@ -250,21 +251,20 @@ namespace ImportExcel
 
 
                         //单位信息
-                        //  var companyinfo = new CompanyInfo { };
-                        if (item[11] != "")
-                        {
-                            var companyinfo = new CompanyInfo
-                            {
-                                Name = item[11],
-                                Character = item[12],
-                                SocialId = item[13],
-                                ContactPerson = item[14],
-                                PersonId = item[15],
-                                Phone = item[16],
-                                Area = item[17]
-                            };
-                            context.CompanyInfos.Add(companyinfo);
-                        }
+                        //if (item[11] != "")
+                        //{
+                        //    var companyinfo = new CompanyInfo
+                        //    {
+                        //        Name = item[11],
+                        //        Character = item[12],
+                        //        SocialId = item[13],
+                        //        ContactPerson = item[14],
+                        //        PersonId = item[15],
+                        //        Phone = item[16],
+                        //        Area = item[17]
+                        //    };
+                        //    context.CompanyInfos.Add(companyinfo);
+                        //}
                         //特殊人群
 
                         if (item[34] != "")
@@ -351,8 +351,8 @@ namespace ImportExcel
 
         private void CheckAllValue(string[] items, int count)
         {
-            if (items.Length < count)
-                count = items.Length;
+            //if (items.Length < count)
+               // count = items.Length;
 
             for (int i = 0; i < count; i++)
             {

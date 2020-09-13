@@ -10,7 +10,7 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20200912090222_InitialCreate")]
+    [Migration("20200913091830_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -108,10 +108,15 @@ namespace Models.Migrations
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SocialId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
 
                     b.ToTable("CompanyInfos");
                 });
@@ -537,6 +542,13 @@ namespace Models.Migrations
                     b.HasOne("Models.StreetUnit", "Street")
                         .WithMany("Communities")
                         .HasForeignKey("StreetId");
+                });
+
+            modelBuilder.Entity("Models.CompanyInfo", b =>
+                {
+                    b.HasOne("Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
                 });
 
             modelBuilder.Entity("Models.NetGrid", b =>
