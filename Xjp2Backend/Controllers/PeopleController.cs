@@ -6,59 +6,25 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
-using Models.DataHelper;
 
 namespace Xjp2Backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PersonController : ControllerBase
+    public class PeopleController : ControllerBase
     {
         private readonly StreetContext _context;
-        private XjpRepository _repository = null;
 
-        public PersonController()//StreetContext context
+        public PeopleController(StreetContext context)
         {
-            _context = new StreetContext();
-            _repository = new XjpRepository(_context);
-        }
-
-        // GET: api/GetSubdivsions
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Subdivision>>> GetSubdivsions()
-        {
-            return await _context.Subdivisions.ToListAsync();
-        }
-
-        // GET: api/GetBuildings/1
-        [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<IEnumerable<Building>>> GetBuildingInSubdivision(int id)
-        {
-            return await _repository.GetBuildingInSubdivision(id).ToListAsync();
+            _context = context;
         }
 
         // GET: api/People
-        [HttpGet("[action]")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
         {
             return await _context.Persons.ToListAsync();
-        }
-
-        // GET: api/GetPersonsByBuilding/1
-        [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
-        {
-            return _repository.GetPersonsByBuilding(id);
-        }
-
-        [HttpPost("[action]")]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)
-        {
-            var coll = _repository.GetPersonsInRoom(para.CommunityName, para.BuildingName, para.RoomNO);
-            if (coll != null)
-                return await coll.ToListAsync();
-            else
-                return NotFound();
         }
 
         // GET: api/People/5
