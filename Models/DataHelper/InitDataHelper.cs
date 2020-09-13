@@ -18,8 +18,8 @@ namespace Models.DataHelper
             {
                 using (var context = new StreetContext())
                 {
-                    //添加街道
-                    var street = AddStreet(context, "徐家棚");
+                    //添加街道  var street = AddStreet(context, "徐家棚");
+                    var street = AddStreet(context, "徐家棚") ;
 
                     //add 网格员 Role
                     var roleWangGe = AddRole(context, "网格员");
