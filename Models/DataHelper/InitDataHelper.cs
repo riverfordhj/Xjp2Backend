@@ -56,7 +56,7 @@ namespace Models.DataHelper
 
             if (street == null)
             {
-                street = new StreetUnit { Name = "徐家棚" };
+                street = new StreetUnit { Name = name };
                 context.Streets.Add(street);
             }
 
@@ -77,7 +77,7 @@ namespace Models.DataHelper
             for (int i = 1; i <= gridCount; i++)
             {
                 //网格
-                var netGrid = context.NetGrids.SingleOrDefault(s => s.Name == i.ToString());
+                var netGrid = context.NetGrids.SingleOrDefault(s => s.Name == i.ToString() && s.Community.Id ==community .Id );
                 if (netGrid == null)
                 {
                     netGrid = new NetGrid { Name = i.ToString() };
@@ -86,7 +86,7 @@ namespace Models.DataHelper
                 }
 
                 //网格员
-                var user = AddUser(context, userName + i.ToString());
+                var user = AddUser(context,netGrid , userName + i.ToString());
                 AddUser2Role(context, role, user);
                 netGrid.User = user;
             }
@@ -104,6 +104,16 @@ namespace Models.DataHelper
             return user;
         }
 
+        private static User AddUser(StreetContext context,NetGrid net , string name)
+        {
+            var user = context.Users.SingleOrDefault(s => s.UserName == name && s.NetGrid.Contains(net));
+            if (user == null)
+            {
+                user = new User { UserName = name, Password = "123456" };
+                context.Users.Add(user);
+            }
+            return user;
+        }
         private static void AddUser2Role(StreetContext context, Role role, User user)
         {
             RoleUser ru = new RoleUser { Role = role, User = user };

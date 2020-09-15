@@ -10,7 +10,7 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20200913112505_InitialCreate")]
+    [Migration("20200915114453_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,6 +27,9 @@ namespace Models.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Alias")
                         .HasColumnType("nvarchar(max)");
@@ -232,9 +235,6 @@ namespace Models.Migrations
                     b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CompanyInfoId")
-                        .HasColumnType("int");
-
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
@@ -268,8 +268,6 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyInfoId");
 
                     b.HasIndex("PersonId")
                         .IsUnique();
@@ -397,9 +395,6 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Alias")
                         .HasColumnType("nvarchar(max)");
 
@@ -411,6 +406,9 @@ namespace Models.Migrations
 
                     b.Property<string>("Category")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Height")
+                        .HasColumnType("float");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -566,13 +564,6 @@ namespace Models.Migrations
                     b.HasOne("Models.User", "User")
                         .WithMany("NetGrid")
                         .HasForeignKey("UserId");
-                });
-
-            modelBuilder.Entity("Models.Person", b =>
-                {
-                    b.HasOne("Models.CompanyInfo", "CompanyInfo")
-                        .WithMany()
-                        .HasForeignKey("CompanyInfoId");
                 });
 
             modelBuilder.Entity("Models.PersonRoom", b =>

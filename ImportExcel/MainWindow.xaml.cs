@@ -55,10 +55,13 @@ namespace ImportExcel
         }
 
         private void bn_Add_Click(object sender, RoutedEventArgs e)
-        {           
+        {
             try
             {
-                tbInfo.Text = ReadExcelData(tbPath.Text);
+                List<string> data = ReadExcelData(tbPath.Text, 4);
+                // tbInfo.Text = ReadExcelData(tbPath.Text);
+                //tbInfo.Text = data.ToString();
+                Add2DB(data);
 
             }
             catch (Exception err)
@@ -66,16 +69,10 @@ namespace ImportExcel
                 tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
                 //tbInfo.Text = err.Message;
             }
-            //using (var db = new ImportContext())
-            //{
-            //    var blog = new PartyInfo { Name = "name1", Note = "node1" };
-            //    db.PartyInfos.Add(blog);
-            //    db.SaveChanges();
-            //}
 
         }
 
-        private string ReadExcelData(string path)
+        private List<string> ReadExcelData(string path, int ignoreLine)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             FileInfo fi = new FileInfo(path);
@@ -87,7 +84,7 @@ namespace ImportExcel
                 int rowCount = worksheet.Dimension.Rows;
                 int ColCount = worksheet.Dimension.Columns;
 
-                for (int row = 4; row <= rowCount; row++)//在excel表中第一行是标题，所以数据是从第二行开始的。
+                for (int row = ignoreLine; row <= rowCount; row++)//在excel表中第一行是标题，所以数据是从第二行开始的。
                 {
                     StringBuilder sbRow = new StringBuilder();
                     for (int col = 1; col <= ColCount; col++)
@@ -102,9 +99,9 @@ namespace ImportExcel
                 }
             }
 
-            Add2DB(data);
-
-            return sb.ToString();
+            //Add2DB(data);
+            //return sb.ToString();
+            return data;
         }
 
         string _currentLine = "";
@@ -122,7 +119,7 @@ namespace ImportExcel
                 if (IsEmpty(item, 6))
                     continue;
 
-                CheckAllValue(item, 8);
+                CheckAllValue(item, 6);
 
                 using (var context = new StreetContext())
                 {
@@ -137,11 +134,11 @@ namespace ImportExcel
                     }
 
                     //社区
-                    var community = context.Communitys.SingleOrDefault(s => s.Name == item[0].Replace("社区",""));
+                    var community = context.Communitys.SingleOrDefault(s => s.Name == item[0].Replace("社区", ""));
                     if (community == null)
                     {
                         //CheckValue(item,0);
-                        community = new Community { Name = item[0].Replace("社区","") };
+                        community = new Community { Name = item[0].Replace("社区", "") };
                         community.Street = street;
                         //street.Communities.Add(community);
                         context.Communitys.Add(community);
@@ -151,7 +148,7 @@ namespace ImportExcel
                     var netGrid = context.NetGrids.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[1]);
                     if (netGrid == null)
                     {
-                       // CheckValue(item, 1);
+                        // CheckValue(item, 1);
                         netGrid = new NetGrid { Name = item[1] };
                         netGrid.Community = community;
                         context.NetGrids.Add(netGrid);
@@ -159,11 +156,11 @@ namespace ImportExcel
 
 
                     //小区
-                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区",""));
+                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区", ""));
                     if (subdivision == null)
                     {
                         //CheckValue(item,3);
-                        subdivision = new Subdivision { Name = item[3].Replace("小区","") };
+                        subdivision = new Subdivision { Name = item[3].Replace("小区", "") };
                         subdivision.Street = street;
                         context.Subdivisions.Add(subdivision);
                     }
@@ -171,10 +168,15 @@ namespace ImportExcel
                     //楼栋
 
                     //var building = netGrid.Buildings.SingleOrDefault(s => s.Name == item[4]);
-                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4].Replace("栋",""));
+                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4].Replace("栋", ""));
                     if (building == null)
                     {
-                        building = new Building { Name = item[4].Replace("栋","") };
+                        building = new Building
+                        {
+                            Name = item[4].Replace("栋", ""),
+                            //房屋地址
+                            Address = item[2],
+                        };
                         building.NetGrid = netGrid;
                         building.Subdivision = subdivision;
                         context.Buildings.Add(building);
@@ -182,15 +184,13 @@ namespace ImportExcel
                     }
 
                     //房屋
-                    string roomName = $"{item[5].Replace("单元","")}-{item[6].Replace("号","")}";
+                    string roomName = $"{item[5].Replace("单元", "")}-{item[6].Replace("号", "")}";
                     var room = context.Rooms.SingleOrDefault(r => r.Building.Id == building.Id && r.Name == roomName);
                     if (room == null)
                     {
-                        room = new Room 
-                        { 
-                            Name = roomName ,
-                            //房屋地址
-                            Address = item[2],
+                        room = new Room
+                        {
+                            Name = roomName,
                             Category = item[7],
                             Use = item[8],
                             Area = item[10],
@@ -202,7 +202,7 @@ namespace ImportExcel
                     }
 
                     //单位信息
-                  //  var companyinfo = new CompanyInfo { };
+                    //  var companyinfo = new CompanyInfo { };
                     if (item[11] != "")
                     {
                         var companyinfo = new CompanyInfo
@@ -218,21 +218,21 @@ namespace ImportExcel
                         companyinfo.Room = room;
                         context.CompanyInfos.Add(companyinfo);
                     }
-                   
+
 
 
                     //人
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
 
                     //检测空名空身份证号
-                    if(!CheckItem(item))
+                    if (!CheckItem(item))
                         continue;
                     //检测同身份证号不同名
                     if (!CheckPerson(person, item))
                         continue;
 
                     if (person == null)
-                    {                     
+                    {
                         person = new Person
                         {
                             Name = item[18],
@@ -248,7 +248,7 @@ namespace ImportExcel
                             IsOverseasChinese = (item[30] == "是"),
                             MerriedStatus = item[31],
                         };
-                       // person.CompanyInfo = companyinfo;
+                        // person.CompanyInfo = companyinfo;
                         context.Persons.Add(person);
 
 
@@ -347,14 +347,14 @@ namespace ImportExcel
                     _preItem = item;
                 }
             }
-           // tbInfo_err.Text = "";
+            // tbInfo_err.Text = "";
             tbInfo_err.Text += _errorMessage;
         }
 
         private void CheckAllValue(string[] items, int count)
         {
             //if (items.Length < count)
-               // count = items.Length;
+            // count = items.Length;
 
             for (int i = 0; i < count; i++)
             {
@@ -363,12 +363,12 @@ namespace ImportExcel
                 {
                     items[i] = _preItem[i];
                 }
-                   
+
             }
 
         }
 
-        private bool IsEmpty(string[] item,int v)
+        private bool IsEmpty(string[] item, int v)
         {
             foreach (var i in item)
             {
@@ -387,7 +387,7 @@ namespace ImportExcel
         //    {
         //        item[v] = _preItem[v];
         //    }
-              
+
         //}
 
         #region check data
@@ -422,12 +422,53 @@ namespace ImportExcel
                 string gridUser = tbGirdUser.Text;
                 int count = int.Parse(tbGridCount.Text);
 
-                string message = InitDataHelper.AddData(communiteName, gridUser,count );
+                string message = InitDataHelper.AddData(communiteName, gridUser, count);
                 tbInfo.Text = message;
             }
             catch (Exception err)
             {
                 tbInfo_err.Text += err.Message;
+            }
+        }
+        //添加坐标
+        private void bn_AddCoordinates_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData(tbPath.Text, 2);
+                Add2Coordinate(data);
+                
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";
+                //tbInfo.Text = err.Message;
+            }
+        }
+
+        private void Add2Coordinate(List<string> data)
+        {
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split(',');
+                using (var context = new StreetContext())
+                {
+                    string roomName = $"{item[7]}-{item[5]}";
+                    var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
+                    if (room1 != null)
+                    {
+                        //经纬度
+                        room1.Longitude = Convert.ToDouble(item[12]);
+                        room1.Latitude = Convert.ToDouble(item[13]);
+                        //楼高
+                        room1.Height = Convert.ToDouble(item[3]) + (Convert.ToDouble(item[4])) / 2;
+
+                    }
+                    context.SaveChanges();
+                    tbInfo.Text = "Add Coordinate OK!";
+                    //return "Add Coordinate OK!";
+                }
             }
         }
     }
