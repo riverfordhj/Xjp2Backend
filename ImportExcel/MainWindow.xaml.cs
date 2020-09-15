@@ -119,7 +119,7 @@ namespace ImportExcel
                 if (IsEmpty(item, 6))
                     continue;
 
-                CheckAllValue(item, 6);
+                CheckAllValue(item, 7);
 
                 using (var context = new StreetContext())
                 {
@@ -348,6 +348,7 @@ namespace ImportExcel
                 }
             }
             // tbInfo_err.Text = "";
+            tbInfo.Text = "Add personroomdata OK!";
             tbInfo_err.Text += _errorMessage;
         }
 
@@ -462,7 +463,8 @@ namespace ImportExcel
                         room1.Longitude = Convert.ToDouble(item[12]);
                         room1.Latitude = Convert.ToDouble(item[13]);
                         //楼高
-                        room1.Height = Convert.ToDouble(item[3]) + (Convert.ToDouble(item[4])) / 2;
+                        double h = Convert.ToDouble(item[4]) / 2;
+                        room1.Height = Convert.ToDouble(item[3]) + Math.Round(h, 2);
 
                     }
                     context.SaveChanges();
