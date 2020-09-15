@@ -463,9 +463,9 @@ namespace ImportExcel
                         room1.Longitude = Convert.ToDouble(item[12]);
                         room1.Latitude = Convert.ToDouble(item[13]);
                         //楼高
-                        double h = Convert.ToDouble(item[4]) / 2;
-                        room1.Height = Convert.ToDouble(item[3]) + Math.Round(h, 2);
-
+                        double h = (Convert.ToDouble(item[3]) + Convert.ToDouble(item[4]) / 2);
+                        room1.Height = Math.Round(h, 2);
+                        //room1.Height = Math.Round((Convert.ToDouble(item[3]) + Convert.ToDouble(item[4]) / 2), 2);
                     }
                     context.SaveChanges();
                     tbInfo.Text = "Add Coordinate OK!";
