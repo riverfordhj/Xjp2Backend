@@ -116,7 +116,7 @@ namespace ImportExcel
                 _currentLine = data[_i];
                 string[] item = _currentLine.Split(',');
                 //string[] item = data[0].Split(',');
-                if (IsEmpty(item, 6))
+                if (IsEmpty(item, 7))
                     continue;
 
                 CheckAllValue(item, 7);
@@ -371,9 +371,10 @@ namespace ImportExcel
 
         private bool IsEmpty(string[] item, int v)
         {
-            foreach (var i in item)
+            for (int i = 0; i < v; i++)
+            //foreach (var i in item)
             {
-                string value = i.Trim();
+                string value = item[i].Trim();
                 if (value != "")
                     return false;
 
