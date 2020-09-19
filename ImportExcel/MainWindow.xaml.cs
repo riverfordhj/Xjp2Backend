@@ -236,7 +236,7 @@ namespace ImportExcel
                         person = new Person
                         {
                             Name = item[18],
-                            EthnicGroups = item[19],
+                            EthnicGroups = item[19].Replace("族", ""),
                             PersonId = item[20],
                             Phone = item[21],
                             //户籍地址
@@ -457,7 +457,10 @@ namespace ImportExcel
                 using (var context = new StreetContext())
                 {
                     string roomName = $"{item[7]}-{item[5]}";
-                    var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
+                    //水岸星城坐标导入
+                    //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
+                    //                经纬度坐标                                  //社区name——网格id——楼栋id——房间号
+                    var room1 = context.Rooms.SingleOrDefault(r => r.Building.NetGrid.Community.Name == item[11] && r.Building.NetGrid.Name == item[10] && r.Building.Name == item[6] && r.Name == roomName);
                     if (room1 != null)
                     {
                         //经纬度
