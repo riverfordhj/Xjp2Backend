@@ -145,7 +145,7 @@ namespace ImportExcel
                     }
 
                     //网格
-                    var netGrid = context.NetGrids.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[1]);
+                    var netGrid = context.NetGrids.SingleOrDefault(s => s.Community.Id == community.Id && s.Name == item[1].Replace("网格", ""));
                     if (netGrid == null)
                     {
                         // CheckValue(item, 1);
