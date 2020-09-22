@@ -79,9 +79,9 @@ namespace Models
         public int Id { get; set; }
         //身份证
         public string PersonId { get; set; }
-        //残疾类别
+       //
         public string Key { get; set; }
-        //残疾等级
+        //
         public string Value { get; set; }
         //备注
         public string Note { get; set; }

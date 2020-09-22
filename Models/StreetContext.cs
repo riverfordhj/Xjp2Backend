@@ -22,7 +22,7 @@ namespace Models
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
             //string cs1 = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
+            string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";//
             optionsBuilder.UseSqlServer(cs);
         }
 
@@ -44,6 +44,9 @@ namespace Models
 
         //人员信息
         public DbSet<Person> Persons { get; set; }
+
+
+        public DbSet<CompanyInfo> CompanyInfos { get; set; }
         public DbSet<OtherInfos> OtherInfos { get; set; }
         public DbSet<PersonRoom> PersonRooms { get; set; }
 
@@ -58,6 +61,5 @@ namespace Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<RoleUser> RoleUsers { get; set; }
 
-        
     }
 }

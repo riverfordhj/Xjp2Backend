@@ -11,7 +11,9 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
         public List<Community> Communities { get; set; }
         public List<Subdivision> Subdivisions { get; set; }
@@ -25,7 +27,9 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -40,7 +44,9 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
         //导航属性
         public List<Building> Buildings { get; set; }
@@ -55,7 +61,9 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -70,23 +78,35 @@ namespace Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
         public string Note { get; set; }
 
         //导航属性
         public List<Room> Rooms { get; set; }
-        public Community Community { get; set; }
+        public NetGrid NetGrid { get; set; }
+        //public Community Community { get; set; }
         public Subdivision Subdivision { get; set; }
     }
 
     /// <summary>
-    /// 楼栋
+    /// 房间
     /// </summary>
     public class Room
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        public string Alias { get; set; }
+        public string Address { get; set; }
+        public string Category { get; set; }
+        public string Use { get; set; }
+        public string Area { get; set; }
+        public string Other { get; set; }
+
+
         public string Note { get; set; }
 
         //导航属性

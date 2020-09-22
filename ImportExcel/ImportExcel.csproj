@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\modelBuildingEconomy\ModelsBuildingEconomy.csproj" />
     <ProjectReference Include="..\Models\Models.csproj" />
   </ItemGroup>
 

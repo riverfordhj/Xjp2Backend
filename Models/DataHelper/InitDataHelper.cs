@@ -12,24 +12,24 @@ namespace Models.DataHelper
         /// <summary>
         /// 添加初始数据
         /// </summary>
-        public static string AddData()
+        public static string AddData(string comName, string gridUser, int gridCount)
         {
             try
             {
                 using (var context = new StreetContext())
                 {
-                    //添加街道
-                    var street = AddStreet(context, "徐家棚");
+                    //添加街道  var street = AddStreet(context, "徐家棚");
+                    var street = AddStreet(context, "徐家棚") ;
 
                     //add 网格员 Role
                     var roleWangGe = AddRole(context, "网格员");
 
                     #region 添加水岸星城社区、网格、网格员账户
                     //添加社区
-                    var saxcCommunity = AddCommunity(context, street, "水岸星城");
+                    var saxcCommunity = AddCommunity(context, street, comName);
 
                     //网格
-                    AddGrid(context, saxcCommunity, 10, roleWangGe, "sawg");
+                    AddGrid(context, saxcCommunity, gridCount, roleWangGe, gridUser);
                     #endregion
 
                     //添加管理员role，user
@@ -52,11 +52,11 @@ namespace Models.DataHelper
         //添加街道数据
         private static StreetUnit AddStreet(StreetContext context, string name)
         {
-            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == "name");
+            StreetUnit street = context.Streets.SingleOrDefault(s => s.Name == name);
 
             if (street == null)
             {
-                street = new StreetUnit { Name = "name" };
+                street = new StreetUnit { Name = name };
                 context.Streets.Add(street);
             }
 

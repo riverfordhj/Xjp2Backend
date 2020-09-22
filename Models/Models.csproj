@@ -2,7 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+	
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="buildingCompany\**" />
+    <EmbeddedResource Remove="buildingCompany\**" />
+    <None Remove="buildingCompany\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <None Remove="appsettings.Development.json" />
