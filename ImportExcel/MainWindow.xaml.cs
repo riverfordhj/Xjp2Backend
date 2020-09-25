@@ -515,30 +515,6 @@ namespace ImportExcel
                         context.CompanyBuilding.Add(building);
                     }
 
-                    Company company = context.Company.SingleOrDefault(c => c.CompanyName == item[3]);
-                    if (company == null)
-                    {
-                        company = new Company
-                        {
-                            CompanyName = item[3],
-                            UnifiedSocialCreditCode = item[4],
-                            RegisteredAddress = item[5],
-                            ActualOfficeAddress = item[6],
-                            RegisteredCapital = item[10],
-                            IsIndependentLegalEntity = item[11],
-                            LegalRepresentative = item[12],
-                            Contacts = item[13],
-                            Phone = item[14],
-                            EnterpriseType = item[15],
-                            EnterpriseBackground = item[16],
-                            BusinessDirection = item[17],
-                            RegistrationPlace = item[18],
-                            TaxStatisticsArea = item[19],
-                            note = item[22]
-                        };
-                        context.Company.Add(company);
-                    }
-
                     Company_OtherInfo company_OtherInfo = context.Company_OtherInfo.SingleOrDefault(c => c.CompanyName == item[3]);
                     if (company_OtherInfo == null)
                     {
@@ -563,7 +539,37 @@ namespace ImportExcel
                         };
                         context.CompanyEconomy.Add(companyEconomy);
                     }
-           
+
+                    Company company = context.Company.SingleOrDefault(c => c.CompanyName == item[3]);
+                    if (company == null)
+                    {
+                        company = new Company
+                        {
+                            CompanyName = item[3],
+                            UnifiedSocialCreditCode = item[4],
+                            RegisteredAddress = item[5],
+                            ActualOfficeAddress = item[6],
+                            RegisteredCapital = item[10],
+                            IsIndependentLegalEntity = item[11],
+                            LegalRepresentative = item[12],
+                            Contacts = item[13],
+                            Phone = item[14],
+                            EnterpriseType = item[15],
+                            EnterpriseBackground = item[16],
+                            BusinessDirection = item[17],
+                            RegistrationPlace = item[18],
+                            TaxStatisticsArea = item[19],
+                            note = item[22],
+                            CompanyBuilding = building,
+                            CompanyEconomy = companyEconomy,
+                            Company_OtherInfo = company_OtherInfo
+                        };
+                        //company.CompanyBuilding = building;
+                        //company.CompanyEconomy = companyEconomy;
+                        //company.Company_OtherInfo = company_OtherInfo;
+                        context.Company.Add(company);
+                    }
+
                     context.SaveChanges();
                     //_preItem = item;
 

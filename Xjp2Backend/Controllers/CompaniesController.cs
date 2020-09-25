@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsBuildingEconomy.buildingCompany;
+using ModelsBuildingEconomy.DataHelper;
 
 namespace Xjp2Backend.Controllers
 {
@@ -14,10 +15,12 @@ namespace Xjp2Backend.Controllers
     public class CompaniesController : ControllerBase
     {
         private readonly xjpCompanyContext _context;
+        private readonly companyRepository _repository;
 
-        public CompaniesController()
+       public CompaniesController()
         {
             _context = new xjpCompanyContext();
+            _repository = new companyRepository(_context);
         }
     
         // GET: api/Companies
@@ -25,6 +28,15 @@ namespace Xjp2Backend.Controllers
         public async Task<ActionResult<IEnumerable<Company>>> GetCompany()
         {
             return await _context.Company.ToListAsync();
+           
+        }
+
+        // GET: api/
+        [HttpGet("[action]")]
+        public IEnumerable<Object> GetBuildingCompany()
+        {
+            return  _repository.GetbuildingEconomy_company();
+
         }
 
         // GET: api/Companies/5
