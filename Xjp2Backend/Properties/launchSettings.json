@@ -1,30 +1,36 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http:\\\\192.168.124.4:19898",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:4293",
       "sslPort": 44318
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
-      "launchUrl": "api/Auth",
+      "launchUrl": "api/person/GetSubdivsions",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "sqlDebugging": true,
+      "nativeDebugging": true
     },
     "Xjp2Backend": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "Auth",
-      "applicationUrl": "https://localhost:5001;http://localhost:5000",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:5001;http://localhost:5000"
     }
   }
 }
