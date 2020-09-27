@@ -12,7 +12,9 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //街道名字
         public string Name { get; set; }
+        //别名
         public string Alias { get; set; }
         public string Note { get; set; }
         public List<Community> Communities { get; set; }
@@ -28,7 +30,9 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //社区
         public string Name { get; set; }
+        //别名
         public string Alias { get; set; }
         public string Note { get; set; }
 
@@ -45,7 +49,9 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //网格
         public string Name { get; set; }
+        //别名
         public string Alias { get; set; }
         public string Note { get; set; }
         //导航属性
@@ -62,6 +68,7 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //小区
         public string Name { get; set; }
         public string Alias { get; set; }
         public string Note { get; set; }
@@ -79,8 +86,11 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //楼栋
         public string Name { get; set; }
         public string Alias { get; set; }
+        //地址
+        public string Address { get; set; }
         public string Note { get; set; }
 
         //导航属性
@@ -98,12 +108,22 @@ namespace Models
         [Key]
         public int Id { get; set; }
         [Required]
+        //房间号
         public string Name { get; set; }
-        public string Alias { get; set; }
-        public string Address { get; set; }
+        public string Alias { get; set; }       
+        //房屋类别
         public string Category { get; set; }
+        //房屋用途
         public string Use { get; set; }
+        //面积
         public string Area { get; set; }
+        //经度
+        public double Longitude { get; set; }
+        //纬度
+        public double Latitude { get; set; }
+        //高程
+        public double Height { get; set; }
+        //其他
         public string Other { get; set; }
 
 

@@ -12,12 +12,13 @@ namespace Models
         //身份证
         public string PersonId { get; set; }
 
-        //户主
+        //是否户主
         public bool IsHouseholder { get; set; }
         //与户主关系
         public string RelationWithHouseholder { get; set; }
         //是否为产权人
         public bool IsOwner { get; set; }
+        //是否居住在此
         public bool IsLiveHere { get; set; }
                 
         //人口性质
