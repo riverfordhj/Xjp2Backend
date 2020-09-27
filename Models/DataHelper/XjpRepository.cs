@@ -81,7 +81,9 @@ namespace Models.DataHelper
         {
             Subdivision sub = GetSubdivision(subdivisionName);
             if (sub != null)
-                return _context.Buildings.Where(item => item.Subdivision.Id == sub.Id && (item.Name == name || item.Note == name)).FirstOrDefault();
+            {
+                return _context.Buildings.Where(item => item.Subdivision.Id == sub.Id && (item.Name == name || item.Alias == name)).FirstOrDefault();
+            }
             else
                 return null;
         }
