@@ -25,17 +25,34 @@ namespace Xjp2Backend.Controllers
     
         // GET: api/Companies
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Company>>> GetCompany()
+        public async Task<ActionResult<IEnumerable<Object>>> GetCompany()
         {
             return await _context.Company.ToListAsync();
            
         }
 
-        // GET: api/
+        // GET: api/Companies/GetBuildingCompany
         [HttpGet("[action]")]
         public IEnumerable<Object> GetBuildingCompany()
         {
             return  _repository.GetbuildingEconomy_company();
+
+        }
+
+        // GET: api/Companies/getCompanysByBuilding/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> getCompanysByBuilding(int id)
+        {
+            return _repository.getCompanysByBuilding(id);
+
+        }
+
+
+        // GET: api/Companies/getDemoData
+        [HttpGet("[action]")]
+        public IEnumerable<Object> getDemoData()
+        {
+            return _repository.getDemoData();
 
         }
 

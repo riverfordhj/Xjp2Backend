@@ -32,5 +32,54 @@ namespace ModelsBuildingEconomy.DataHelper
             return data;
         }
 
+        public IQueryable<object> GetbuildingEco()
+        {
+            var data = from companyBD in _context.CompanyBuilding
+                       from company in companyBD.Company
+                       select new
+                       {
+                           company,
+                           companyBD.BuildingName,
+                           companyBD.StreetName,
+                           companyEco = company.CompanyEconomy,
+                           company_OtherInfo = company.Company_OtherInfo
+                       };
+
+
+            return data;
+        }
+
+        public IQueryable<object> getCompanysByBuilding(int id)
+        {
+            var data = from companyBD in _context.CompanyBuilding.Where(b => b.Id == id)
+                       from company in companyBD.Company
+                       select new
+                       {
+                           company,
+                           companyBD.BuildingName,
+                           companyBD.StreetName,
+                           companyEco = company.CompanyEconomy,
+                           company_OtherInfo = company.Company_OtherInfo
+                       };
+
+            return data;
+
+        }
+
+
+        public IQueryable<object> getDemoData()
+        {
+            var demoData = from companyBD in _context.CompanyBuilding
+                       from company in companyBD.Company
+                       select new
+                       {
+                           company.Contacts,
+                           company.Phone,
+                           company.BusinessDirection
+                       };
+
+            return demoData;
+
+        }
     }
 }
