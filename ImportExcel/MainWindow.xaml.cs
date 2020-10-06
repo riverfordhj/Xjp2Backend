@@ -149,7 +149,7 @@ namespace ImportExcel
                     if (netGrid == null)
                     {
                         // CheckValue(item, 1);
-                        netGrid = new NetGrid { Name = item[1] };
+                        netGrid = new NetGrid { Name = item[1].Replace("网格", "")};
                         netGrid.Community = community;
                         context.NetGrids.Add(netGrid);
                     }
@@ -456,22 +456,61 @@ namespace ImportExcel
                 string[] item = _currentLine.Split(',');
                 using (var context = new StreetContext())
                 {
-                    string roomName = $"{item[7]}-{item[5]}";
+                    string roomName = $"{item[9]}-{item[10]}";
                     //水岸星城坐标导入
                     //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
-                    //                经纬度坐标                                  //社区name——网格id——楼栋id——房间号
-                    var room1 = context.Rooms.SingleOrDefault(r => r.Building.NetGrid.Community.Name == item[11] && r.Building.NetGrid.Name == item[10] && r.Building.Name == item[6] && r.Name == roomName);
+                    //                经纬度坐标                                  //社区name——小区alias——楼栋id——房间号
+                    var room1 = context.Rooms.FirstOrDefault(r =>r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
+                    //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Subdivision.Community.Name == item[4].Replace("社区", "") && r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
                     if (room1 != null)
                     {
                         //经纬度
-                        room1.Longitude = Convert.ToDouble(item[12]);
-                        room1.Latitude = Convert.ToDouble(item[13]);
+                        room1.Longitude = Convert.ToDouble(item[11]);
+                        room1.Latitude = Convert.ToDouble(item[12]);
                         //楼高
-                        double h = (Convert.ToDouble(item[3]) + Convert.ToDouble(item[4]) / 2);
+                        double h = (Convert.ToDouble(item[2]) + Convert.ToDouble(item[3]) / 2);
                         room1.Height = Math.Round(h, 2);
                     }
                     context.SaveChanges();
                     tbInfo.Text = "Add Coordinate OK!";
+                    //return "Add Coordinate OK!";
+                }
+            }
+        }
+
+        private void bn_AddAlias_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData(tbPath.Text, 1);
+                Add2Alias(data);
+
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";              
+            }
+        }
+
+        private void Add2Alias(List<string> data)
+        {
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split(',');
+                using (var context = new StreetContext())
+                {
+                    var subdivision1 = context.Subdivisions.SingleOrDefault(s => s.Name == item[0]);
+                    if (subdivision1 != null)
+                    {
+                        //CheckValue(item,3);
+                        subdivision1.Alias  = item[1];
+                        //subdivision1.Community.Id = int.Parse(item[3]);
+
+                    }
+
+                    context.SaveChanges();
+                    tbInfo.Text = "Add alias OK!";
                     //return "Add Coordinate OK!";
                 }
             }
