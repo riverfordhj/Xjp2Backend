@@ -38,6 +38,7 @@ namespace Models
 
         //导航属性
         public List<NetGrid> NetGrids { get; set; }
+        public List<Subdivision> Subdivisions { get; set; }
         public StreetUnit Street { get; set; }
     }
 
@@ -75,6 +76,7 @@ namespace Models
 
         //导航属性
         public List<Building> Buildings { get; set; }
+        public Community Community { get; set; }
         public StreetUnit Street { get; set; }
     }
 

@@ -9,9 +9,9 @@
     <Grid>
         <Button x:Name="bn_Open" Content="打开文件" HorizontalAlignment="Left" Margin="21,19,0,0" VerticalAlignment="Top" Width="71" Height="26" Click="bn_Open_Click" />
         <TextBox x:Name="tbPath" Margin="21,66,19,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="33" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto"/>
-        <Button x:Name="bn_Add" Content="添加数据" HorizontalAlignment="Left" Margin="105,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_Add_Click" />
+        <Button x:Name="bn_Add" Content="添加人房数据" HorizontalAlignment="Left" Margin="105,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_Add_Click" />
         <TextBox x:Name="tbInfo" Margin="21,112,222,36" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
-        <Button x:Name="bnAddInitData" Content="添加初始数据" HorizontalAlignment="Left" Margin="657,19,0,0" VerticalAlignment="Top" Height="26" Width="88" Click="bnAddInitData_Click" RenderTransformOrigin="0.019,0.48"/>
+        <Button x:Name="bnAddInitData" Content="添加初始数据" HorizontalAlignment="Left" Margin="612,19,0,0" VerticalAlignment="Top" Height="26" Width="88" Click="bnAddInitData_Click" RenderTransformOrigin="0.019,0.48"/>
         <TextBox x:Name="tbInfo_err" Margin="594,113,19,36" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
         <Label Content="社区" HorizontalAlignment="Left" Margin="278,19,0,0" VerticalAlignment="Top"/>
         <TextBox  x:Name="tbCommuniteName" HorizontalAlignment="Left" Margin="317,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="60"/>
@@ -20,6 +20,7 @@
         <Label Content="网格数量" HorizontalAlignment="Left" Margin="494,19,0,0" VerticalAlignment="Top"/>
         <TextBox  x:Name="tbGridCount" HorizontalAlignment="Left" Margin="557,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="50"/>
         <Button x:Name="bn_AddCoordinates" Content="添加坐标" HorizontalAlignment="Left" Margin="192,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_AddCoordinates_Click" RenderTransformOrigin="1.631,0.668" />
+        <Button x:Name="bn_AddAlias" Content="小区别名" HorizontalAlignment="Left" Margin="710,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_AddAlias_Click" RenderTransformOrigin="1.631,0.668" />
 
     </Grid>
 </Window>
