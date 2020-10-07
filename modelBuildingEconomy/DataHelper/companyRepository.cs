@@ -67,12 +67,13 @@ namespace ModelsBuildingEconomy.DataHelper
         }
 
 
-        public IQueryable<object> getDemoData()
+        public IEnumerable<object> getDemoData()
         {
             var demoData = from companyBD in _context.CompanyBuilding
                        from company in companyBD.Company
                        select new
                        {
+                          // companyBD.BuildingName,
                            company.CompanyName,
                            company.Contacts,
                            company.Phone,

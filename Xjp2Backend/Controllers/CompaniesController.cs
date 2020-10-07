@@ -136,9 +136,10 @@ namespace Xjp2Backend.Controllers
                     Phone = arr.Phone,
                     BusinessDirection = arr.BusinessDirection
                 };
+                _context.Company.Add(company);
 
             }
-            _context.Company.Add(company);
+            
             await _context.SaveChangesAsync();
             return CreatedAtAction("CompanyFields", new { info = "ok" });
 
