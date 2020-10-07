@@ -73,6 +73,7 @@ namespace ModelsBuildingEconomy.DataHelper
                        from company in companyBD.Company
                        select new
                        {
+                           company.CompanyName,
                            company.Contacts,
                            company.Phone,
                            company.BusinessDirection

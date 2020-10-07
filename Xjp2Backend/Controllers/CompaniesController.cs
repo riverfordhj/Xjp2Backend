@@ -114,6 +114,36 @@ namespace Xjp2Backend.Controllers
             return CreatedAtAction("GetCompany", new { id = company.Id }, company);
         }
 
+        //POST: api/CompanyFields
+        [HttpPost("[action]")]
+        public async Task<ActionResult<Company>> CompanyFields(Company arr)
+        {
+            string companyName = arr.CompanyName;
+            Company company = _context.Company.FirstOrDefault(cm => cm.CompanyName == companyName);
+            if(company != null)
+            {
+                company.BusinessDirection = arr.BusinessDirection;
+                company.CompanyName = arr.CompanyName;
+                company.Contacts = arr.Contacts;
+                company.Phone = arr.Phone;
+            }
+            else
+            {
+                company = new Company
+                {
+                    CompanyName = arr.CompanyName,
+                    Contacts = arr.Contacts,
+                    Phone = arr.Phone,
+                    BusinessDirection = arr.BusinessDirection
+                };
+
+            }
+            _context.Company.Add(company);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("CompanyFields", new { info = "ok" });
+
+        }
+
         // DELETE: api/Companies/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<Company>> DeleteCompany(int id)
