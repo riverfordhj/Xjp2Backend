@@ -54,7 +54,7 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)
         {
-            var coll = _repository.GetPersonsInRoom(para.CommunityName, para.BuildingName, para.RoomNO);
+            var coll = _repository.GetPersonsInRoom(para.SubdivisionName, para.BuildingName, para.RoomNO);
             if (coll != null)
                 return await coll.ToListAsync();
             else

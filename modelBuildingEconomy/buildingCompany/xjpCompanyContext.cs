@@ -15,7 +15,9 @@ namespace ModelsBuildingEconomy.buildingCompany
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
             //string cs1 = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            string cs = @"Server=(localdb)\mssqllocaldb;Database=BuildingCompanyDB;Integrated Security=True";//
+            //string cs = @"Server=(localdb)\mssqllocaldb;Database=BuildingCompanyDB;Integrated Security=True";
+            string cs = @"Server=localhost\SQLEXPRESS2019;Database=BuildingCompanyDB;Uid=sa;Password=sa;Integrated Security=false";//
+
             optionsBuilder.UseSqlServer(cs);
         }
 

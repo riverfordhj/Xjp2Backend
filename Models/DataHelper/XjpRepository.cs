@@ -63,7 +63,7 @@ namespace Models.DataHelper
         #region 小区
         public Subdivision GetSubdivision(string name)
         {
-            return _context.Subdivisions.Where(item => item.Name == name).FirstOrDefault();
+            return _context.Subdivisions.Where(item => item.Name == name || item.Alias.Contains(name)).FirstOrDefault();
         }
         #endregion
 
@@ -200,9 +200,9 @@ namespace Models.DataHelper
         /// <param name="buidlingName"></param>
         /// <param name="roomNO"></param>
         /// <returns></returns>
-        public IQueryable<Person> GetPersonsInRoom(string commnunityName, string buidlingName, string roomNO)
+        public IQueryable<Person> GetPersonsInRoom(string subdivisionName, string buidlingName, string roomNO)
         {
-            Room room = GetRoom(commnunityName, buidlingName, roomNO);
+            Room room = GetRoom(subdivisionName, buidlingName, roomNO);
 
             if (room != null)
             {
