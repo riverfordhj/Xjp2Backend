@@ -41,18 +41,18 @@ namespace Xjp2Backend.Controllers
 
         // GET: api/Companies/getCompanysByBuilding/1
         [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> getCompanysByBuilding(int id)
+        public IEnumerable<Object> GetCompanysByBuilding(int id)
         {
-            return _repository.getCompanysByBuilding(id);
+            return _repository.GetCompanysByBuilding(id);
 
         }
 
 
-        // GET: api/Companies/getDemoData
+        // GET: api/Companies/GetBuildingEcoFields
         [HttpGet("[action]")]
-        public IEnumerable<Object> getDemoData()
+        public IEnumerable<Object> GetBuildingEcoFields()
         {
-            return _repository.getDemoData();
+            return _repository.BuildingEcoFields();
 
         }
 
@@ -114,35 +114,67 @@ namespace Xjp2Backend.Controllers
             return CreatedAtAction("GetCompany", new { id = company.Id }, company);
         }
 
-        //POST: api/CompanyFields
+        //POST: api/Companies/CompanyFields
         [HttpPost("[action]")]
-        public async Task<ActionResult<Company>> CompanyFields(Company arr)
+        public async Task<IEnumerable<Object>> CompanyFields([FromBody] CompanyFieldsParameter para)
         {
-            string companyName = arr.CompanyName;
-            Company company = _context.Company.FirstOrDefault(cm => cm.CompanyName == companyName);
+            CompanyBuilding building = _context.CompanyBuilding.FirstOrDefault(bd => bd.BuildingName == para.BuildingName);
+            if(building != null)
+            {
+                building.BuildingName = para.BuildingName;
+            }
+            else
+            {
+                building = new CompanyBuilding
+                {
+                    BuildingName = para.BuildingName
+                };
+                _context.CompanyBuilding.Add(building);
+            }
+             
+            Company company = _context.Company.FirstOrDefault(cm => cm.CompanyName == para.CompanyName);
             if(company != null)
             {
-                company.BusinessDirection = arr.BusinessDirection;
-                company.CompanyName = arr.CompanyName;
-                company.Contacts = arr.Contacts;
-                company.Phone = arr.Phone;
+                company.BusinessDirection = para.BusinessDirection;
+                company.CompanyName = para.CompanyName;
+                company.Contacts = para.Contacts;
+                company.Phone = para.Phone;
+                company.CompanyBuilding = building;
             }
             else
             {
                 company = new Company
                 {
-                    CompanyName = arr.CompanyName,
-                    Contacts = arr.Contacts,
-                    Phone = arr.Phone,
-                    BusinessDirection = arr.BusinessDirection
+                    CompanyName = para.CompanyName,
+                    Contacts = para.Contacts,
+                    Phone = para.Phone,
+                    BusinessDirection = para.BusinessDirection,
+                    CompanyBuilding = building,
                 };
                 _context.Company.Add(company);
 
             }
             
             await _context.SaveChangesAsync();
-            return CreatedAtAction("CompanyFields", new { info = "ok" });
+            return _repository.BuildingEcoFields();
+            //return CreatedAtAction("CompanyFields", new { info = "ok" });
+        }
 
+        // POST: api/Companies/DeleteCompanyByName
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<Object>> DeleteCompanyByName(string[] arr)
+        {
+            var company = _context.Company.SingleOrDefault(cm => cm.CompanyName == arr[0]);
+            if (company == null)
+            {
+                return _repository.BuildingEcoFields(); 
+            }
+
+            _context.Company.Remove(company);
+            await _context.SaveChangesAsync();
+
+            //return company;
+            return _repository.BuildingEcoFields();
         }
 
         // DELETE: api/Companies/5
@@ -160,6 +192,8 @@ namespace Xjp2Backend.Controllers
 
             return company;
         }
+
+       
 
         private bool CompanyExists(int id)
         {
