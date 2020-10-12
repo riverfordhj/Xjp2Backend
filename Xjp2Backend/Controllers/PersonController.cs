@@ -17,9 +17,9 @@ namespace Xjp2Backend.Controllers
         private readonly StreetContext _context;
         private XjpRepository _repository = null;
 
-        public PersonController()//StreetContext context
+        public PersonController(StreetContext xjpContext)//StreetContext context
         {
-            _context = new StreetContext();
+            _context = xjpContext;// new StreetContext();
             _repository = new XjpRepository(_context);
         }
 

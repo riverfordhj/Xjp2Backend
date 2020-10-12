@@ -15,9 +15,9 @@ namespace Xjp2Backend.Controllers
     {
         private readonly xjpCompanyContext _context;
 
-        public CompanyEconomiesController()
+        public CompanyEconomiesController(xjpCompanyContext context)
         {
-            _context = new xjpCompanyContext();
+            _context = context;// new xjpCompanyContext();
         }
 
         // GET: api/CompanyEconomies
