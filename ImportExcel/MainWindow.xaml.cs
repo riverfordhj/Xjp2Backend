@@ -224,6 +224,10 @@ namespace ImportExcel
                     //人
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
 
+                   
+                  
+                       
+                   
                     //检测空名空身份证号
                     if (!CheckItem(item))
                         continue;
@@ -347,7 +351,6 @@ namespace ImportExcel
                     _preItem = item;
                 }
             }
-            // tbInfo_err.Text = "";
             tbInfo.Text = "Add personroomdata OK!";
             tbInfo_err.Text += _errorMessage;
         }
@@ -513,6 +516,28 @@ namespace ImportExcel
                     tbInfo.Text = "Add alias OK!";
                     //return "Add Coordinate OK!";
                 }
+            }
+        }
+
+        private void bn_Moni_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                using (var context = new StreetContext())
+                {
+                    foreach (var item1 in context.Persons)
+                    {
+                        item1.PersonId = item1.Id.ToString();
+                        item1.Phone = item1.Id.ToString();
+
+                    }
+                    context.SaveChanges();
+                    tbInfo.Text = "OK!";
+                }
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text= err.Message;
             }
         }
     }
