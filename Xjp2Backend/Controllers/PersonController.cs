@@ -17,9 +17,9 @@ namespace Xjp2Backend.Controllers
         private readonly StreetContext _context;
         private XjpRepository _repository = null;
 
-        public PersonController()//StreetContext context
+        public PersonController(StreetContext xjpContext)//StreetContext context
         {
-            _context = new StreetContext();
+            _context = xjpContext;// new StreetContext();
             _repository = new XjpRepository(_context);
         }
 
@@ -54,7 +54,7 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)
         {
-            var coll = _repository.GetPersonsInRoom(para.CommunityName, para.BuildingName, para.RoomNO);
+            var coll = _repository.GetPersonsInRoom(para.SubdivisionName, para.BuildingName, para.RoomNO);
             if (coll != null)
                 return await coll.ToListAsync();
             else

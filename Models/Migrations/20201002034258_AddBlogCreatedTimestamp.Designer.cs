@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    partial class StreetContextModelSnapshot : ModelSnapshot
+    [Migration("20201002034258_AddBlogCreatedTimestamp")]
+    partial class AddBlogCreatedTimestamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,10 +28,14 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int?>("CommunityId")
-                        .HasColumnType("int");
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("NetGridId")
@@ -42,8 +48,6 @@ namespace Models.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CommunityId");
 
                     b.HasIndex("NetGridId");
 
@@ -59,7 +63,11 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -73,6 +81,47 @@ namespace Models.Migrations
                     b.HasIndex("StreetId");
 
                     b.ToTable("Communitys");
+                });
+
+            modelBuilder.Entity("Models.CompanyInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Character")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ContactPerson")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PersonId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SocialId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoomId");
+
+                    b.ToTable("CompanyInfos");
                 });
 
             modelBuilder.Entity("Models.Disability", b =>
@@ -127,10 +176,14 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("CommunityId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -179,34 +232,23 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Address")
+                    b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Company")
+                    b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsHouseholder")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsLiveHere")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsMerried")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsOverseasChinese")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsOwner")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LodgingReason")
+                    b.Property<string>("MerriedStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -216,6 +258,7 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PersonId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Phone")
@@ -223,6 +266,39 @@ namespace Models.Migrations
 
                     b.Property<string>("PoliticalState")
                         .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PersonId")
+                        .IsUnique();
+
+                    b.ToTable("Persons");
+                });
+
+            modelBuilder.Entity("Models.PersonRoom", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsHouseholder")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsLiveHere")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsOwner")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LodgingReason")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PersonId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("PersonId1")
+                        .HasColumnType("int");
 
                     b.Property<string>("PopulationCharacter")
                         .HasColumnType("nvarchar(max)");
@@ -235,13 +311,11 @@ namespace Models.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("PersonId")
-                        .IsUnique()
-                        .HasFilter("[PersonId] IS NOT NULL");
+                    b.HasIndex("PersonId1");
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Persons");
+                    b.ToTable("PersonRooms");
                 });
 
             modelBuilder.Entity("Models.PoorPeople", b =>
@@ -321,13 +395,38 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Area")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("BuildingId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Height")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Other")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Use")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -365,7 +464,11 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -383,7 +486,14 @@ namespace Models.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Alias")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CommunityId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -393,6 +503,8 @@ namespace Models.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CommunityId");
 
                     b.HasIndex("StreetId");
 
@@ -425,11 +537,7 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Building", b =>
                 {
-                    b.HasOne("Models.Community", "Community")
-                        .WithMany()
-                        .HasForeignKey("CommunityId");
-
-                    b.HasOne("Models.NetGrid", null)
+                    b.HasOne("Models.NetGrid", "NetGrid")
                         .WithMany("Buildings")
                         .HasForeignKey("NetGridId");
 
@@ -445,6 +553,13 @@ namespace Models.Migrations
                         .HasForeignKey("StreetId");
                 });
 
+            modelBuilder.Entity("Models.CompanyInfo", b =>
+                {
+                    b.HasOne("Models.Room", "Room")
+                        .WithMany()
+                        .HasForeignKey("RoomId");
+                });
+
             modelBuilder.Entity("Models.NetGrid", b =>
                 {
                     b.HasOne("Models.Community", "Community")
@@ -456,10 +571,14 @@ namespace Models.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Models.Person", b =>
+            modelBuilder.Entity("Models.PersonRoom", b =>
                 {
+                    b.HasOne("Models.Person", "Person")
+                        .WithMany("PersonRooms")
+                        .HasForeignKey("PersonId1");
+
                     b.HasOne("Models.Room", "Room")
-                        .WithMany("Persons")
+                        .WithMany("PersonRooms")
                         .HasForeignKey("RoomId");
                 });
 
@@ -487,6 +606,10 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.Subdivision", b =>
                 {
+                    b.HasOne("Models.Community", "Community")
+                        .WithMany("Subdivisions")
+                        .HasForeignKey("CommunityId");
+
                     b.HasOne("Models.StreetUnit", "Street")
                         .WithMany("Subdivisions")
                         .HasForeignKey("StreetId");

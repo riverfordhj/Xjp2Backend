@@ -17,9 +17,9 @@ namespace Xjp2Backend.Controllers
         private readonly xjpCompanyContext _context;
         private readonly companyRepository _repository;
 
-       public CompaniesController()
+       public CompaniesController(xjpCompanyContext context)
         {
-            _context = new xjpCompanyContext();
+            _context = context;// new xjpCompanyContext();
             _repository = new companyRepository(_context);
         }
     

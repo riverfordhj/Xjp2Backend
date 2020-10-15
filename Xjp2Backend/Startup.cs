@@ -17,8 +17,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Models;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
+using ModelsBuildingEconomy.buildingCompany;
+using Xjp2Backend.Helper;
 
 namespace Xjp2Backend
 {
@@ -87,9 +90,14 @@ namespace Xjp2Backend
             ////services.AddAuthorization()
 
             //#endregion
-            //services.AddDbContext<XjpContext>(opt =>
-            //   opt.UseInMemoryDatabase("XjpDB"));
-            //services.AddDbContext<XjpContext>(options => options.UseSqlServer(Configuration.GetConnectionString("BloggingDatabase")));
+
+            //配置数据库context
+            //services.AddDbContext<XjpContext>(opt => opt.UseInMemoryDatabase("XjpDB"));
+            services.AddDbContext<StreetContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpDatabase")));
+            services.AddDbContext<xjpCompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpBuildingEcoDatabase")));
+
+            //读取徐家棚数据库连接字符串，保持到全局静态变量中
+            SystemParameterHelper.XjpDBConnectionString = Configuration.GetConnectionString("XjpDatabase");
 
             #region
             services.AddTransient<IUserService, UserService>();

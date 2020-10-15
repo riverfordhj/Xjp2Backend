@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Models;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
 using Models.DataHelper;
@@ -26,14 +27,14 @@ namespace Xjp2Backend.Controllers
 
         private XjpRepository _repository = null;
 
-        public AuthController(IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUserService userService, IMemoryCache cache)
+        public AuthController(StreetContext xjpContext, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUserService userService, IMemoryCache cache)
         {
             _jwtFactory = jwtFactory;
             _jwtOptions = jwtOptions.Value;
             _userService = userService;
             _cache = cache;
 
-            _repository = new XjpRepository();
+            _repository = new XjpRepository(xjpContext);
         }
 
         /// <summary>
