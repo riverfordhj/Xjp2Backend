@@ -20,8 +20,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-//using Xjp2Backend.Models;
-//更改作者
 
 namespace ImportExcel
 {
@@ -69,12 +67,6 @@ namespace ImportExcel
                 tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
                 //tbInfo.Text = err.Message;
             }
-            //using (var db = new ImportContext())
-            //{
-            //    var blog = new PartyInfo { Name = "name1", Note = "node1" };
-            //    db.PartyInfos.Add(blog);
-            //    db.SaveChanges();
-            //}
 
         }
 
@@ -115,10 +107,6 @@ namespace ImportExcel
         string _errorMessage = "";
         int _i = 0;
         string[] _preItem = null;
-
-
-       
-        
 
         private void Add2DB(List<string> data)
         {
@@ -387,15 +375,7 @@ namespace ImportExcel
             return true;
         }
 
-        //private void CheckValue(string[] item, int v)
-        //{
-        //    string value = item[v].Trim();
-        //    if (value == "")
-        //    {
-        //        item[v] = _preItem[v];
-        //    }
-              
-        //}
+     
 
         #region check data
         //网格数据检测，空名空身份证号，同身份证号不同名
@@ -438,13 +418,8 @@ namespace ImportExcel
             }
         }
 
-        private void tbPath_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
 
         #region CompanyBuilding
-
         private List<string> ReadExcelData2(string path, int defaultNum)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
