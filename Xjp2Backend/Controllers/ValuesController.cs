@@ -12,6 +12,11 @@ namespace Xjp2Backend.Controllers
     public class ValuesController : ControllerBase
     {
         [HttpGet("[action]")]
+        public ActionResult<IEnumerable<string>> GetTestValue()
+        {
+            return new string[] { "TestValue" };
+        }
+        [HttpGet("[action]")]
         [Authorize(Policy = "APIAccess")]
         public ActionResult<IEnumerable<string>> GetValueByGuestPolicy()
         {

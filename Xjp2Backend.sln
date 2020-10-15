@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "Models\Models.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ImportExcel", "ImportExcel\ImportExcel.csproj", "{15A7EC4A-9B28-49F8-9416-0F3948A5C2D9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModelsBuildingEconomy", "modelBuildingEconomy\ModelsBuildingEconomy.csproj", "{2EF6AB16-94A4-4A23-B570-9EBF26070344}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{15A7EC4A-9B28-49F8-9416-0F3948A5C2D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15A7EC4A-9B28-49F8-9416-0F3948A5C2D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15A7EC4A-9B28-49F8-9416-0F3948A5C2D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF6AB16-94A4-4A23-B570-9EBF26070344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF6AB16-94A4-4A23-B570-9EBF26070344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF6AB16-94A4-4A23-B570-9EBF26070344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF6AB16-94A4-4A23-B570-9EBF26070344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
