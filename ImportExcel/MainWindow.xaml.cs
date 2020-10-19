@@ -186,7 +186,7 @@ namespace ImportExcel
                         room = new Room 
                         { 
                             Name = roomName ,
-                            Address = item[2],
+                            //Address = item[2],
                             Category = item[7],
                             Use = item[8],
                             Area = item[10],

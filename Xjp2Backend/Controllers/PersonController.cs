@@ -23,7 +23,7 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
-        // GET: api/GetSubdivsions
+        // GET: api/Person/GetSubdivsions
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Subdivision>>> GetSubdivsions()
         {
