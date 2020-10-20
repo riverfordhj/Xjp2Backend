@@ -75,6 +75,20 @@ namespace Xjp2Backend.Controllers
             return person;
         }
 
+        // GET: api/GetRoomByBuilding/5
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoomByBuilding(int id)
+        {
+            var rooms = await _context.Rooms.Where(r => r.Building.Id == id).ToListAsync();
+
+            if (rooms == null)
+            {
+                return NotFound();
+            }
+
+            return rooms;
+        }
+
         // PUT: api/People/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
