@@ -84,5 +84,34 @@ namespace ModelsBuildingEconomy.DataHelper
 
         }
 
+        public IQueryable<object> GetCompanysByFloor(string buildingName, string floor)
+        {
+            var comByBuilidng = from companyBD in _context.CompanyBuilding.Where(b => b.BuildingName == buildingName)
+                       from company in companyBD.Company
+                       select new
+                       {
+                           companyBD.BuildingName,
+                           company
+                       };
+
+            var comByFloor = from otherInfo in _context.Company_OtherInfo.Where(info => info.Floor.Contains(floor))
+                             select new
+                             {
+                                 otherInfo
+                             };
+
+            var data = from cb in comByBuilidng
+                        join cf in comByFloor on cb.company.CompanyName equals cf.otherInfo.CompanyName
+                        select new
+                        {
+                            cb.BuildingName,
+                            cb.company,
+                            cb.company.CompanyEconomy,
+                            cf.otherInfo
+                        };
+
+            return data;   
+        }
+
     }
 }
