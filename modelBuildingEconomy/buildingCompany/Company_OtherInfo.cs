@@ -18,6 +18,5 @@ namespace ModelsBuildingEconomy.buildingCompany
         public string SettlingTime { get; set; }
         public string MoveAwayTime { get; set; }
         
-        
     }
 }

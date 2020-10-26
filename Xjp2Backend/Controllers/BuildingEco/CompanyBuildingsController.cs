@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsBuildingEconomy.buildingCompany;
+using ModelsBuildingEconomy.DataHelper;
 
 namespace Xjp2Backend.Controllers
 {
@@ -14,10 +15,11 @@ namespace Xjp2Backend.Controllers
     public class CompanyBuildingsController : ControllerBase
     {
         private readonly xjpCompanyContext _context;
-
+        private readonly companyRepository _repository;
         public CompanyBuildingsController(xjpCompanyContext context)
         {
             _context = context;// new xjpCompanyContext();
+            _repository = new companyRepository(_context);
         }
 
         // GET: api/CompanyBuildings
@@ -39,6 +41,17 @@ namespace Xjp2Backend.Controllers
             }
 
             return companyBuilding;
+        }
+
+
+        //GET: api/CompanyBuildings/GetFloorInfoByBuilding
+        [HttpGet("[action]/{id}")]
+        public async Task<IEnumerable<Object>> GetFloorInfoByBuilding(int id)
+        {
+            var info = _repository.GetFloorsByBuilding(id);
+
+            return await info.ToListAsync();
+
         }
 
         // PUT: api/CompanyBuildings/5

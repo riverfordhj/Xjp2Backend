@@ -19,6 +19,41 @@ namespace ModelsBuildingEconomy.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.BuildingFloor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("BuildingName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Community")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CompanyBuildingId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("FloorNum")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Height")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Long")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CompanyBuildingId");
+
+                    b.ToTable("BuildingFloor");
+                });
+
             modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.Company", b =>
                 {
                     b.Property<int>("Id")
@@ -164,6 +199,13 @@ namespace ModelsBuildingEconomy.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Company_OtherInfo");
+                });
+
+            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.BuildingFloor", b =>
+                {
+                    b.HasOne("ModelsBuildingEconomy.buildingCompany.CompanyBuilding", "CompanyBuilding")
+                        .WithMany("Floor")
+                        .HasForeignKey("CompanyBuildingId");
                 });
 
             modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.Company", b =>

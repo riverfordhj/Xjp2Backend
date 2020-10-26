@@ -6,6 +6,7 @@ using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -417,7 +418,7 @@ namespace ImportExcel
                 tbInfo_err.Text += err.Message;
             }
         }
-
+        
 
         #region CompanyBuilding
         private List<string> ReadExcelData2(string path, int defaultNum)
@@ -551,8 +552,57 @@ namespace ImportExcel
                 }
             }
         }
+
+        private void addFloor_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData2(tbPath.Text, 2);
+                addFloorInfo(data);
+                tbInfo.Text = "完成楼层数据的添加";
+
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                //tbInfo.Text = err.Message;
+            }
+        }
+
+        private void addFloorInfo(List<string> data)
+        {
+            for(_i = 0; _i < data.Count; _i++)
+            {
+                string curLine = data[_i];
+                string[] item = curLine.Split('&');
+                using ( var context = new xjpCompanyContext())
+                {
+                    BuildingFloor BdFloor = context.BuildingFloor.SingleOrDefault(bf => bf.FloorNum == item[6]);
+                    CompanyBuilding CompanyBD = context.CompanyBuilding.SingleOrDefault(bd => bd.BuildingName == item[5]);
+
+                    if(BdFloor == null && CompanyBD != null)
+                    {
+                        BdFloor = new BuildingFloor
+                        {
+                            Community = item[3],
+                            BuildingName = item[5],
+                            FloorNum = item[6],
+                            Long = Convert.ToDouble(item[7]),
+                            Lat = Convert.ToDouble(item[8]),
+                            Height = decimal.Parse(item[1]) + decimal.Parse(item[2]) / 2,
+                            CompanyBuilding = CompanyBD
+                        };
+                        context.BuildingFloor.Add(BdFloor);
+                    }
+                    context.SaveChanges();
+                }
+            }
+        }
+
+
+
         #endregion
 
-      
+
     }
 }

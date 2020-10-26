@@ -21,6 +21,7 @@
         <TextBox  x:Name="tbGridCount" HorizontalAlignment="Left" Margin="557,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="50"/>
         <Button Content="Button" HorizontalAlignment="Left" Margin="331,-175,0,0" VerticalAlignment="Top"/>
         <Button x:Name="addCompany" Content="添加入驻公司数据" HorizontalAlignment="Left" Margin="21,80,0,0" VerticalAlignment="Top" Height="26" Width="107" Click="addCompany_Click"/>
+        <Button x:Name="addFloor" Content="添加楼层数据" HorizontalAlignment="Left" Margin="144,80,0,0" VerticalAlignment="Top" Height="26" Width="84" Click="addFloor_Click"/>
 
     </Grid>
 </Window>
