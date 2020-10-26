@@ -149,7 +149,7 @@ namespace ImportExcel
                     if (netGrid == null)
                     {
                         // CheckValue(item, 1);
-                        netGrid = new NetGrid { Name = item[1].Replace("网格", "")};
+                        netGrid = new NetGrid { Name = item[1].Replace("网格", "") };
                         netGrid.Community = community;
                         context.NetGrids.Add(netGrid);
                     }
@@ -224,10 +224,10 @@ namespace ImportExcel
                     //人
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
 
-                   
-                  
-                       
-                   
+
+
+
+
                     //检测空名空身份证号
                     if (!CheckItem(item))
                         continue;
@@ -442,7 +442,7 @@ namespace ImportExcel
             {
                 List<string> data = ReadExcelData(tbPath.Text, 2);
                 Add2Coordinate(data);
-                
+
             }
             catch (Exception err)
             {
@@ -463,7 +463,7 @@ namespace ImportExcel
                     //水岸星城坐标导入
                     //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
                     //                经纬度坐标                                  //社区name——小区alias——楼栋id——房间号
-                    var room1 = context.Rooms.FirstOrDefault(r =>r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
+                    var room1 = context.Rooms.FirstOrDefault(r => r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
                     //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Subdivision.Community.Name == item[4].Replace("社区", "") && r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
                     if (room1 != null)
                     {
@@ -491,7 +491,7 @@ namespace ImportExcel
             }
             catch (Exception err)
             {
-                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";              
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";
             }
         }
 
@@ -507,7 +507,7 @@ namespace ImportExcel
                     if (subdivision1 != null)
                     {
                         //CheckValue(item,3);
-                        subdivision1.Alias  = item[1];
+                        subdivision1.Alias = item[1];
                         //subdivision1.Community.Id = int.Parse(item[3]);
 
                     }
@@ -537,8 +537,79 @@ namespace ImportExcel
             }
             catch (Exception err)
             {
-                tbInfo.Text= err.Message;
+                tbInfo.Text = err.Message;
+            }
+        }
+
+        private void CheckBuildingsRooms(List<string> data)
+        {
+            //if (data.Count > 0)
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split(',');
+
+                string residence = item[6].Trim();
+                string buildingName = item[7].Trim();
+                string unit = item[8].Trim();
+                string roomNO = item[9].Trim();
+
+                if (residence == "" || buildingName == "" || unit == "" || roomNO == "")
+                {
+                    _errorMessage += _i + 2 + "小区、楼栋、单元、房间为空" + Environment.NewLine;
+                    //tbInfo_err.Text += _i + 2 + "小区、楼栋、单元、房间为空" + Environment.NewLine;
+                    continue;
+                }
+
+                string roomN = unit + "-" + roomNO;
+
+                using (var context = new StreetContext())
+                {
+                    //
+                    Subdivision sub = context.Subdivisions.FirstOrDefault(s => s.Name == residence || s.Alias.Contains(residence));
+
+                    if (sub == null)
+                    {
+                        _errorMessage += _i + 2 + "小区未找到" + Environment.NewLine;
+                        // tbInfo.Text += "小区没找到， " + _currentLine + Environment.NewLine;
+                        continue;
+                    }
+
+                    //
+                    var building = context.Buildings.FirstOrDefault(s => (s.Subdivision.Id == sub.Id ||s.Subdivision.Alias.Contains(residence)) && (s.Name == buildingName || s.Alias.Contains(buildingName)));
+                    if (building == null)
+                    {
+                        _errorMessage += _i + 2 + "楼栋未找到" + Environment.NewLine;
+                        continue;
+                    }
+
+                    var room = context.Rooms.SingleOrDefault(r => r.Building.Id == building.Id && r.Name == roomN);
+                    if (room == null)
+                    {
+                        _errorMessage += _i + 2 + "房间未找到" + Environment.NewLine;
+                        continue;
+                    }
+                    //context.SaveChanges();
+                }
+            }
+            tbInfo.Text = "比对完成!";
+            tbInfo_err.Text += _errorMessage;
+        }
+        private void bn_bidui_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData(tbPath.Text, 2);
+                CheckBuildingsRooms(data);
+
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";
+                //tbInfo.Text = err.Message;
             }
         }
     }
 }
+
+
