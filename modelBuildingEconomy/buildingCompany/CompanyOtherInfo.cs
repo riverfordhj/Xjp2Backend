@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ModelsBuildingEconomy.buildingCompany
 {
-    public class Company_OtherInfo
+    public class CompanyOtherInfo
     {
         [Key]
         public int Id { get; set; }

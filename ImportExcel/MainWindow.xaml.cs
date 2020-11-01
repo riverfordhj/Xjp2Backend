@@ -491,10 +491,10 @@ namespace ImportExcel
                         context.CompanyBuilding.Add(building);
                     }
 
-                    Company_OtherInfo company_OtherInfo = context.Company_OtherInfo.SingleOrDefault(c => c.CompanyName == item[3]);
+                    CompanyOtherInfo company_OtherInfo = context.CompanyOtherInfo.SingleOrDefault(c => c.CompanyName == item[3]);
                     if (company_OtherInfo == null)
                     {
-                        company_OtherInfo = new Company_OtherInfo {
+                        company_OtherInfo = new CompanyOtherInfo {
                             CompanyName = item[3],
                             UnifiedSocialCreditCode = item[4],
                             Floor = item[7],
@@ -502,7 +502,7 @@ namespace ImportExcel
                             Area = item[9],
                             SettlingTime = item[21]
                         };
-                        context.Company_OtherInfo.Add(company_OtherInfo);
+                        context.CompanyOtherInfo.Add(company_OtherInfo);
                     }
 
                     CompanyEconomy companyEconomy = context.CompanyEconomy.SingleOrDefault(c => c.CompanyName == item[3]);
@@ -538,11 +538,11 @@ namespace ImportExcel
                             note = item[22],
                             CompanyBuilding = building,
                             CompanyEconomy = companyEconomy,
-                            Company_OtherInfo = company_OtherInfo
+                            CompanyOtherInfo = company_OtherInfo
                         };
                         //company.CompanyBuilding = building;
                         //company.CompanyEconomy = companyEconomy;
-                        //company.Company_OtherInfo = company_OtherInfo;
+                        //company.CompanyOtherInfo = company_OtherInfo;
                         context.Company.Add(company);
                     }
 
@@ -579,8 +579,8 @@ namespace ImportExcel
                 {
                     BuildingFloor BdFloor = context.BuildingFloor.SingleOrDefault(bf => bf.FloorNum == item[6]);
                     CompanyBuilding CompanyBD = context.CompanyBuilding.SingleOrDefault(bd => bd.BuildingName == item[5]);
-
-                    if(BdFloor == null && CompanyBD != null)
+                    double h = float.Parse(item[1]) + float.Parse(item[2]) / 2;
+                    if (BdFloor == null && CompanyBD != null)
                     {
                         BdFloor = new BuildingFloor
                         {
@@ -589,7 +589,7 @@ namespace ImportExcel
                             FloorNum = item[6],
                             Long = Convert.ToDouble(item[7]),
                             Lat = Convert.ToDouble(item[8]),
-                            Height = decimal.Parse(item[1]) + decimal.Parse(item[2]) / 2,
+                            Height =  Math.Round(h,2),
                             CompanyBuilding = CompanyBD
                         };
                         context.BuildingFloor.Add(BdFloor);
@@ -599,10 +599,69 @@ namespace ImportExcel
             }
         }
 
+        private void addCompanyTaxInfos_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData2(tbPath.Text, 2);
+                addCompanyTaxData(data);
+                tbInfo.Text = "完成公司税收信息的添加";
 
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                //tbInfo.Text = err.Message;
+            }
+
+        }
+
+        private void addCompanyTaxData(List<string> data)
+        {
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split('&');
+                using (var context = new xjpCompanyContext())
+                {
+                    CompanyTaxInfo cmTax = context.CompanyTaxInfo.SingleOrDefault(cm => cm.UnifiedSocialCreditCode == item[0]);
+                    Company cm = context.Company.FirstOrDefault(cm => cm.UnifiedSocialCreditCode == item[0]);
+                    if(cmTax == null)
+                    {
+                        cmTax = new CompanyTaxInfo
+                        {
+                            UnifiedSocialCreditCode = item[0],
+                            TaxPayer = item[1],
+                            TaxYear = int.Parse(item[3]),
+                            TotalTax = Convert.ToDouble(item[4]),
+                            BusinessTax = Convert.ToDouble(item[5]),
+                            ValueAddedTax = Convert.ToDouble(item[6]),
+                            CorporateIncomeTax = Convert.ToDouble(item[7]),
+                            IndividualIncomeTax = Convert.ToDouble(item[8]),
+                            UrbanConstructionTax = Convert.ToDouble(item[9]),
+                            RealEstateTax = Convert.ToDouble(item[10]),
+                            StampDuty = Convert.ToDouble(item[11]),
+                            LandUseTax = Convert.ToDouble(item[12]),
+                            LandValueIncrementTax = Convert.ToDouble(item[13]),
+                            VehicleAndVesselTax = Convert.ToDouble(item[14]),
+                            DeedTax = Convert.ToDouble(item[15]),
+                            AdditionalTaxOfEducation = Convert.ToDouble(item[16]),
+                            DelayedTaxPayment = Convert.ToDouble(item[17]),
+                            RegisteredAddress = item[18]
+                        };
+                        context.CompanyTaxInfo.Add(cmTax);
+                        if(cm != null)
+                        {
+                            cm.CompanyTaxInfo = cmTax;
+                        }
+                    }
+                   
+                    context.SaveChanges();
+                }
+            }
+        }
 
         #endregion
-
 
     }
 }

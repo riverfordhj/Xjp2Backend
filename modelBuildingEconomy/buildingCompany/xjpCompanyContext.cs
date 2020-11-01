@@ -21,10 +21,10 @@ namespace ModelsBuildingEconomy.buildingCompany
         {
             //optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString);
             //string cs1 = ConfigurationManager.ConnectionStrings["XjpDatabase"].ConnectionString;
-            string cs = @"Server=(localdb)\mssqllocaldb;Database=BuildingCompanyDB;Integrated Security=True";
+            //string cs = @"Server=(localdb)\mssqllocaldb;Database=BuildingCompanyDB;Integrated Security=True";
             //string cs = @"Server=localhost\SQLEXPRESS2019;Database=BuildingCompanyDB;Uid=sa;Password=sa;Integrated Security=false";//
 
-            optionsBuilder.UseSqlServer(cs);
+            //optionsBuilder.UseSqlServer(cs);
         }
 
         //楼宇
@@ -34,8 +34,9 @@ namespace ModelsBuildingEconomy.buildingCompany
         public DbSet<Company> Company { get; set; }
 
         public DbSet<CompanyEconomy> CompanyEconomy { get; set; }
-        public DbSet<Company_OtherInfo> Company_OtherInfo { get; set; }
+        public DbSet<CompanyOtherInfo> CompanyOtherInfo { get; set; }
         public DbSet<BuildingFloor> BuildingFloor { get; set; }
+        public DbSet<CompanyTaxInfo> CompanyTaxInfo { get; set; }
 
     }
 }

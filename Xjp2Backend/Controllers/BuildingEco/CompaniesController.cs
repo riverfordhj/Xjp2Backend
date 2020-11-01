@@ -56,6 +56,14 @@ namespace Xjp2Backend.Controllers
 
         }
 
+        //GET: api/Companies/GetCompanyTaxInfo
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetCompanyTaxInfo()
+        {
+            return await _context.CompanyTaxInfo.ToListAsync();
+
+        }
+
         // GET: api/Companies/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Company>> GetCompany(int id)

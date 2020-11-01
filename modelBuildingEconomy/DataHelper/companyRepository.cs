@@ -25,7 +25,7 @@ namespace ModelsBuildingEconomy.DataHelper
                            companyBD.BuildingName,
                            companyBD.StreetName,
                            companyEco = company.CompanyEconomy,
-                           company_OtherInfo = company.Company_OtherInfo
+                           company_OtherInfo = company.CompanyOtherInfo
                        };
 
 
@@ -42,7 +42,7 @@ namespace ModelsBuildingEconomy.DataHelper
                            companyBD.BuildingName,
                            companyBD.StreetName,
                            companyEco = company.CompanyEconomy,
-                           company_OtherInfo = company.Company_OtherInfo
+                           company_OtherInfo = company.CompanyOtherInfo
                        };
 
             return data;
@@ -77,7 +77,7 @@ namespace ModelsBuildingEconomy.DataHelper
                            company
                        };
 
-            var comByFloor = from otherInfo in _context.Company_OtherInfo.Where(info => info.Floor.Contains(floor))
+            var comByFloor = from otherInfo in _context.CompanyOtherInfo.Where(info => info.Floor.Contains(floor))
                              select new
                              {
                                  otherInfo
@@ -108,5 +108,10 @@ namespace ModelsBuildingEconomy.DataHelper
             return floorsInfo;
 
         }
+
+        //public IQueryable<object> GetCompanyTaxInfo()
+        //{
+        //    return _context.CompanyTaxInfo;
+        //}
     }
 }

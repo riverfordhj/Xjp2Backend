@@ -38,8 +38,8 @@ namespace ModelsBuildingEconomy.Migrations
                     b.Property<string>("FloorNum")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("Height")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double>("Height")
+                        .HasColumnType("float");
 
                     b.Property<double>("Lat")
                         .HasColumnType("float");
@@ -76,7 +76,10 @@ namespace ModelsBuildingEconomy.Migrations
                     b.Property<string>("CompanyName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Company_OtherInfoId")
+                    b.Property<int?>("CompanyOtherInfoId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CompanyTaxInfoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Contacts")
@@ -121,7 +124,9 @@ namespace ModelsBuildingEconomy.Migrations
 
                     b.HasIndex("CompanyEconomyId");
 
-                    b.HasIndex("Company_OtherInfoId");
+                    b.HasIndex("CompanyOtherInfoId");
+
+                    b.HasIndex("CompanyTaxInfoId");
 
                     b.ToTable("Company");
                 });
@@ -168,7 +173,7 @@ namespace ModelsBuildingEconomy.Migrations
                     b.ToTable("CompanyEconomy");
                 });
 
-            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.Company_OtherInfo", b =>
+            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.CompanyOtherInfo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -198,7 +203,73 @@ namespace ModelsBuildingEconomy.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company_OtherInfo");
+                    b.ToTable("CompanyOtherInfo");
+                });
+
+            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.CompanyTaxInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("AdditionalTaxOfEducation")
+                        .HasColumnType("float");
+
+                    b.Property<double>("BusinessTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("CorporateIncomeTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DeedTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("DelayedTaxPayment")
+                        .HasColumnType("float");
+
+                    b.Property<double>("IndividualIncomeTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LandUseTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("LandValueIncrementTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("RealEstateTax")
+                        .HasColumnType("float");
+
+                    b.Property<string>("RegisteredAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("StampDuty")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TaxPayer")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TaxYear")
+                        .HasColumnType("int");
+
+                    b.Property<double>("TotalTax")
+                        .HasColumnType("float");
+
+                    b.Property<string>("UnifiedSocialCreditCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("UrbanConstructionTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("ValueAddedTax")
+                        .HasColumnType("float");
+
+                    b.Property<double>("VehicleAndVesselTax")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("CompanyTaxInfo");
                 });
 
             modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.BuildingFloor", b =>
@@ -218,9 +289,13 @@ namespace ModelsBuildingEconomy.Migrations
                         .WithMany()
                         .HasForeignKey("CompanyEconomyId");
 
-                    b.HasOne("ModelsBuildingEconomy.buildingCompany.Company_OtherInfo", "Company_OtherInfo")
+                    b.HasOne("ModelsBuildingEconomy.buildingCompany.CompanyOtherInfo", "CompanyOtherInfo")
                         .WithMany()
-                        .HasForeignKey("Company_OtherInfoId");
+                        .HasForeignKey("CompanyOtherInfoId");
+
+                    b.HasOne("ModelsBuildingEconomy.buildingCompany.CompanyTaxInfo", "CompanyTaxInfo")
+                        .WithMany()
+                        .HasForeignKey("CompanyTaxInfoId");
                 });
 #pragma warning restore 612, 618
         }

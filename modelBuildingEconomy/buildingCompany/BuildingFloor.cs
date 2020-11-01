@@ -14,7 +14,7 @@ namespace ModelsBuildingEconomy.buildingCompany
         public string FloorNum { get; set; }
         public double Long { get; set; }
         public double Lat { get; set; }
-        public decimal Height { get; set; }
+        public double Height { get; set; }
 
         public CompanyBuilding CompanyBuilding{ get;set;}
 

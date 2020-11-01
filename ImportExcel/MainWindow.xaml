@@ -22,6 +22,7 @@
         <Button Content="Button" HorizontalAlignment="Left" Margin="331,-175,0,0" VerticalAlignment="Top"/>
         <Button x:Name="addCompany" Content="添加入驻公司数据" HorizontalAlignment="Left" Margin="21,80,0,0" VerticalAlignment="Top" Height="26" Width="107" Click="addCompany_Click"/>
         <Button x:Name="addFloor" Content="添加楼层数据" HorizontalAlignment="Left" Margin="144,80,0,0" VerticalAlignment="Top" Height="26" Width="84" Click="addFloor_Click"/>
+        <Button x:Name="addCompanyTaxInfos" Content="添加企业税收数据" HorizontalAlignment="Left" Margin="257,80,0,0" VerticalAlignment="Top" Height="26" Width="103" Click="addCompanyTaxInfos_Click"/>
 
     </Grid>
 </Window>
