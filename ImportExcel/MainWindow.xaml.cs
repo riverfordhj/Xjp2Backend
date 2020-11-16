@@ -624,7 +624,7 @@ namespace ImportExcel
                 string[] item = _currentLine.Split('&');
                 using (var context = new xjpCompanyContext())
                 {
-                    CompanyTaxInfo cmTax = context.CompanyTaxInfo.SingleOrDefault(cm => cm.UnifiedSocialCreditCode == item[0]);
+                    CompanyTaxInfo cmTax = context.CompanyTaxInfo.FirstOrDefault(cm => cm.UnifiedSocialCreditCode == item[0] && cm.TaxYear == int.Parse(item[3]));
                     Company cm = context.Company.FirstOrDefault(cm => cm.UnifiedSocialCreditCode == item[0]);
                     if(cmTax == null)
                     {
@@ -649,11 +649,11 @@ namespace ImportExcel
                             DelayedTaxPayment = Convert.ToDouble(item[17]),
                             RegisteredAddress = item[18]
                         };
-                        context.CompanyTaxInfo.Add(cmTax);
                         if(cm != null)
                         {
-                            cm.CompanyTaxInfo = cmTax;
+                           cmTax.Company = cm;
                         }
+                        context.CompanyTaxInfo.Add(cmTax);
                     }
                    
                     context.SaveChanges();

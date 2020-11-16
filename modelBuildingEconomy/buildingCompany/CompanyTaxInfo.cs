@@ -27,6 +27,7 @@ namespace ModelsBuildingEconomy.buildingCompany
         public double AdditionalTaxOfEducation { get; set; }
         public double DelayedTaxPayment { get; set; }
         public string RegisteredAddress { get; set; }
+        public Company Company { get; set; }
 
     }
 }

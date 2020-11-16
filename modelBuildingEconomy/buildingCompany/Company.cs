@@ -29,7 +29,7 @@ namespace ModelsBuildingEconomy.buildingCompany
         public CompanyBuilding CompanyBuilding { get; set; }
         public CompanyEconomy CompanyEconomy { get; set; }
         public CompanyOtherInfo CompanyOtherInfo { get; set; } 
-        public CompanyTaxInfo CompanyTaxInfo { get; set; }
+        public List<CompanyTaxInfo>  CompanyTaxInfo { get; set; }
 
       
     }

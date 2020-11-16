@@ -24,7 +24,7 @@ namespace ModelsBuildingEconomy.buildingCompany
             //string cs = @"Server=(localdb)\mssqllocaldb;Database=BuildingCompanyDB;Integrated Security=True";
             //string cs = @"Server=localhost\SQLEXPRESS2019;Database=BuildingCompanyDB;Uid=sa;Password=sa;Integrated Security=false";//
 
-            //optionsBuilder.UseSqlServer(cs);
+           // optionsBuilder.UseSqlServer(cs);
         }
 
         //楼宇
