@@ -203,7 +203,10 @@ namespace Models.DataHelper
                                        select new
                                        {
                                            RoomId = room.Id,
-                                           RoomNO = room.Name,                                        
+                                           RoomNO = room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -230,6 +233,9 @@ namespace Models.DataHelper
                            {
                                pr.RoomId,
                                pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -311,6 +317,66 @@ namespace Models.DataHelper
 
                 //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
                 //var d1 = data as IEnumerable<object>;
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+        /// <summary>
+        /// 获取特殊人群
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<object> GetSpecialGroups()
+        {       
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
+                           //where pr.PersonId = sg.PersonId
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+                               //SpecialGroup = psg // 特殊人群信息
+                               
+                           };
                 return data;
             }
             catch (Exception e)
