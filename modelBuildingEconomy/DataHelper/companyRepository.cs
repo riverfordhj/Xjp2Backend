@@ -67,6 +67,36 @@ namespace ModelsBuildingEconomy.DataHelper
         }
 
 
+        public IQueryable<object> GetCompanysByFloor(string buildingName, string floor)
+        {
+            var comByBuilidng = from companyBD in _context.CompanyBuilding.Where(b => b.BuildingName == buildingName)
+                                from company in companyBD.Company
+                                select new
+                                {
+                                    companyBD.BuildingName,
+                                    company
+                                };
+
+            var comByFloor = from otherInfo in _context.CompanyOtherInfo.Where(info => info.Floor == floor)
+                             select new
+                             {
+                                 otherInfo
+                             };
+
+            var data = from cb in comByBuilidng
+                       join cf in comByFloor on cb.company.CompanyName equals cf.otherInfo.CompanyName
+                       select new
+                       {
+                           cb.BuildingName,
+                           cb.company,
+                           cb.company.CompanyEconomy,
+                           cf.otherInfo
+                       };
+
+            return data;
+        }
+
+
         //筛选出指定楼栋、楼层的公司信息（中文），用于透视表统计
         public IQueryable<object> GetCompanysByFloor_ZH(string buildingName, string floor)
         {
@@ -84,6 +114,15 @@ namespace ModelsBuildingEconomy.DataHelper
                                  otherInfo
                              };
 
+            //var data = from cb in comByBuilidng
+            //           join cf in comByFloor on cb.company.CompanyName equals cf.otherInfo.CompanyName
+            //           select new
+            //           {
+            //               cb.BuildingName,
+            //               cb.company,
+            //               cb.company.CompanyEconomy,
+            //               cf.otherInfo
+            //           };
             var data = from cb in comByBuilidng
                        join cf in comByFloor on cb.company.CompanyName equals cf.otherInfo.CompanyName
                        select new
@@ -148,7 +187,7 @@ namespace ModelsBuildingEconomy.DataHelper
             return data;
         }
 
-
+        //返回指定楼栋的楼层信息
         public IQueryable<object> GetFloorsByBuilding(int id)
         {
             var floorsInfo = from bd in _context.CompanyBuilding.Where(cb => cb.Id == id)
@@ -160,7 +199,21 @@ namespace ModelsBuildingEconomy.DataHelper
             return floorsInfo;
 
         }
-       
+
+        public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
+        {
+            var floorInfo = from bf in _context.BuildingFloor.Where(bf => bf.BuildingName == buildingName && bf.FloorNum == floorNum)
+                            select new
+                            {
+                                bf.Long,
+                                bf.Lat,
+                                bf.Height
+                            };
+                            
+            return floorInfo;
+
+        }
+
 
 
         //返回中文的公司税收信息，用于透视表统计
@@ -188,6 +241,22 @@ namespace ModelsBuildingEconomy.DataHelper
 
                           };
             return TaxInfo;
+        }
+
+        public IQueryable<object> GetBuildingInfoByStatus(string status)
+        {
+            var buildings = from cBuilding in _context.CompanyBuilding.Where(cb => cb.Status == status)
+                            select new
+                            {  
+                                cBuilding.Id,
+                                cBuilding.BuildingName,
+                                cBuilding.StartTime,
+                                cBuilding.CompletionTime,
+                                cBuilding.Status,
+                                cBuilding.LegalEntity,
+                                cBuilding.ConstructionSite,
+                            };
+            return buildings;
         }
     }
 }

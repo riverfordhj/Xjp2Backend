@@ -43,6 +43,26 @@ namespace Xjp2Backend.Controllers
             return companyBuilding;
         }
 
+        // GET: api/CompanyBuildings/GetBuildingInfoByStatus
+        [HttpGet("[action]")]
+        public async Task<ActionResult<object>> GetBuildingInfoByStatus(string status)
+        {
+            var companyBuildings = await _repository.GetBuildingInfoByStatus(status).ToListAsync();
+
+            if (companyBuildings == null)
+            {
+                return NotFound();
+            }
+
+            return companyBuildings;
+        }
+
+        // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
+        {
+            return await _repository.GetInfoByBuildingAndFloor(buildingName, floor).ToListAsync();
+        }
 
         //GET: api/CompanyBuildings/GetFloorInfoByBuilding
         [HttpGet("[action]/{id}")]
@@ -84,6 +104,18 @@ namespace Xjp2Backend.Controllers
             }
 
             return NoContent();
+        }
+
+        // POST: api/CompanyBuildings/UpdateBuildingStatus
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<CompanyBuilding>> UpdateBuildingStatus([FromBody] BuildingStatus BS)
+        {
+            var targetBuilding = _context.CompanyBuilding.SingleOrDefault(cd => cd.BuildingName == BS.BuildingName);
+            targetBuilding.Status = BS.status;
+
+            await _context.SaveChangesAsync();
+            return _context.CompanyBuilding;
+
         }
 
         // POST: api/CompanyBuildings

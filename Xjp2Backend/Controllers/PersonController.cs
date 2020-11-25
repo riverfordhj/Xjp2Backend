@@ -44,11 +44,28 @@ namespace Xjp2Backend.Controllers
             return await _context.Persons.ToListAsync();
         }
 
+        //通过楼栋查找人
         // GET: api/GetPersonsByBuilding/1
         [HttpGet("[action]/{id}")]
         public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
         {
             return _repository.GetPersonsByBuilding(id);
+        }
+
+        //通过小区查找人
+        // GET: api/GetPersonsBySubdivision/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsBySubdivision(int id)//Person
+        {
+            return _repository.GetPersonsBySubdivision(id);
+        }
+
+        //通过name\身份证、电话号查找人
+        // GET: api/GetPersonsBySearch/1
+        [HttpGet("[action]/{str}")]
+        public IEnumerable<Object> GetPersonsBySearch(string str)//Person
+        {
+            return _repository.GetPersonsBySearch(str);
         }
 
         [HttpPost("[action]")]

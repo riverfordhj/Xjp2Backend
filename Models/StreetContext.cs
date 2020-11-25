@@ -25,7 +25,7 @@ namespace Models
             //string cs = @"Server=(localdb)\mssqllocaldb;Database=XjpStreetDB;Integrated Security=True";
             //string cs = @"Server=localhost\SQLEXPRESS2019;Database=XjpStreetDB;Uid=sa;Password=sa;Integrated Security=false";
             //HJ - HOME - DESKTOP\SQLEXPRESS2019; Initial Catalog = XjpStreetDB1; User ID = sa; Password = ********; Connect Timeout = 30; Encrypt = False; TrustServerCertificate = False; ApplicationIntent = ReadWrite; MultiSubnetFailover = False
-            //optionsBuilder.UseSqlServer(cs);
+           // optionsBuilder.UseSqlServer(cs);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

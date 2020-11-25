@@ -185,7 +185,18 @@ namespace Xjp2Backend.Controllers
             //return CreatedAtAction("CompanyFields", new { info = "ok" });
         }
 
+
         //POST: api/Companies/GetInfoByFloor
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<Object>> GetInfoByFloor([FromBody] BuildingFloor BF)
+        {
+            var info = _repository.GetCompanysByFloor(BF.BuildingName, BF.Floor);
+
+            return await info.ToListAsync();
+
+        }
+
+        //POST: api/Companies/GetCompanysByFloor_ZH
         [HttpPost("[action]")]
         public async Task<IEnumerable<Object>> GetCompanysByFloor_ZH([FromBody] BuildingFloor BF)
         {

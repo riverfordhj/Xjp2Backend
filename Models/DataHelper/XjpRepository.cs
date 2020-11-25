@@ -134,6 +134,9 @@ namespace Models.DataHelper
                                        {
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -160,6 +163,9 @@ namespace Models.DataHelper
                            {
                                pr.RoomId,
                                pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -176,6 +182,138 @@ namespace Models.DataHelper
                 return data;
             }
             catch(Exception e)
+            {
+                return null;
+            }
+
+
+        }
+        ///<summary>
+        ///
+        /// 根据小区获得人员信息表
+        /// 
+        ///</summary>
+        public IEnumerable<object> GetPersonsBySubdivision(int id)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id )
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,                                        
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+                //组连接，附加特殊人群信息
+                //var ps = from p in _context.Persons
+                //         where p.PersonId == "35220119860918511X"
+                //         select new
+                //        {
+                //            p.PersonId,
+                //            p.Name
+                //        };
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
+
+                //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
+                //var d1 = data as IEnumerable<object>;
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+        ///<summery>
+        ///通过姓名身份证号电话搜索
+        /// </summery>
+        public IEnumerable<object> GetPersonsBySearch(string str)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from person in _context.Persons.Where(r => r.Name == str || r.PersonId == str || r.Phone == str )
+                                       from pr in  person.PersonRooms                                       
+                                       select new
+                                       {
+                                           RoomId = pr.Room.Id,
+                                           RoomNO = pr.Room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
+                                           // person.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+        //组连接，附加特殊人群信息
+        //var ps = from p in _context.Persons
+        //         where p.PersonId == "35220119860918511X"
+        //         select new
+        //        {
+        //            p.PersonId,
+        //            p.Name
+        //        };
+        var psdata = roomsWithPersons.ToList();
+
+        var data = from pr in psdata
+                   join sg in _context.SpecialGroups on pr.Person.PersonId equals sg.PersonId into psg // 根据身份证关联
+                   select new
+                   {
+                       pr.RoomId,
+                       pr.RoomNO,
+                       pr.Person.PersonId,                      
+                       pr.CommunityName,
+                       pr.SubdivsionName,
+                       pr.BulidingName,
+                       pr.Person,
+                       pr.IsOwner,
+                       pr.IsHouseholder,
+                       pr.IsLiveHere,
+                       pr.RelationWithHouseholder,
+                       pr.LodgingReason,
+                       pr.PopulationCharacter,
+                       SpecialGroup = psg // 特殊人群信息
+                   };
+
+                //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
+                //var d1 = data as IEnumerable<object>;
+                return data;
+            }
+            catch (Exception e)
             {
                 return null;
             }

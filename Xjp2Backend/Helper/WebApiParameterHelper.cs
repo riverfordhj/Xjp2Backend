@@ -72,4 +72,15 @@ namespace Xjp2Backend.Controllers
         public string Floor { get; set; }
 
     }
+
+
+    public class BuildingStatus
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BuildingName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string status { get; set; }
+    }
+
 }

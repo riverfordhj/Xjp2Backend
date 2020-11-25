@@ -29,6 +29,7 @@ namespace ImportExcel
     /// </summary>
     public partial class MainWindow : Window
     {
+        string complete = "";
         public MainWindow()
         {
             InitializeComponent();
@@ -44,6 +45,7 @@ namespace ImportExcel
                 if (ofd.ShowDialog() == true)
                 {
                     tbPath.Text = ofd.FileName;
+                    complete = ofd.SafeFileName;
 
                 }
             }
@@ -459,7 +461,7 @@ namespace ImportExcel
             {
                 List<string> data = ReadExcelData2(tbPath.Text, 4);
                 addCompanyInfo(data);
-                tbInfo.Text = "入驻企业数据导入数据库已完成";
+                tbInfo.Text = $"入驻企业数据导入数据库已完成:{complete}";
 
             }
             catch (Exception err)
@@ -559,12 +561,12 @@ namespace ImportExcel
             {
                 List<string> data = ReadExcelData2(tbPath.Text, 2);
                 addFloorInfo(data);
-                tbInfo.Text = "完成楼层数据的添加";
+                tbInfo.Text = $"完成楼层数据的添加:{complete}";
 
             }
             catch (Exception err)
             {
-                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";
                 //tbInfo.Text = err.Message;
             }
         }
@@ -605,12 +607,12 @@ namespace ImportExcel
             {
                 List<string> data = ReadExcelData2(tbPath.Text, 2);
                 addCompanyTaxData(data);
-                tbInfo.Text = "完成公司税收信息的添加";
+                tbInfo.Text = $"完成公司税收信息的添加:{complete}";
 
             }
             catch (Exception err)
             {
-                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 2}, {_currentLine}";
                 //tbInfo.Text = err.Message;
             }
 
@@ -656,6 +658,68 @@ namespace ImportExcel
                         context.CompanyTaxInfo.Add(cmTax);
                     }
                    
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        private void addBuildingInfos_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData2(tbPath.Text, 3);
+                addBuildingInfo(data);
+                tbInfo.Text = $"完成楼宇信息添加:{complete}" ;
+
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 3}, {_currentLine}";
+                //tbInfo.Text = err.Message;
+            }
+        }
+
+        private void addBuildingInfo(List<string> data)
+        {
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split('&');
+                using (var context = new xjpCompanyContext())
+                {
+                    CompanyBuilding companyBuilding = context.CompanyBuilding.FirstOrDefault(cb => cb.BuildingName == item[2]);
+                    
+                    if (companyBuilding == null && item.Length <= 6)
+                    {
+                        companyBuilding = new CompanyBuilding
+                        {
+                            Status = item[1],
+                            BuildingName = item[2],
+                            ConstructionSite =item[3],
+                            StreetName = "徐家棚"
+                        };
+                        context.CompanyBuilding.Add(companyBuilding);
+                    }
+                    else if(companyBuilding == null && item.Length > 6)
+                    {
+                        companyBuilding = new CompanyBuilding
+                        {
+                            Status = item[1],
+                            BuildingName = item[2],
+                            ConstructionSite = item[3],
+                            LegalEntity = item[4],
+                            StartTime = item[5],
+                            CompletionTime = item[6],
+                            StreetName = "徐家棚"
+                        };
+                        context.CompanyBuilding.Add(companyBuilding);
+                    }
+
+                    if (companyBuilding != null && companyBuilding.Status == null)
+                    {
+                        companyBuilding.Status = item[1];
+                        companyBuilding.ConstructionSite = item[3];
+                    }
                     context.SaveChanges();
                 }
             }
