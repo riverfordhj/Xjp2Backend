@@ -40,7 +40,7 @@ namespace Models.Authentication.JWT.AuthHelper
         /// <summary>
         /// Set the timespan the token will be valid for (default is 10 min)
         /// </summary>
-        public TimeSpan ValidFor { get; set; } = TimeSpan.FromHours(4);
+        public TimeSpan ValidFor { get; set; } = TimeSpan.FromHours(8);
 
 
 

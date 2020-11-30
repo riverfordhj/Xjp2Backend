@@ -188,6 +188,59 @@ namespace Models.DataHelper
 
 
         }
+
+        //获取建筑物的住户信息(中文)
+        public IEnumerable<object> GetPersonsByBuilding_ZH(int id)
+        {            
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Id == id)
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               房间号 = pr.RoomNO,
+                               社区名 = pr.CommunityName,
+                               小区名 = pr.SubdivsionName,
+                               楼栋名 = pr.BulidingName,
+                               产权人 = pr.IsOwner,
+                               户主 = pr.IsHouseholder,
+                               在此居住 = pr.IsLiveHere,
+                               与户主关系 = pr.RelationWithHouseholder,
+                               寄住原因 = pr.LodgingReason,
+                               人口性质 = pr.PopulationCharacter,
+                           };
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
+
         ///<summary>
         ///
         /// 根据小区获得人员信息表

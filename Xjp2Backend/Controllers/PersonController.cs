@@ -45,11 +45,19 @@ namespace Xjp2Backend.Controllers
         }
 
         //通过楼栋查找人
-        // GET: api/GetPersonsByBuilding/1
+        // GET: api/api/Person/GetPersonsByBuilding_ZH/1
         [HttpGet("[action]/{id}")]
         public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
         {
             return _repository.GetPersonsByBuilding(id);
+        }
+
+        //通过楼栋查找人（返回中文数据）
+        // GET: api/GetPersonsByBuilding_ZH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByBuilding_ZH(int id)//Person
+        {
+            return _repository.GetPersonsByBuilding_ZH(id);
         }
 
         //通过小区查找人
