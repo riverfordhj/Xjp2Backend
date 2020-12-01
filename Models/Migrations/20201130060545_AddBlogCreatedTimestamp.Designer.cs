@@ -10,7 +10,7 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201124022318_AddBlogCreatedTimestamp")]
+    [Migration("20201130060545_AddBlogCreatedTimestamp")]
     partial class AddBlogCreatedTimestamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -449,15 +449,10 @@ namespace Models.Migrations
                     b.Property<string>("PersonId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PersonId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonId1");
 
                     b.ToTable("SpecialGroups");
                 });
@@ -607,13 +602,6 @@ namespace Models.Migrations
                     b.HasOne("Models.Building", "Building")
                         .WithMany("Rooms")
                         .HasForeignKey("BuildingId");
-                });
-
-            modelBuilder.Entity("Models.SpecialGroup", b =>
-                {
-                    b.HasOne("Models.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId1");
                 });
 
             modelBuilder.Entity("Models.Subdivision", b =>

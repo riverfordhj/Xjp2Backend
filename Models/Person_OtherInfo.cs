@@ -18,7 +18,6 @@ namespace Models
         public string Type { get; set; }
         //备注
         public string Note { get; set; }
-        public Person Person { get; set; }
     }
 
     /// <summary>
