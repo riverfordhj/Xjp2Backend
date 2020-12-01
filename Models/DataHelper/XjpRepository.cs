@@ -74,7 +74,7 @@ namespace Models.DataHelper
             //if (com != null)
             //    return _context.Buildings.Where(item => item.Community == com && item.Name == name).FirstOrDefault();
             //else
-                return null;
+            return null;
         }
 
         public Building GetBuildingInSubdivision(string subdivisionName, string name)
@@ -144,7 +144,7 @@ namespace Models.DataHelper
                                            IsLiveHere = pr.IsLiveHere ? "是" : "否",
                                            pr.RelationWithHouseholder,
                                            pr.LodgingReason,
-                                           pr.PopulationCharacter                                           
+                                           pr.PopulationCharacter
                                        };
 
                 //组连接，附加特殊人群信息
@@ -158,7 +158,7 @@ namespace Models.DataHelper
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
-                         join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
                            select new
                            {
                                pr.RoomId,
@@ -173,7 +173,7 @@ namespace Models.DataHelper
                                pr.IsLiveHere,
                                pr.RelationWithHouseholder,
                                pr.LodgingReason,
-                               pr.PopulationCharacter,                               
+                               pr.PopulationCharacter,
                                SpecialGroup = psg // 特殊人群信息
                            };
 
@@ -181,7 +181,7 @@ namespace Models.DataHelper
                 //var d1 = data as IEnumerable<object>;
                 return data;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 return null;
             }
@@ -251,12 +251,15 @@ namespace Models.DataHelper
             try
             {
                 //根据 room - person 数据
-                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id )
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id)
                                        from pr in room.PersonRooms
                                        select new
                                        {
                                            RoomId = room.Id,
-                                           RoomNO = room.Name,                                        
+                                           RoomNO = room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -283,6 +286,9 @@ namespace Models.DataHelper
                            {
                                pr.RoomId,
                                pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -308,19 +314,20 @@ namespace Models.DataHelper
         ///<summery>
         ///通过姓名身份证号电话搜索
         /// </summery>
-        public IEnumerable<object> GetPersonsBySearch(string str)
+        public IEnumerable<object> GetPersonsBySearch(string SubdivisionId, string Name)
         {
             try
             {
                 //根据 room - person 数据
-                var roomsWithPersons = from person in _context.Persons.Where(r => r.Name == str || r.PersonId == str || r.Phone == str )
-                                       from pr in  person.PersonRooms                                       
+                var roomsWithPersons = from person in _context.Persons.Where(r => r.Name.Contains(Name) || r.PersonId == Name || r.Phone == Name)
+                                       from pr in person.PersonRooms
                                        select new
                                        {
                                            RoomId = pr.Room.Id,
                                            RoomNO = pr.Room.Name,
                                            BulidingName = pr.Room.Building.Name,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
                                            CommunityName = pr.Room.Building.Subdivision.Community.Name,
                                            // person.PersonId,
                                            pr.Person,
@@ -331,39 +338,92 @@ namespace Models.DataHelper
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
                                        };
+                if (SubdivisionId != null && SubdivisionId != string.Empty)
+                {
+                    roomsWithPersons = roomsWithPersons.Where(item => item.SubdivisionId == SubdivisionId);       //.Contains(SubdivisionId));  //== SubdivisionId );
 
-        //组连接，附加特殊人群信息
-        //var ps = from p in _context.Persons
-        //         where p.PersonId == "35220119860918511X"
-        //         select new
-        //        {
-        //            p.PersonId,
-        //            p.Name
-        //        };
-        var psdata = roomsWithPersons.ToList();
+                }
+                var psdata = roomsWithPersons.ToList();
 
-        var data = from pr in psdata
-                   join sg in _context.SpecialGroups on pr.Person.PersonId equals sg.PersonId into psg // 根据身份证关联
-                   select new
-                   {
-                       pr.RoomId,
-                       pr.RoomNO,
-                       pr.Person.PersonId,                      
-                       pr.CommunityName,
-                       pr.SubdivsionName,
-                       pr.BulidingName,
-                       pr.Person,
-                       pr.IsOwner,
-                       pr.IsHouseholder,
-                       pr.IsLiveHere,
-                       pr.RelationWithHouseholder,
-                       pr.LodgingReason,
-                       pr.PopulationCharacter,
-                       SpecialGroup = psg // 特殊人群信息
-                   };
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.Person.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.Person.PersonId,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
 
-                //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
-                //var d1 = data as IEnumerable<object>;
+
+        }
+        /// <summary>
+        /// 获取特殊人群
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<object> GetSpecialGroups()
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
+                           //where pr.PersonId = sg.PersonId
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+                               //SpecialGroup = psg // 特殊人群信息
+
+                           };
                 return data;
             }
             catch (Exception e)

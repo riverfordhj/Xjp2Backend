@@ -28,6 +28,7 @@ namespace Xjp2Backend.Controllers
         public async Task<ActionResult<IEnumerable<Subdivision>>> GetSubdivsions()
         {
             return await _context.Subdivisions.ToListAsync();
+                //ToListAsync();
         }
 
         // GET: api/GetBuildings/1
@@ -42,6 +43,14 @@ namespace Xjp2Backend.Controllers
         public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
         {
             return await _context.Persons.ToListAsync();
+        }
+
+        //获取特殊群体，吸毒、信访人员的信息
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public IEnumerable<Object> GetSpecialGroups()//Person
+        {
+            return _repository.GetSpecialGroups();
         }
 
         //通过楼栋查找人
@@ -70,10 +79,10 @@ namespace Xjp2Backend.Controllers
 
         //通过name\身份证、电话号查找人
         // GET: api/GetPersonsBySearch/1
-        [HttpGet("[action]/{str}")]
-        public IEnumerable<Object> GetPersonsBySearch(string str)//Person
+        [HttpPost("[action]")]
+        public IEnumerable<Object> GetPersonsBySearch([FromBody] QueryParameter para)//Person
         {
-            return _repository.GetPersonsBySearch(str);
+            return _repository.GetPersonsBySearch(para.SubdivisionId ,para.Name);
         }
 
         [HttpPost("[action]")]

@@ -3,21 +3,19 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201002034258_AddBlogCreatedTimestamp")]
-    partial class AddBlogCreatedTimestamp
+    partial class StreetContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -449,10 +447,15 @@ namespace Models.Migrations
                     b.Property<string>("PersonId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PersonId1")
+                        .HasColumnType("int");
+
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PersonId1");
 
                     b.ToTable("SpecialGroups");
                 });
@@ -602,6 +605,13 @@ namespace Models.Migrations
                     b.HasOne("Models.Building", "Building")
                         .WithMany("Rooms")
                         .HasForeignKey("BuildingId");
+                });
+
+            modelBuilder.Entity("Models.SpecialGroup", b =>
+                {
+                    b.HasOne("Models.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId1");
                 });
 
             modelBuilder.Entity("Models.Subdivision", b =>
