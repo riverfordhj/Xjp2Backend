@@ -50,4 +50,13 @@ namespace Xjp2Backend.Controllers
         [Required(ErrorMessage = "{0} 不能为空！")]
         public string Name { get; set; }
     }
+
+    public class QueryDataParameter
+    {
+        public string Field { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string Oper { get; set; }
+        public string Value { get; set; }
+    }
 }
