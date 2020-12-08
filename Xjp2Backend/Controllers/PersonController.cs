@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,10 +27,60 @@ namespace Xjp2Backend.Controllers
 
         // GET: api/Person/GetSubdivsions
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Subdivision>>> GetSubdivsions()
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivsions()
         {
             return await _context.Subdivisions.ToListAsync();
-                //ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivsionsByUser()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+           
+            //var list =  _context.Roles.Where(r => r.Users.Any(u => u.UserName == userName)).Select(u => u);
+          
+
+            var list = from userRow in _context.Users.Where(u => u.UserName == userName)
+                       from u_RoleUsers in userRow.RoleUsers
+                       join ru in _context.RoleUsers
+                       on u_RoleUsers.Id equals ru.Id
+                       select new
+                       {
+                           u_RoleUsers.Role.Name
+                       };
+            var roleList = list.ToList();
+ 
+            if (roleList[0].Name == "网格员")
+            {
+               var divisions =  from user in _context.Users.Where(u => u.UserName == userName)
+                                from grid in user.NetGrid
+                                select new 
+                                {
+                                   grid.Community.Subdivisions[0].Id,
+                                   grid.Community.Subdivisions[0].Name
+                                };
+               return await divisions.ToListAsync();
+            }
+
+            if(roleList[0].Name == "水岸星城")
+            {
+                return await (from comm in _context.Communitys.Where(u => u.Name == "水岸星城")
+                              select new 
+                              { 
+                                 comm.Subdivisions[0].Id,
+                                 comm.Subdivisions[0].Name
+
+                              } ).ToListAsync();
+            } 
+
+            if (roleList[0].Name == "Administrator" && roleList[1].Name == "网格员")
+            {
+                return await  _context.Subdivisions.ToListAsync();
+            }
+
+            return NotFound();
         }
 
         // GET: api/GetBuildings/1
@@ -42,6 +94,19 @@ namespace Xjp2Backend.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersons()
         {
+            return await _context.Persons.ToListAsync();
+        }
+
+        // GET: api/Person/GetPersonsByUser
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Person>>> GetPersonsByUser()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+
+            var divisions = from user in _context.Users.Where(u => u.UserName == userName)
+                            from grid in user.NetGrid
+                            select grid.Community.Subdivisions;
             return await _context.Persons.ToListAsync();
         }
 
@@ -95,7 +160,7 @@ namespace Xjp2Backend.Controllers
                 return NotFound();
         }
 
-        // GET: api/People/5
+        // GET: api/Person/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {

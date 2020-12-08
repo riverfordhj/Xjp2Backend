@@ -82,5 +82,12 @@ namespace Xjp2Backend.Controllers
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string status { get; set; }
     }
+    public class QueryParameter
+    {
+        public string SubdivisionId { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string Name { get; set; }
+    }
 
 }

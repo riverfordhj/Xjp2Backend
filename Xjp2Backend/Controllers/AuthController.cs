@@ -109,6 +109,7 @@ namespace Xjp2Backend.Controllers
         public IActionResult GetUserInfo()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
             return Ok(claimsIdentity.Claims.ToList().Select(r=> new { r.Type, r.Value}));
         }
     }
