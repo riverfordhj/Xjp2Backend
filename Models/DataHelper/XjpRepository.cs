@@ -112,57 +112,8 @@ namespace Models.DataHelper
         {
             switch (field)
             {
-                case "小区":
-                    try
-                    {
-                        var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Name.Contains(value))
-                                               from pr in room.PersonRooms
-                                               select new
-                                               {
-                                                   RoomId = room.Id,
-                                                   RoomNO = room.Name,
-                                                   BulidingName = pr.Room.Building.Name,
-                                                   SubdivsionName = pr.Room.Building.Subdivision.Name,
-                                                   CommunityName = pr.Room.Building.Subdivision.Community.Name,
-                                                   pr.PersonId,
-                                                   pr.Person,
-                                                   IsOwner = pr.IsOwner ? "是" : "否",
-                                                   IsHouseholder = pr.IsHouseholder ? "是" : "否",
-                                                   IsLiveHere = pr.IsLiveHere ? "是" : "否",
-                                                   pr.RelationWithHouseholder,
-                                                   pr.LodgingReason,
-                                                   pr.PopulationCharacter
-                                               };
-
-                        var psdata = roomsWithPersons.ToList();
-
-                        var data = from pr in psdata
-                                   join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
-                                   select new
-                                   {
-                                       pr.RoomId,
-                                       pr.RoomNO,
-                                       pr.CommunityName,
-                                       pr.SubdivsionName,
-                                       pr.BulidingName,
-                                       pr.PersonId,
-                                       pr.Person,
-                                       pr.IsOwner,
-                                       pr.IsHouseholder,
-                                       pr.IsLiveHere,
-                                       pr.RelationWithHouseholder,
-                                       pr.LodgingReason,
-                                       pr.PopulationCharacter,
-                                       SpecialGroup = psg // 特殊人群信息
-                                   };
-
-
-                        return data;
-                    }
-                    catch (Exception e)
-                    {
-                        return null;
-                    }
+                case "小区":                  
+                    return  _context.Subdivisions.Where(item => item.Name == value);
                 default:
                     return null;                
             }
