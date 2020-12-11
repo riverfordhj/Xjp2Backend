@@ -90,4 +90,26 @@ namespace Xjp2Backend.Controllers
         public string Name { get; set; }
     }
 
+    public class PersonUpdateParam
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string PersonId { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string PhoneNum { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Status { get; set; }
+    }
+
+    public class ReviewParam
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string PersonId { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Status { get; set; }
+    }
 }
+
+

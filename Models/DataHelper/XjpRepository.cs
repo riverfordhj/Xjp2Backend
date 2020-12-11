@@ -473,11 +473,268 @@ namespace Models.DataHelper
             //_context.Entry(user).Collection(u => u.RoleUsers).Load();
             return user;
         }
+        
+        //根据user，返回对应的小区
+        public IQueryable<object> GetSubdivsionsByUser(string userName)
+        {
+            //var list =  _context.Roles.Where(r => r.Users.Any(u => u.UserName == userName)).Select(u => u);
+
+            //var list = from userRow in _context.Users.Where(u => u.UserName == userName)
+            //           from u_RoleUsers in userRow.RoleUsers
+            //           join ru in _context.RoleUsers
+            //           on u_RoleUsers.Id equals ru.Id
+            //           select new
+            //           {
+            //               u_RoleUsers.Role.Name
+            //           };
+            //var roleList = list.ToList();
+
+            //var isNetGrid = roleList.Find(role => role.Name == "网格员");
+
+            var user = GetUserByName(userName);
+            var roleList = user.Roles;
+
+
+
+            if(roleList[0].Name == "网格员")
+            {
+                return (from useRow in _context.Users.Where(u => u.UserName == userName)
+                        from grid in useRow.NetGrid
+                        select new
+                        {
+                            grid.Community.Subdivisions[0].Id,
+                            grid.Community.Subdivisions[0].Name
+                        });
+            
+            }
+
+            if (roleList[0].Name == "水岸星城")
+            {
+                return (from comm in _context.Communitys.Where(u => u.Name == "水岸星城")
+                        select new
+                        {
+                            comm.Subdivisions[0].Id,
+                            comm.Subdivisions[0].Name
+
+                        });
+            }
+
+            //if (roleList[0].Name == "Administrator" && roleList[1].Name == "网格员")
+            //{
+            //    return _context.Subdivisions;
+            //}
+
+            return _context.Subdivisions;
+        }
+
+        public IQueryable<object> GetRoomsByUser(string userName)
+        {
+
+            var user = GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name == "网格员"){
+                var roomData=  from u in _context.Users.Where(u => u.UserName == userName)
+                               from ng in u.NetGrid
+                               from b in ng.Buildings
+                               from room in b.Rooms
+                               select new
+                               {
+                                   room.Id,
+                                   room.Name,
+                                   room.Alias,
+                                   room.Category,
+                                   room.Use,
+                                   room.Area,
+                                   room.Longitude,
+                                   room.Latitude,
+                                   room.Height,
+                                   room.Other,
+                                   room.Note,
+                                   buildingName = b.Name,
+                                   netGridName = ng.Name,
+                                   communityName = ng.Community.Name
+                               };
+                return roomData;
+            }
+            if (roleList[0].Name == "水岸星城")
+            {
+                var roomData = from comm in _context.Communitys.Where(c => c.Name == "水岸星城")
+                               from ng in comm.NetGrids
+                               from b in ng.Buildings
+                               from room in b.Rooms
+                               select new
+                               {
+                                   room.Id,
+                                   room.Name,
+                                   room.Alias,
+                                   room.Category,
+                                   room.Use,
+                                   room.Area,
+                                   room.Longitude,
+                                   room.Latitude,
+                                   room.Height,
+                                   room.Other,
+                                   room.Note,
+                                   buildingName = b.Name,
+                                   netGridName = ng.Name,
+                                   communityName = comm.Name
+                               };
+
+                return roomData;
+            }
+
+            return from room in _context.Rooms
+                   select new {
+                       room.Id,
+                       room.Name,
+                       room.Alias,
+                       room.Category,
+                       room.Use,
+                       room.Area,
+                       room.Longitude,
+                       room.Latitude,
+                       room.Height,
+                       room.Other,
+                       room.Note,
+                       buildingName = room.Building.Name,
+                       netGridName = room.Building.NetGrid.Name,
+                       communityName = room.Building.NetGrid.Community.Name
+                   };
+
+        }
+
+        public IQueryable<object> GetPersonsByUser(string userName){
+            var user = GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name == "网格员")
+            {
+                var personInfo = from u in _context.Users.Where(u => u.UserName == userName)
+                                 from ng in u.NetGrid
+                                 from b in ng.Buildings
+                                 from room in b.Rooms
+                                 from pr in room.PersonRooms
+                                 select new
+                                 {
+                                    pr.Person,
+                                    roomName = room.Name,
+                                    roomUse = room.Use,
+                                    roomCategory = room.Category,
+                                    buildingName = b.Name,
+                                    netGrid = ng.Name,
+                                    communityName = ng.Community.Name
+                                 };
+                return personInfo;
+
+            }
+
+            if (roleList[0].Name == "水岸星城")
+            {
+                var personInfoByComm = from comm in _context.Communitys.Where(c => c.Name == "水岸星城")
+                                 from ng in comm.NetGrids
+                                 from b in ng.Buildings
+                                 from room in b.Rooms
+                                 from pr in room.PersonRooms
+                                 select new
+                                 {
+                                     pr.Person,
+                                     roomName = room.Name,
+                                     roomUse = room.Use,
+                                     roomCategory = room.Category,
+                                     buildingName = b.Name,
+                                     netGrid = ng.Name,
+                                     communityName = ng.Community.Name
+                                 };
+
+
+                var personInfoByStatus = from p in _context.Persons.Where(per => per.Status != null && per.Status != "commiting")
+                                         select p;
+
+                var result = from pc in personInfoByComm
+                             join ps in personInfoByStatus on pc.Person.PersonId equals ps.PersonId
+                             select pc;
+                        
+                                        
+                return result;
+
+            }
+
+            //不满足以上条件时，筛选全部数据
+            var personInfoByAdmin = from comm in _context.Communitys
+                                    from ng in comm.NetGrids
+                                    from b in ng.Buildings
+                                    from room in b.Rooms
+                                    from pr in room.PersonRooms
+                                    select new
+                                    {
+                                        pr.Person,
+                                        roomName = room.Name,
+                                        roomUse = room.Use,
+                                        roomCategory = room.Category,
+                                        buildingName = b.Name,
+                                        netGrid = ng.Name,
+                                        communityName = ng.Community.Name
+                                    };
+            var PersonInfoForCommiting = from p in _context.Persons.Where(per => per.Status == "commiting")
+                                         select p;
+
+            return from pc in personInfoByAdmin
+                   join ps in PersonInfoForCommiting on pc.Person.PersonId equals ps.PersonId
+                   select pc;
+        }
+
+        //网格员修改指定人员信息
+        public IQueryable<object> UpdatePersonHouseByNetGrid(string userName, string personId, string phoneNum, string status)
+        {
+            Person person = _context.Persons.FirstOrDefault(p => p.PersonId == personId);
+            person.EditingPhone = phoneNum;
+            person.Status = status;
+            _context.SaveChanges();
+
+            return from u in _context.Users.Where(u => u.UserName == userName)
+                   from ng in u.NetGrid
+                   from b in ng.Buildings
+                   from room in b.Rooms
+                   from pr in room.PersonRooms
+                   select new
+                   {
+                       pr.Person,
+                       roomName = room.Name,
+                       roomUse = room.Use,
+                       roomCategory = room.Category,
+                       buildingName = b.Name,
+                       netGrid = ng.Name,
+                       communityName = ng.Community.Name
+                   };
+                        
+        }
+
+        public void ReviewByCommunity(string personId, string status)
+        {
+            Person person = _context.Persons.FirstOrDefault(p => p.PersonId == personId);
+            person.Status = status;
+            _context.SaveChanges();
+        }
+
+        public IQueryable<object> ConfirmByAdmin(string userName, string personId)
+        {
+            Person person = _context.Persons.FirstOrDefault(p => p.PersonId == personId);
+            person.Status = null;
+            person.Phone = person.EditingPhone;
+            person.EditingPhone = null;
+            _context.SaveChanges();
+
+            return GetPersonsByUser(userName);
+        }
+
         #endregion
 
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);
         }
+
+        
     }
 }

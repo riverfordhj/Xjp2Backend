@@ -38,49 +38,10 @@ namespace Xjp2Backend.Controllers
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
-           
-            //var list =  _context.Roles.Where(r => r.Users.Any(u => u.UserName == userName)).Select(u => u);
-          
 
-            var list = from userRow in _context.Users.Where(u => u.UserName == userName)
-                       from u_RoleUsers in userRow.RoleUsers
-                       join ru in _context.RoleUsers
-                       on u_RoleUsers.Id equals ru.Id
-                       select new
-                       {
-                           u_RoleUsers.Role.Name
-                       };
-            var roleList = list.ToList();
- 
-            if (roleList[0].Name == "网格员")
-            {
-               var divisions =  from user in _context.Users.Where(u => u.UserName == userName)
-                                from grid in user.NetGrid
-                                select new 
-                                {
-                                   grid.Community.Subdivisions[0].Id,
-                                   grid.Community.Subdivisions[0].Name
-                                };
-               return await divisions.ToListAsync();
-            }
-
-            if(roleList[0].Name == "水岸星城")
-            {
-                return await (from comm in _context.Communitys.Where(u => u.Name == "水岸星城")
-                              select new 
-                              { 
-                                 comm.Subdivisions[0].Id,
-                                 comm.Subdivisions[0].Name
-
-                              } ).ToListAsync();
-            } 
-
-            if (roleList[0].Name == "Administrator" && roleList[1].Name == "网格员")
-            {
-                return await  _context.Subdivisions.ToListAsync();
-            }
-
-            return NotFound();
+            return await _repository.GetSubdivsionsByUser(userName).ToListAsync();
+      
+           // return NotFound();
         }
 
         // GET: api/GetBuildings/1
@@ -99,15 +60,71 @@ namespace Xjp2Backend.Controllers
 
         // GET: api/Person/GetPersonsByUser
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPersonsByUser()
+        public async Task<ActionResult<IEnumerable<object>>> GetPersonsByUser()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
 
-            var divisions = from user in _context.Users.Where(u => u.UserName == userName)
-                            from grid in user.NetGrid
-                            select grid.Community.Subdivisions;
-            return await _context.Persons.ToListAsync();
+            return await _repository.GetPersonsByUser(userName).ToListAsync();
+        }
+
+        //根据user，返回room信息
+        // GET: api/Person/GetRoomsByUser
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByUser()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+
+            return await _repository.GetRoomsByUser(userName).ToListAsync();
+        }
+
+        //网格员修改指定人员信息
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> UpdatePersonHouseByNetGrid([FromBody] PersonUpdateParam personFields)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name != "网格员")
+            {
+                return NotFound();
+            }
+
+            return await _repository.UpdatePersonHouseByNetGrid(userName, personFields.PersonId, personFields.PhoneNum, personFields.Status).ToListAsync();
+        }
+
+        [HttpPost("[action]")]
+        public void ReviewByCommunity([FromBody] ReviewParam ReviewFileds)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name == "水岸星城")
+            {
+                _repository.ReviewByCommunity(ReviewFileds.PersonId, ReviewFileds.Status);
+            }
+            
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> ConfirmByAdmin(string personId)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name != "Administrator" || roleList[1].Name != "网格员")
+            {
+                return NotFound();
+            }
+
+           return await  _repository.ConfirmByAdmin(userName, personId).ToListAsync();
         }
 
         //获取特殊群体，吸毒、信访人员的信息
