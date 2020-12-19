@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Models;
 
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    partial class StreetContextModelSnapshot : ModelSnapshot
+    [Migration("20201216122420_AddBlogCreatedTimestamp")]
+    partial class AddBlogCreatedTimestamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -304,12 +306,6 @@ namespace Models.Migrations
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EditTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Editor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
@@ -347,9 +343,6 @@ namespace Models.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Operation")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("OrganizationalRelation")
                         .HasColumnType("nvarchar(max)");
 
@@ -380,9 +373,6 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoomUse")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ID");

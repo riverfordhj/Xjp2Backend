@@ -2,28 +2,28 @@
 
 namespace Models.Migrations
 {
-    public partial class AddBlogCreatedTimestamp1215 : Migration
+    public partial class AddBlogCreatedTimestamp111 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "EditTime",
-                table: "Persons",
+                table: "PersonHouseDatas",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Editor",
-                table: "Persons",
+                table: "PersonHouseDatas",
+                nullable: true);
+
+            migrationBuilder.AddColumn<string>(
+                name: "Operation",
+                table: "PersonHouseDatas",
                 nullable: true);
 
             migrationBuilder.AddColumn<string>(
                 name: "Status",
-                table: "Persons",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "Status",
-                table: "PersonRooms",
+                table: "PersonHouseDatas",
                 nullable: true);
         }
 
@@ -31,19 +31,19 @@ namespace Models.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "EditTime",
-                table: "Persons");
+                table: "PersonHouseDatas");
 
             migrationBuilder.DropColumn(
                 name: "Editor",
-                table: "Persons");
+                table: "PersonHouseDatas");
+
+            migrationBuilder.DropColumn(
+                name: "Operation",
+                table: "PersonHouseDatas");
 
             migrationBuilder.DropColumn(
                 name: "Status",
-                table: "Persons");
-
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "PersonRooms");
+                table: "PersonHouseDatas");
         }
     }
 }

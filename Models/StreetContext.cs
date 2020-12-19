@@ -63,6 +63,10 @@ namespace Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<RoleUser> RoleUsers { get; set; }
 
-        
+
+        //人房信息
+        public DbSet<PersonHouseData> PersonHouseDatas { get; set; }
+
+
     }
 }

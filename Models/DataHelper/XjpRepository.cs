@@ -424,7 +424,7 @@ namespace Models.DataHelper
         /// <returns></returns>
         public IEnumerable<string> GetFields()
         {
-            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "性别", "民族" };
+            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "民族" };
             return fields;
         }
       
@@ -440,27 +440,49 @@ namespace Models.DataHelper
             {
                 if (query[0] == "小区")
                 {
-                    rooms = rooms.Where(r => r.Building.Subdivision.Name == query[2]);
+                    rooms = rooms.Where(r => r.Building.Subdivision.Name.Contains(query[2]));
                 }
                 if (query[0] == "楼栋")
                 {
-                    rooms = rooms.Where(r => r.Building.Name == query[2] || r.Building.Alias == query[2]);
+                    rooms = rooms.Where(r => r.Building.Name.Contains(query[2]) || r.Building.Alias.Contains(query[2]));
                 }
                 if (query[0] == "房间")
                 {
-                    rooms = rooms.Where(r => r.Name == query[2]);
+                    rooms = rooms.Where(r => r.Name.Contains(query[2]));
                 }
-                //if (query[0] == "姓名")
-                //{
-                //    rooms = (DbSet<Room>)rooms.Where(r => r.PersonRooms.Person.Name == query[2]);
-                //    //persons = (DbSet<Person>)persons.Where(p => p.Name == query[2]);
-                //    //return  Person = GetPersonsBySearch(query[2],);
-                //}
+                if (query[0] == "姓名" )
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Name.Contains(query[2])));                
+                }
+                if (query[0] == "电话")
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Phone == query[2]));
+                }
+                if (query[0] == "身份证")
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.PersonId == query[2]));                  
+                }
+                if (query[0] == "年龄")
+                {
+                    string[] age = query[2].Split('-');
+                    int start = int.Parse(age[0]);
+                    int end = int.Parse(age[1]);
+                    
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>CheckAge(pr,start,end)));             
+                }
             }
             return GetPersonsByQueryRoom(rooms);
 
         }
 
+        private bool CheckAge(PersonRoom r,int start ,int end)
+        {
+            
+            int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
+            int year = DateTime.Now.Year;
+            int age = year - birth;
+            return age >= start && age <= end;
+        }
         private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms)
         {
             try
