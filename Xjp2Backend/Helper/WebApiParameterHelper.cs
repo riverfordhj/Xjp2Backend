@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -102,14 +103,8 @@ namespace Xjp2Backend.Controllers
         public string Status { get; set; }
     }
 
-    public class ReviewParam
-    {
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string PersonId { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string Status { get; set; }
-    }
+   
 }
 
 

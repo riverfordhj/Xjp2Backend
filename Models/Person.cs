@@ -35,12 +35,6 @@ namespace Models
         //备注
         public string Note { get; set; }
 
-        public string EditTime { get; set; }
-        public string Editor { get; set; }
-        public string Status { get; set; }
-
-        public string EditingPhone { get; set; }
-
         //导航属性
         public List<PersonRoom> PersonRooms { get; set; }
     }

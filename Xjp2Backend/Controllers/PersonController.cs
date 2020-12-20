@@ -44,6 +44,39 @@ namespace Xjp2Backend.Controllers
            // return NotFound();
         }
 
+        //GET: api/Person/GetBuildingsByNetGrid
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetBuildingsByNetGrid()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name != "网格员")
+            {
+                return NotFound();
+            }
+
+            return await _repository.GetBuildingsByNetGrid(userName).ToListAsync();
+
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name != "网格员")
+            {
+                return NotFound();
+            }
+            return await _repository.GetRoomsByBuilding(userName, buildingName).ToListAsync();
+        }
+
         // GET: api/GetBuildings/1
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<IEnumerable<Building>>> GetBuildingInSubdivision(int id)
@@ -60,28 +93,17 @@ namespace Xjp2Backend.Controllers
 
         // GET: api/Person/GetPersonsByUser
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> GetPersonsByUser()
+        public IEnumerable<object> GetPersonsByUser()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
 
-            return await _repository.GetPersonsByUser(userName).ToListAsync();
-        }
-
-        //根据user，返回room信息
-        // GET: api/Person/GetRoomsByUser
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByUser()
-        {
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            var userName = claimsIdentity.Name;
-
-            return await _repository.GetRoomsByUser(userName).ToListAsync();
+            return  _repository.GetPersonsByUser(userName);
         }
 
         //网格员修改指定人员信息
         [HttpPost("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> UpdatePersonHouseByNetGrid([FromBody] PersonUpdateParam personFields)
+        public IEnumerable<object> UpdatePersonHouseByNetGrid([FromBody] PersonUpdateParamTesting personFields)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
@@ -90,14 +112,25 @@ namespace Xjp2Backend.Controllers
 
             if (roleList[0].Name != "网格员")
             {
-                return NotFound();
+                
             }
 
-            return await _repository.UpdatePersonHouseByNetGrid(userName, personFields.PersonId, personFields.PhoneNum, personFields.Status).ToListAsync();
+            return _repository.UpdatePersonHouseByNetGrid(userName, personFields);
         }
 
+        //返回指定网格员提交后数据（未审核）
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> SearchPersonHouseByNetGrid()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+
+            return await _repository.SearchPersonHouseByNetGrid(userName).ToListAsync();
+        }
+
+        //社区审核（确认）网格员的修改
         [HttpPost("[action]")]
-        public void ReviewByCommunity([FromBody] ReviewParam ReviewFileds)
+        public void VerifyByCommunity([FromBody] VerifyAndConfirmParam verifyFileds)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
@@ -106,13 +139,14 @@ namespace Xjp2Backend.Controllers
 
             if (roleList[0].Name == "水岸星城")
             {
-                _repository.ReviewByCommunity(ReviewFileds.PersonId, ReviewFileds.Status);
+                _repository.VerifyByCommunity(verifyFileds);
             }
             
         }
 
-        [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> ConfirmByAdmin(string personId)
+        //街道批准社区的审核
+        [HttpPost("[action]")]
+        public IEnumerable<object> ConfirmByAdmin([FromBody] VerifyAndConfirmParam confirmFields)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
@@ -121,10 +155,20 @@ namespace Xjp2Backend.Controllers
 
             if (roleList[0].Name != "Administrator" || roleList[1].Name != "网格员")
             {
-                return NotFound();
+                return new object[0];//不满足条件，就返回一个空对象数组
             }
 
-           return await  _repository.ConfirmByAdmin(userName, personId).ToListAsync();
+           return  _repository.ConfirmByAdmin(confirmFields, userName);
+        }
+
+        //返回人房数据的历史编辑数据
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetPersonHouseHistoryInfo()
+        {
+            //var claimsIdentity = User.Identity as ClaimsIdentity;
+            //var userName = claimsIdentity.Name;
+
+            return await _repository.PersonHouseHistoryInfo().ToListAsync();
         }
 
         //获取特殊群体，吸毒、信访人员的信息

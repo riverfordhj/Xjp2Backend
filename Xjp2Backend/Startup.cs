@@ -21,6 +21,7 @@ using Models;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
 using ModelsBuildingEconomy.buildingCompany;
+using Newtonsoft.Json;
 using Xjp2Backend.Helper;
 
 namespace Xjp2Backend
@@ -168,6 +169,11 @@ namespace Xjp2Backend
             //{
             //    options.Filters.Add(new ActionFilter());
             //}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddControllers().AddNewtonsoftJson(option =>
+                //ºöÂÔÑ­»·ÒıÓÃ
+                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
