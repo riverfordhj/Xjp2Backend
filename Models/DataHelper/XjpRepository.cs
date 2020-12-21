@@ -435,7 +435,8 @@ namespace Models.DataHelper
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
             var rooms = _context.Rooms.AsQueryable();
-            var persons = _context.Persons.AsQueryable();
+            string[] ageQuery = null;
+            //var persons = _context.Persons.AsQueryable();
             foreach (var query in queries)
             {
                 if (query[0] == "小区")
@@ -464,7 +465,8 @@ namespace Models.DataHelper
                 }
                 if (query[0] == "年龄")
                 {
-                    try
+                    ageQuery = query;
+                    /*try
                     {
                         string[] age = query[2].Split('-');
                         int start = int.Parse(age[0]);
@@ -473,12 +475,12 @@ namespace Models.DataHelper
                     }
                     catch(Exception e)
                     {
-                        return null;
-                    }
-                     
+                        
+                    }*/
+
                 }
             }
-            return GetPersonsByQueryRoom(rooms ,persons);
+            return GetPersonsByQueryRoom(rooms , ageQuery);
 
         }
 
@@ -490,7 +492,7 @@ namespace Models.DataHelper
         //    int age = year - birth;
         //    return age >= start && age <= end;
         //}
-        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, IQueryable<Person> persons)
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, string[] ageQuery)
         {
             try
             {
@@ -505,6 +507,7 @@ namespace Models.DataHelper
                                            SubdivsionName = room.Building.Subdivision.Name,
                                            CommunityName = room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
+                                           pr.Person.Age,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
                                            IsHouseholder = pr.IsHouseholder ? "是" : "否",
@@ -513,6 +516,13 @@ namespace Models.DataHelper
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
                                        };
+                if (ageQuery != null)
+                {
+                    string[] age = ageQuery[2].Split('-');
+                    int start = int.Parse(age[0]);
+                    int end = int.Parse(age[1]);
+                    roomsWithPersons = roomsWithPersons.Where(rp => rp.Age > start && rp.Age < end);
+                }
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
