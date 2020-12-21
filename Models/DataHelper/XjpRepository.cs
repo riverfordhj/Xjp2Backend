@@ -435,7 +435,7 @@ namespace Models.DataHelper
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
             var rooms = _context.Rooms.AsQueryable();
-            // var persons = _context.Persons;
+            var persons = _context.Persons.AsQueryable();
             foreach (var query in queries)
             {
                 if (query[0] == "小区")
@@ -464,26 +464,33 @@ namespace Models.DataHelper
                 }
                 if (query[0] == "年龄")
                 {
-                    string[] age = query[2].Split('-');
-                    int start = int.Parse(age[0]);
-                    int end = int.Parse(age[1]);
-                    
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>CheckAge(pr,start,end)));             
+                    try
+                    {
+                        string[] age = query[2].Split('-');
+                        int start = int.Parse(age[0]);
+                        int end = int.Parse(age[1]);
+                        persons = persons.Where(p => p.Age > start && p.Age < end);            
+                    }
+                    catch(Exception e)
+                    {
+                        return null;
+                    }
+                     
                 }
             }
-            return GetPersonsByQueryRoom(rooms);
+            return GetPersonsByQueryRoom(rooms ,persons);
 
         }
 
-        private bool CheckAge(PersonRoom r,int start ,int end)
-        {
+        //private bool CheckAge(PersonRoom r,int start ,int end)
+        //{
             
-            int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
-            int year = DateTime.Now.Year;
-            int age = year - birth;
-            return age >= start && age <= end;
-        }
-        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms)
+        //    int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
+        //    int year = DateTime.Now.Year;
+        //    int age = year - birth;
+        //    return age >= start && age <= end;
+        //}
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, IQueryable<Person> persons)
         {
             try
             {
