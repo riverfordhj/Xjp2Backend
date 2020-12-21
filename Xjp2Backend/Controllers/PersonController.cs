@@ -203,12 +203,25 @@ namespace Xjp2Backend.Controllers
             return _repository.GetPersonsBySubdivision(id);
         }
 
+        [HttpGet("[action]")]
+        public IEnumerable<Object> GetFields()//Person
+        {
+            return _repository.GetFields();
+        }
+
         //通过name\身份证、电话号查找人
         // GET: api/GetPersonsBySearch/1
         [HttpPost("[action]")]
         public IEnumerable<Object> GetPersonsBySearch([FromBody] QueryParameter para)//Person
         {
             return _repository.GetPersonsBySearch(para.SubdivisionId ,para.Name);
+        }
+
+        //高级检索
+        [HttpPost("[action]")]
+        public IEnumerable<Object> GetDataByQuery([FromBody] QueryDataParameter para)//Person
+        {
+            return _repository.GetDataByQuery(para.Field, para.Oper, para.Value);
         }
 
         [HttpPost("[action]")]

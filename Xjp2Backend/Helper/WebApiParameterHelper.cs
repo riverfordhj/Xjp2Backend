@@ -1,6 +1,4 @@
-﻿using Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -45,44 +43,6 @@ namespace Xjp2Backend.Controllers
         [Required(ErrorMessage = "{0} 不能为空！")]
         public string RoomNO { get; set; }
     }
-
-    public class CompanyFieldsParameter
-    {
-        [Required(ErrorMessage ="{0} 不能为空! ")]
-        public string BuildingName { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string CompanyName { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string Contacts { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string Phone { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string BusinessDirection { get; set; }
-    }
-
-    public class BuildingFloor
-    {
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string BuildingName { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string Floor { get; set; }
-
-    }
-
-
-    public class BuildingStatus
-    {
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string BuildingName { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string status { get; set; }
-    }
     public class QueryParameter
     {
         public string SubdivisionId { get; set; }
@@ -91,20 +51,12 @@ namespace Xjp2Backend.Controllers
         public string Name { get; set; }
     }
 
-    public class PersonUpdateParam
+    public class QueryDataParameter
     {
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string PersonId { get; set; }
+        public string Field { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string PhoneNum { get; set; }
-
-        [Required(ErrorMessage = "{0} 不能为空! ")]
-        public string Status { get; set; }
+        [Required(ErrorMessage = "{0} 不能为空！")]
+        public string Oper { get; set; }
+        public string Value { get; set; }
     }
-
-
-   
 }
-
-

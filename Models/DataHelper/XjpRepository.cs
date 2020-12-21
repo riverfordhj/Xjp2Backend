@@ -68,14 +68,14 @@ namespace Models.DataHelper
         #endregion
 
         #region building
-        public Building GetBuildingInCommunity(string commnunityName, string name)
-        {
+        //public Building GetBuildingInCommunity(string commnunityName, string name)
+        //{
             //Community com = GetCommunity(commnunityName);
             //if (com != null)
             //    return _context.Buildings.Where(item => item.Community == com && item.Name == name).FirstOrDefault();
             //else
-            return null;
-        }
+         //   return null;
+       // }
 
         public Building GetBuildingInSubdivision(string subdivisionName, string name)
         {
@@ -87,6 +87,38 @@ namespace Models.DataHelper
             else
                 return null;
         }
+        /// <summary>
+        /// 获取所有字段
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetFields()
+        {
+            List<String> fields = new List<String>();
+
+            fields.Add("小区");
+            fields.Add("姓名");
+            fields.Add("电话");
+            fields.Add("身份证");
+            fields.Add("性别");
+            fields.Add("民族");
+            return fields;
+        }
+
+        ///<summary>
+        ///高级检索
+        /// 
+        /// </summary>
+        public IEnumerable<object> GetDataByQuery(string field, string Oper, string value)
+        {
+            switch (field)
+            {
+                case "小区":                  
+                    return  _context.Subdivisions.Where(item => item.Name == value);
+                default:
+                    return null;                
+            }
+        }
+
 
         /// <summary>
         /// 获取小区内的楼栋
@@ -270,14 +302,6 @@ namespace Models.DataHelper
                                            pr.PopulationCharacter
                                        };
 
-                //组连接，附加特殊人群信息
-                //var ps = from p in _context.Persons
-                //         where p.PersonId == "35220119860918511X"
-                //         select new
-                //        {
-                //            p.PersonId,
-                //            p.Name
-                //        };
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
@@ -340,7 +364,7 @@ namespace Models.DataHelper
                                        };
                 if (SubdivisionId != null && SubdivisionId != string.Empty)
                 {
-                    roomsWithPersons = roomsWithPersons.Where(item => item.SubdivisionId == SubdivisionId);       //.Contains(SubdivisionId));  //== SubdivisionId );
+                    roomsWithPersons = roomsWithPersons.Where(item => item.SubdivisionId == SubdivisionId || item.SubdivsionName == SubdivisionId);       //.Contains(SubdivisionId));  //== SubdivisionId );
 
                 }
                 var psdata = roomsWithPersons.ToList();
