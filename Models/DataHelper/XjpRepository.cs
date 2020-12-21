@@ -435,7 +435,8 @@ namespace Models.DataHelper
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
             var rooms = _context.Rooms.AsQueryable();
-            string[] ageQuery = null;
+            int start = 0;
+            int end = 200;
             //var persons = _context.Persons.AsQueryable();
             foreach (var query in queries)
             {
@@ -465,34 +466,16 @@ namespace Models.DataHelper
                 }
                 if (query[0] == "年龄")
                 {
-                    ageQuery = query;
-                    /*try
-                    {
-                        string[] age = query[2].Split('-');
-                        int start = int.Parse(age[0]);
-                        int end = int.Parse(age[1]);
-                        persons = persons.Where(p => p.Age > start && p.Age < end);            
-                    }
-                    catch(Exception e)
-                    {
-                        
-                    }*/
-
+                    string[] age = query[2].Split('-');
+                    start = int.Parse(age[0]);
+                    end = int.Parse(age[1]);
                 }
             }
-            return GetPersonsByQueryRoom(rooms , ageQuery);
+            return GetPersonsByQueryRoom(rooms , start, end);
 
         }
 
-        //private bool CheckAge(PersonRoom r,int start ,int end)
-        //{
-            
-        //    int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
-        //    int year = DateTime.Now.Year;
-        //    int age = year - birth;
-        //    return age >= start && age <= end;
-        //}
-        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, string[] ageQuery)
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, int start, int end)
         {
             try
             {
@@ -516,14 +499,15 @@ namespace Models.DataHelper
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
                                        };
-                if (ageQuery != null)
+               /* if (ageQuery != null)
                 {
                     string[] age = ageQuery[2].Split('-');
                     int start = int.Parse(age[0]);
                     int end = int.Parse(age[1]);
-                    roomsWithPersons = roomsWithPersons.Where(rp => rp.Age > start && rp.Age < end);
-                }
-                var psdata = roomsWithPersons.ToList();
+                    //roomsWithPersons = roomsWithPersons.Where(rp => rp.Age > start && rp.Age < end);                                                                                                                                              
+                }*/
+                var psdata = roomsWithPersons.AsEnumerable().Where(rp => rp.Age > start && rp.Age < end).ToList();
+               // var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
                            join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
