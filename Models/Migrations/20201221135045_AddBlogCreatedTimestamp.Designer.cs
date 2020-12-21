@@ -10,8 +10,8 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201216124801_AddBlogCreatedTimestamp111")]
-    partial class AddBlogCreatedTimestamp111
+    [Migration("20201221135045_AddBlogCreatedTimestamp")]
+    partial class AddBlogCreatedTimestamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -238,12 +238,6 @@ namespace Models.Migrations
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EditTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Editor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
@@ -271,9 +265,6 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PoliticalState")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

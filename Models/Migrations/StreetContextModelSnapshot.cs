@@ -236,12 +236,6 @@ namespace Models.Migrations
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EditTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Editor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
@@ -269,9 +263,6 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PoliticalState")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
