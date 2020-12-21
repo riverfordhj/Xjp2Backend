@@ -10,8 +10,8 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201217114055_editSomeFields")]
-    partial class editSomeFields
+    [Migration("20201216124801_AddBlogCreatedTimestamp111")]
+    partial class AddBlogCreatedTimestamp111
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -238,6 +238,12 @@ namespace Models.Migrations
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("EditTime")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Editor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
@@ -267,6 +273,9 @@ namespace Models.Migrations
                     b.Property<string>("PoliticalState")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId")
@@ -288,13 +297,7 @@ namespace Models.Migrations
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BuildingName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CommunityName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Company")
@@ -341,9 +344,6 @@ namespace Models.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NetGrid")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")
@@ -569,15 +569,10 @@ namespace Models.Migrations
                     b.Property<string>("PersonId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PersonId1")
-                        .HasColumnType("int");
-
                     b.Property<string>("Type")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("PersonId1");
 
                     b.ToTable("SpecialGroups");
                 });
@@ -727,13 +722,6 @@ namespace Models.Migrations
                     b.HasOne("Models.Building", "Building")
                         .WithMany("Rooms")
                         .HasForeignKey("BuildingId");
-                });
-
-            modelBuilder.Entity("Models.SpecialGroup", b =>
-                {
-                    b.HasOne("Models.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId1");
                 });
 
             modelBuilder.Entity("Models.Subdivision", b =>

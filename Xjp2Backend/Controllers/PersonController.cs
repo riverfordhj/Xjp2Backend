@@ -9,6 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
 using Models.DataHelper;
+using Nancy.Json;
+using System.IO;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
+using System.Text;
+using System.Data;
 
 namespace Xjp2Backend.Controllers
 {
@@ -219,10 +225,18 @@ namespace Xjp2Backend.Controllers
 
         //高级检索
         [HttpPost("[action]")]
-        public IEnumerable<Object> GetDataByQuery([FromBody] QueryDataParameter para)//Person
+         public IEnumerable<Object> GetDataByQuery([FromBody] QueryDataParameterCollection dataForms)//Person
         {
-            return _repository.GetDataByQuery(para.Field, para.Oper, para.Value);
+            List<string[]> items = new List<string[]>();
+            foreach (var item in dataForms.Items)
+            {
+                String[] query = { item.Field, item.Operato, item.Sname };
+                items.Add(query);
+            }
+            return _repository.GetDataByQuery(items);
         }
+
+
 
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)

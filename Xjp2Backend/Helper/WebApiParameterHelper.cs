@@ -107,8 +107,13 @@ namespace Xjp2Backend.Controllers
     {
         public string Field { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空！")]
-        public string Oper { get; set; }
-        public string Value { get; set; }
+        public string Operato { get; set; }
+
+        public string Sname { get; set; }
+    }
+
+    public class QueryDataParameterCollection
+    {
+        public List<QueryDataParameter> Items { get; set; }
     }
 }

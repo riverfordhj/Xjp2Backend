@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Models
@@ -34,6 +35,29 @@ namespace Models
 
         //备注
         public string Note { get; set; }
+        //编辑时间
+        public string EditTime { get; set; }
+        //编辑者
+        public string Editor { get; set; }
+        //状态
+        public string Status { get; set; }
+        [NotMapped]
+        public int Age
+        {
+            get
+            {
+                try
+                {
+                    int year = DateTime.Now.Year;
+                    int age = year - int.Parse(PersonId.Substring(6,4));
+                    return age;
+                }
+                catch(Exception e)
+                {
+                    return 0;
+                }
+            }
+        }
 
         //导航属性
         public List<PersonRoom> PersonRooms { get; set; }

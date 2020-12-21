@@ -70,12 +70,12 @@ namespace Models.DataHelper
         #region building
         //public Building GetBuildingInCommunity(string commnunityName, string name)
         //{
-            //Community com = GetCommunity(commnunityName);
-            //if (com != null)
-            //    return _context.Buildings.Where(item => item.Community == com && item.Name == name).FirstOrDefault();
-            //else
-         //   return null;
-       // }
+        //Community com = GetCommunity(commnunityName);
+        //if (com != null)
+        //    return _context.Buildings.Where(item => item.Community == com && item.Name == name).FirstOrDefault();
+        //else
+        //   return null;
+        // }
 
         public Building GetBuildingInSubdivision(string subdivisionName, string name)
         {
@@ -87,37 +87,7 @@ namespace Models.DataHelper
             else
                 return null;
         }
-        /// <summary>
-        /// 获取所有字段
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<string> GetFields()
-        {
-            List<String> fields = new List<String>();
-
-            fields.Add("小区");
-            fields.Add("姓名");
-            fields.Add("电话");
-            fields.Add("身份证");
-            fields.Add("性别");
-            fields.Add("民族");
-            return fields;
-        }
-
-        ///<summary>
-        ///高级检索
-        /// 
-        /// </summary>
-        public IEnumerable<object> GetDataByQuery(string field, string Oper, string value)
-        {
-            switch (field)
-            {
-                case "小区":                  
-                    return  _context.Subdivisions.Where(item => item.Name == value);
-                default:
-                    return null;                
-            }
-        }
+       
 
 
         /// <summary>
@@ -322,10 +292,7 @@ namespace Models.DataHelper
                                pr.LodgingReason,
                                pr.PopulationCharacter,
                                SpecialGroup = psg // 特殊人群信息
-                           };
-
-                //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
-                //var d1 = data as IEnumerable<object>;
+                           };         
                 return data;
             }
             catch (Exception e)
@@ -335,6 +302,8 @@ namespace Models.DataHelper
 
 
         }
+
+        #region 姓名身份证号电话搜索
         ///<summery>
         ///通过姓名身份证号电话搜索
         /// </summery>
@@ -397,6 +366,8 @@ namespace Models.DataHelper
 
 
         }
+        #endregion
+
         /// <summary>
         /// 获取特殊人群
         /// </summary>
@@ -887,6 +858,144 @@ namespace Models.DataHelper
         {
             return _context.PersonHouseDatas.Where(prd => prd.Status != "approved");
         }
+
+        #endregion
+
+        #region 高级检索
+        /// <summary>
+        /// 获取所有字段
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<string> GetFields()
+        {
+            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "民族" };
+            return fields;
+        }
+      
+        ///<summary>
+        ///高级检索
+        /// 
+        /// </summary>
+        public IEnumerable<object> GetDataByQuery(List<string[]> queries)
+        {
+            var rooms = _context.Rooms.AsQueryable();
+            string[] ageQuery = null;
+            //var persons = _context.Persons.AsQueryable();
+            foreach (var query in queries)
+            {
+                if (query[0] == "小区")
+                {
+                    rooms = rooms.Where(r => r.Building.Subdivision.Name.Contains(query[2]));
+                }
+                if (query[0] == "楼栋")
+                {
+                    rooms = rooms.Where(r => r.Building.Name.Contains(query[2]) || r.Building.Alias.Contains(query[2]));
+                }
+                if (query[0] == "房间")
+                {
+                    rooms = rooms.Where(r => r.Name.Contains(query[2]));
+                }
+                if (query[0] == "姓名" )
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Name.Contains(query[2])));                
+                }
+                if (query[0] == "电话")
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Phone == query[2]));
+                }
+                if (query[0] == "身份证")
+                {
+                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.PersonId == query[2]));                  
+                }
+                if (query[0] == "年龄")
+                {
+                    ageQuery = query;
+                    /*try
+                    {
+                        string[] age = query[2].Split('-');
+                        int start = int.Parse(age[0]);
+                        int end = int.Parse(age[1]);
+                        persons = persons.Where(p => p.Age > start && p.Age < end);            
+                    }
+                    catch(Exception e)
+                    {
+                        
+                    }*/
+
+                }
+            }
+            return GetPersonsByQueryRoom(rooms , ageQuery);
+
+        }
+
+        //private bool CheckAge(PersonRoom r,int start ,int end)
+        //{
+            
+        //    int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
+        //    int year = DateTime.Now.Year;
+        //    int age = year - birth;
+        //    return age >= start && age <= end;
+        //}
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, string[] ageQuery)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in rooms
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           pr.PersonId,
+                                           pr.Person.Age,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+                if (ageQuery != null)
+                {
+                    string[] age = ageQuery[2].Split('-');
+                    int start = int.Parse(age[0]);
+                    int end = int.Parse(age[1]);
+                    roomsWithPersons = roomsWithPersons.Where(rp => rp.Age > start && rp.Age < end);
+                }
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
 
         #endregion
 
