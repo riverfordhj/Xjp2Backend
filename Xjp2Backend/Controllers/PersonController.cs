@@ -112,7 +112,7 @@ namespace Xjp2Backend.Controllers
 
             if (roleList[0].Name != "网格员")
             {
-                
+                return new object[0];//不满足条件，就返回一个空对象数组
             }
 
             return _repository.UpdatePersonHouseByNetGrid(userName, personFields);

@@ -170,10 +170,10 @@ namespace Xjp2Backend
             //    options.Filters.Add(new ActionFilter());
             //}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddControllers().AddNewtonsoftJson(option =>
-                //忽略循环引用
-                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-            );
+            //services.AddControllers().AddNewtonsoftJson(option =>
+            //    //忽略循环引用
+            //    option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            //);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
