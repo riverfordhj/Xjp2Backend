@@ -21,6 +21,7 @@ using Models;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
 using ModelsBuildingEconomy.buildingCompany;
+using Newtonsoft.Json;
 using Xjp2Backend.Helper;
 
 namespace Xjp2Backend
@@ -34,6 +35,7 @@ namespace Xjp2Backend
         {
             Configuration = configuration;
         }
+
 
         public IConfiguration Configuration { get; }
 
@@ -90,7 +92,10 @@ namespace Xjp2Backend
             ////services.AddAuthorization()
 
             //#endregion
-
+            services.AddControllers().AddNewtonsoftJson(option =>
+                //忽略循环引用
+                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
             //配置数据库context
             //services.AddDbContext<XjpContext>(opt => opt.UseInMemoryDatabase("XjpDB"));
             services.AddDbContext<StreetContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpDatabase")));

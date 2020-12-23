@@ -80,5 +80,11 @@ namespace Models
         public string Operation { get; set; }
         //状态
         public string Status { get; set; }
+        public string BuildingName { get; set; }
+        //网格号
+        public string NetGrid { get; set; }
+        //社区名
+        public string CommunityName { get; set; }
+
     }
 }
