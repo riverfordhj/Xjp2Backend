@@ -419,26 +419,20 @@ namespace Models.DataHelper
         #endregion
 
         #region 高级检索
-        /// <summary>
-        /// 获取所有字段
-        /// </summary>
-        /// <returns></returns>
+        // 获取所有字段
         public IEnumerable<string> GetFields()
         {
             String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "民族" };
             return fields;
         }
       
-        ///<summary>
-        ///高级检索
-        /// 
-        /// </summary>
-        //主入口函数
+
+        //高级检索主入口函数
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
+            //获取过滤后的rooms
             IQueryable<Room> rooms = (IQueryable<Room>)FilterRooms(queries);
-
-
+            //返回rooms内的人
             return GetPersonsByQueryRoom(rooms);
 
         }
@@ -497,28 +491,7 @@ namespace Models.DataHelper
             return rooms;
         }
 
-        //第二步：构造二维表rooms
-        //private IEnumerable<object> TwoTable (IQueryable<Room> rooms)
-        //{
-        //    var roomsWithPersons = from room in rooms
-        //                           from pr in room.PersonRooms
-        //                           select new
-        //                           {
-        //                               RoomId = room.Id,
-        //                               RoomNO = room.Name,
-        //                               BulidingName = room.Building.Name,
-        //                               SubdivsionName = room.Building.Subdivision.Name,
-        //                               CommunityName = room.Building.Subdivision.Community.Name,
-        //                               pr.PersonId,
-        //                               pr.Person,
-        //                               IsOwner = pr.IsOwner ? "是" : "否",
-        //                               IsHouseholder = pr.IsHouseholder ? "是" : "否",
-        //                               IsLiveHere = pr.IsLiveHere ? "是" : "否",
-        //                               pr.RelationWithHouseholder,
-        //                               pr.LodgingReason,
-        //                               pr.PopulationCharacter
-        //                           };       
-        //}
+        //第二步：获取过滤后的rooms内的所有人
         private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms)
         {
             try
