@@ -431,14 +431,14 @@ namespace Models.DataHelper
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
             //获取过滤后的rooms
-            IQueryable<Room> rooms = (IQueryable<Room>)FilterRooms(queries);
+            IQueryable<Room> rooms = FilterRooms(queries);
             //返回rooms内的人
-            return GetPersonsByQueryRoom(rooms);
+            return GetPersonsByQueryRoom(rooms, queries);
 
         }
 
         //第一步：前端传来的过滤条件
-        private IEnumerable<object> FilterRooms (List<string[]> queries) 
+        private IQueryable<Room> FilterRooms (List<string[]> queries) 
         {
             var rooms = _context.Rooms.AsQueryable();
             foreach (var query in queries)
@@ -455,44 +455,13 @@ namespace Models.DataHelper
                 {
                     rooms = rooms.Where(r => r.Name.Contains(query[2]));
                 }
-                if (query[0] == "姓名")
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.Name.Contains(query[2])));
-                }
-                if (query[0] == "电话")
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.Phone == query[2]));
-                }
-                if (query[0] == "身份证")
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.PersonId == query[2]));
-                }
-                if (query[0] == "年龄")
-                {
-                    try
-                    {
-                        string[] age = query[2].Split('-');
-                        int start = int.Parse(age[0]);
-                        int end = int.Parse(age[1]);
-
-                        rooms = rooms
-                            .Include(r => r.PersonRooms).ThenInclude(pr => pr.Person)
-                            .Include(r => r.Building).ThenInclude(b => b.Subdivision).ThenInclude(s => s.Community)
-                            .AsEnumerable()
-                            .Where(r => r.PersonRooms.Any(pr => pr.Person.Age > start && pr.Person.Age < end)).AsQueryable();
-                    }
-                    catch (Exception e)
-                    {
-
-                    }
-
-                }
+               
             }
             return rooms;
         }
 
         //第二步：获取过滤后的rooms内的所有人
-        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms)
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms,List<string[]> queries)
         {
             try
             {
@@ -506,6 +475,7 @@ namespace Models.DataHelper
                                            SubdivsionName = room.Building.Subdivision.Name,
                                            CommunityName = room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
+                                           pr.Person.Age,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
                                            IsHouseholder = pr.IsHouseholder ? "是" : "否",
@@ -514,6 +484,42 @@ namespace Models.DataHelper
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
                                        };
+                foreach (var query in queries)
+                {
+                    if (query[0] == "姓名")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.Name.Contains(query[2]));
+                    }
+                    if (query[0] == "电话")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.Phone == query[2]);
+                    }
+                    if (query[0] == "身份证")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.PersonId == query[2]);
+                    }
+                    if (query[0] == "年龄")
+                    {
+                        try
+                        {
+                            string[] age = query[2].Split('-');
+                            int start = int.Parse(age[0]);
+                            int end = int.Parse(age[1]);
+
+                            roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age > start && pr.Person.Age < end).AsQueryable();
+                                //.Include(r => r.PersonRooms).ThenInclude(pr => pr.Person)
+                                //.Include(r => r.Building).ThenInclude(b => b.Subdivision).ThenInclude(s => s.Community)
+                                //.AsEnumerable()
+                                //.Where(pr => pr.Person.Age > start && pr.Person.Age < end)).AsQueryable();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+                    }
+                }
+                
                 var psdata = roomsWithPersons.ToList();
                 var data = from pr in psdata
                            join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
