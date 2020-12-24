@@ -36,6 +36,7 @@ namespace Xjp2Backend
             Configuration = configuration;
         }
 
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -91,7 +92,10 @@ namespace Xjp2Backend
             ////services.AddAuthorization()
 
             //#endregion
-
+            services.AddControllers().AddNewtonsoftJson(option =>
+                //忽略循环引用
+                option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            );
             //配置数据库context
             //services.AddDbContext<XjpContext>(opt => opt.UseInMemoryDatabase("XjpDB"));
             services.AddDbContext<StreetContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpDatabase")));

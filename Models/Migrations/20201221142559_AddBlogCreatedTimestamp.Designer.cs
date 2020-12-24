@@ -10,14 +10,14 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201216124801_AddBlogCreatedTimestamp111")]
-    partial class AddBlogCreatedTimestamp111
+    [Migration("20201221142559_AddBlogCreatedTimestamp")]
+    partial class AddBlogCreatedTimestamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -238,12 +238,6 @@ namespace Models.Migrations
                     b.Property<string>("DomicileAddress")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("EditTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Editor")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EthnicGroups")
                         .HasColumnType("nvarchar(max)");
 
@@ -273,9 +267,6 @@ namespace Models.Migrations
                     b.Property<string>("PoliticalState")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Status")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId")
@@ -297,7 +288,13 @@ namespace Models.Migrations
                     b.Property<string>("Area")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("BuildingName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CommunityName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Company")
@@ -344,6 +341,9 @@ namespace Models.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NetGrid")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Note")

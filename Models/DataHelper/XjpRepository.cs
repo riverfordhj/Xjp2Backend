@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 namespace Models.DataHelper
 {
@@ -894,25 +895,28 @@ namespace Models.DataHelper
         #endregion
 
         #region 高级检索
-        /// <summary>
-        /// 获取所有字段
-        /// </summary>
-        /// <returns></returns>
+        // 获取所有字段
         public IEnumerable<string> GetFields()
         {
             String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "民族" };
             return fields;
         }
       
-        ///<summary>
-        ///高级检索
-        /// 
-        /// </summary>
+
+        //高级检索主入口函数
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
+            //获取过滤后的rooms
+            IQueryable<Room> rooms = FilterRooms(queries);
+            //返回rooms内的人
+            return GetPersonsByQueryRoom(rooms, queries);
+
+        }
+
+        //第一步：前端传来的过滤条件
+        private IQueryable<Room> FilterRooms (List<string[]> queries) 
+        {
             var rooms = _context.Rooms.AsQueryable();
-            string[] ageQuery = null;
-            //var persons = _context.Persons.AsQueryable();
             foreach (var query in queries)
             {
                 if (query[0] == "小区")
@@ -927,52 +931,16 @@ namespace Models.DataHelper
                 {
                     rooms = rooms.Where(r => r.Name.Contains(query[2]));
                 }
-                if (query[0] == "姓名" )
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Name.Contains(query[2])));                
-                }
-                if (query[0] == "电话")
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr =>pr.Person.Phone == query[2]));
-                }
-                if (query[0] == "身份证")
-                {
-                    rooms = rooms.Where(r => r.PersonRooms.Any(pr => pr.Person.PersonId == query[2]));                  
-                }
-                if (query[0] == "年龄")
-                {
-                    ageQuery = query;
-                    /*try
-                    {
-                        string[] age = query[2].Split('-');
-                        int start = int.Parse(age[0]);
-                        int end = int.Parse(age[1]);
-                        persons = persons.Where(p => p.Age > start && p.Age < end);            
-                    }
-                    catch(Exception e)
-                    {
-                        
-                    }*/
-
-                }
+               
             }
-            return GetPersonsByQueryRoom(rooms , ageQuery);
-
+            return rooms;
         }
 
-        //private bool CheckAge(PersonRoom r,int start ,int end)
-        //{
-            
-        //    int birth = int.Parse(r.Person.PersonId.Substring(6, 4));
-        //    int year = DateTime.Now.Year;
-        //    int age = year - birth;
-        //    return age >= start && age <= end;
-        //}
-        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms, string[] ageQuery)
+        //第二步：获取过滤后的rooms内的所有人
+        private IEnumerable<object> GetPersonsByQueryRoom(IQueryable<Room> rooms,List<string[]> queries)
         {
             try
             {
-                //根据 room - person 数据
                 var roomsWithPersons = from room in rooms
                                        from pr in room.PersonRooms
                                        select new
@@ -992,15 +960,43 @@ namespace Models.DataHelper
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
                                        };
-                if (ageQuery != null)
+                foreach (var query in queries)
                 {
-                    string[] age = ageQuery[2].Split('-');
-                    int start = int.Parse(age[0]);
-                    int end = int.Parse(age[1]);
-                    roomsWithPersons = roomsWithPersons.Where(rp => rp.Age > start && rp.Age < end);
-                }
-                var psdata = roomsWithPersons.ToList();
+                    if (query[0] == "姓名")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.Name.Contains(query[2]));
+                    }
+                    if (query[0] == "电话")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.Phone == query[2]);
+                    }
+                    if (query[0] == "身份证")
+                    {
+                        roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.PersonId == query[2]);
+                    }
+                    if (query[0] == "年龄")
+                    {
+                        try
+                        {
+                            string[] age = query[2].Split('-');
+                            int start = int.Parse(age[0]);
+                            int end = int.Parse(age[1]);
 
+                            roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age > start && pr.Person.Age < end).AsQueryable();
+                                //.Include(r => r.PersonRooms).ThenInclude(pr => pr.Person)
+                                //.Include(r => r.Building).ThenInclude(b => b.Subdivision).ThenInclude(s => s.Community)
+                                //.AsEnumerable()
+                                //.Where(pr => pr.Person.Age > start && pr.Person.Age < end)).AsQueryable();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+                    }
+                }
+                
+                var psdata = roomsWithPersons.ToList();
                 var data = from pr in psdata
                            join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
                            select new
