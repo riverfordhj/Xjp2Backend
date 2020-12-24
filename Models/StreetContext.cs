@@ -63,6 +63,6 @@ namespace Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<RoleUser> RoleUsers { get; set; }
 
-        
+        public DbSet<PersonHouseData> PersonHouseDatas { get; set; }
     }
 }

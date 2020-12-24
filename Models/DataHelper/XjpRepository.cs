@@ -672,7 +672,59 @@ namespace Models.DataHelper
                     };
         }
 
-        //网格员修改指定人员信息
+        //创建一条personHouse
+        public PersonHouseData CreatePersonHouse(string userName, PersonUpdateParamTesting personFields)
+        {
+           return new PersonHouseData
+                    {
+                        PersonId = personFields.PersonId,
+                        Name = personFields.Name,
+                        Phone = personFields.Phone,
+                        Status = personFields.Status,
+                        IsHouseholder = personFields.IsHouseholder == "是" ? true : false,
+                        RelationWithHouseholder = personFields.RelationWithHouseholder,
+                        PopulationCharacter = personFields.PopulationCharacter,
+                        RoomName = personFields.RoomName,
+                        RoomUse = personFields.RoomUse,
+                        Category = personFields.Category,
+                        BuildingName = personFields.BuildingName,
+                        NetGrid = personFields.NetGrid,
+                        CommunityName = personFields.CommunityName,
+                        Editor = userName,
+                        EditTime = DateTime.Now.ToString(),
+                        Operation = personFields.Operation
+                    };
+        }
+        //修改一条personHouse
+        public void UdatePersonHouse(string userName,PersonHouseData targetPersonHouse, PersonUpdateParamTesting personFields)
+        {
+            targetPersonHouse.PersonId = personFields.PersonId;
+            targetPersonHouse.Name = personFields.Name;
+            targetPersonHouse.Phone = personFields.Phone;
+            targetPersonHouse.Status = personFields.Status;
+            targetPersonHouse.IsHouseholder = personFields.IsHouseholder == "是" ? true : false;
+            targetPersonHouse.RelationWithHouseholder = personFields.RelationWithHouseholder;
+            targetPersonHouse.PopulationCharacter = personFields.PopulationCharacter;
+            targetPersonHouse.RoomName = personFields.RoomName;
+            targetPersonHouse.RoomUse = personFields.RoomUse;
+            targetPersonHouse.Category = personFields.Category;
+            targetPersonHouse.BuildingName = personFields.BuildingName;
+            targetPersonHouse.NetGrid = personFields.NetGrid;
+            targetPersonHouse.CommunityName = personFields.CommunityName;
+            targetPersonHouse.Editor = userName;
+            targetPersonHouse.EditTime = DateTime.Now.ToString();
+        }
+        //选中一条personRoom，并修改状态值
+        public void UpdatePersonRoom(PersonUpdateParamTesting personFields)
+        {
+            var personRoom = _context.PersonRooms.SingleOrDefault(pr => pr.PersonId == personFields.PersonId
+                                                                          && pr.Room.Name == personFields.RoomName
+                                                                          && pr.Room.Building.Name == personFields.BuildingName
+                                                                          && pr.Room.Building.NetGrid.Name == personFields.NetGrid
+                                                                          && pr.Room.Building.NetGrid.Community.Name == personFields.CommunityName);
+            personRoom.Status = personFields.Status;
+        }
+        //网格员提交新增、修改、删除指定的人房信息
         public IEnumerable<object> UpdatePersonHouseByNetGrid(string userName, PersonUpdateParamTesting personFields)
         {          
             PersonHouseData targetPersonHouse = _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personFields.PersonId
@@ -681,62 +733,41 @@ namespace Models.DataHelper
                                                                 && phd.NetGrid == personFields.NetGrid
                                                                 && phd.CommunityName == personFields.CommunityName);
 
-            //修改或删除操作是对原有数据进行操作的，设定在对应的personRoom信息条中标明操作状态
-            if (personFields.Operation != "creating")
+            if(targetPersonHouse == null)
             {
-                if(targetPersonHouse == null)
-                {
-                    var personRoom = _context.PersonRooms.SingleOrDefault(pr => pr.PersonId == personFields.PersonId
-                                                                            && pr.Room.Name == personFields.RoomName
-                                                                            && pr.Room.Building.Name == personFields.BuildingName
-                                                                            && pr.Room.Building.NetGrid.Name == personFields.NetGrid
-                                                                            && pr.Room.Building.NetGrid.Community.Name == personFields.CommunityName);
-                    personRoom.Status = personFields.Status;
-
+                targetPersonHouse = CreatePersonHouse(userName, personFields);
+                if (personFields.Operation != "creating"){
+                    //修改或删除操作是对原有数据进行操作的，设定在对应的personRoom信息条中标明操作状态
+                    UpdatePersonRoom(personFields);
                 }
-                else if(targetPersonHouse != null)
-                {
-                    targetPersonHouse.PersonId = personFields.PersonId;
-                    targetPersonHouse.Name = personFields.Name;
-                    targetPersonHouse.Phone = personFields.Phone;
-                    targetPersonHouse.Status = personFields.Status;
-                    targetPersonHouse.IsHouseholder = personFields.IsHouseholder == "是" ? true : false;
-                    targetPersonHouse.PopulationCharacter = personFields.PopulationCharacter;
-                    targetPersonHouse.RoomName = personFields.RoomName;
-                    targetPersonHouse.RoomUse = personFields.RoomUse;
-                    targetPersonHouse.Category = personFields.Category;
-                    targetPersonHouse.BuildingName = personFields.BuildingName;
-                    targetPersonHouse.NetGrid = personFields.NetGrid;
-                    targetPersonHouse.CommunityName = personFields.CommunityName;
-                    targetPersonHouse.Editor = userName;
-                    targetPersonHouse.EditTime = DateTime.Now.ToString();
-                }
-            }
-
-            if (personFields.Operation == "creating" && targetPersonHouse == null)
-            {
-                targetPersonHouse = new PersonHouseData
-                {
-                    PersonId = personFields.PersonId,
-                    Name = personFields.Name,
-                    Phone = personFields.Phone,
-                    Status = personFields.Status,
-                    IsHouseholder = personFields.IsHouseholder == "是" ? true : false,
-                    RelationWithHouseholder = personFields.RelationWithHouseholder,
-                    PopulationCharacter = personFields.PopulationCharacter,
-                    RoomName = personFields.RoomName,
-                    RoomUse = personFields.RoomUse,
-                    Category = personFields.Category,
-                    BuildingName = personFields.BuildingName,
-                    NetGrid = personFields.NetGrid,
-                    CommunityName = personFields.CommunityName,
-                    Editor = userName,
-                    EditTime = DateTime.Now.ToString(),
-                    Operation = personFields.Operation
-                };
                 _context.PersonHouseDatas.Add(targetPersonHouse);
+
             }
-          
+            else
+            {
+                if(targetPersonHouse.Operation == "creating" && personFields.Operation == "updating")
+                {
+                    UdatePersonHouse(userName, targetPersonHouse, personFields);
+                }
+                else if(targetPersonHouse.Operation == "creating" && personFields.Operation == "deleting")
+                {
+                    _context.PersonHouseDatas.Remove(targetPersonHouse);
+                }
+               
+                if(targetPersonHouse.Operation == personFields.Operation)//只存在同为updating或deleting两种可能
+                {
+                    UdatePersonHouse(userName, targetPersonHouse, personFields);
+                    UpdatePersonRoom(personFields);
+                }
+                else if ((targetPersonHouse.Operation == "deleting" && personFields.Operation == "updating") || (targetPersonHouse.Operation == "updating" && personFields.Operation == "deleting"))
+                {
+                    UdatePersonHouse(userName, targetPersonHouse, personFields);
+
+                    targetPersonHouse.Operation = personFields.Operation;//对原有数据进行修改转删除或删除转修改，需改变操作类型。
+
+                    UpdatePersonRoom(personFields);
+                }
+            }          
            
             _context.SaveChanges();
 
@@ -816,6 +847,7 @@ namespace Models.DataHelper
                         IsHouseholder = personHouse.IsHouseholder,
                         RelationWithHouseholder = personHouse.RelationWithHouseholder,
                         PopulationCharacter = personHouse.PopulationCharacter,
+                        Status = null
                     };
                     newPersonRoom.Person = targetPerson;//targetPerson为null时，关联新增的person信息；不为null时，关联该targetPerson
                     newPersonRoom.Room = targetRoom;

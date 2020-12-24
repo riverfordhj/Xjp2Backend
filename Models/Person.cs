@@ -35,12 +35,6 @@ namespace Models
 
         //备注
         public string Note { get; set; }
-        //编辑时间
-        public string EditTime { get; set; }
-        //编辑者
-        public string Editor { get; set; }
-        //状态
-        public string Status { get; set; }
         [NotMapped]
         public int Age
         {
