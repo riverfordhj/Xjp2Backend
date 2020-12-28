@@ -437,7 +437,7 @@ namespace Models.DataHelper
 
         }
 
-        //第一步：前端传来的过滤条件
+        //第一步：前端传来的过滤条件小区、楼栋、房间
         private IQueryable<Room> FilterRooms (List<string[]> queries) 
         {
             var rooms = _context.Rooms.AsQueryable();
@@ -492,6 +492,7 @@ namespace Models.DataHelper
                 return null;
             }
         }
+        //前端传来的姓名、电话、身份证、年龄过滤人
         private IEnumerable<IntermediatePersonRoom> FilterPersons (IEnumerable<IntermediatePersonRoom> roomsWithPersons , List<string[]> queries)
         {
             foreach (var query in queries)
@@ -513,10 +514,17 @@ namespace Models.DataHelper
                     try
                     {
                         string[] age = query[2].Split('-');
-                        int start = int.Parse(age[0]);
-                        int end = int.Parse(age[1]);
+                        //int start = int.Parse(age[0]);
+                        //int end = int.Parse(age[1]);
+                        if (query[1] == "介于")
+                        {
+                            roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age > int.Parse(age[0]) && pr.Person.Age < int.Parse(age[1])).AsQueryable();
+                        }
+                        if (query[1] == "=")
+                        {
+                         roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age == int.Parse(age[0])).AsQueryable();
+                        }
 
-                        roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age > start && pr.Person.Age < end).AsQueryable();
                         //.Include(r => r.PersonRooms).ThenInclude(pr => pr.Person)
                         //.Include(r => r.Building).ThenInclude(b => b.Subdivision).ThenInclude(s => s.Community)
                         //.AsEnumerable()
