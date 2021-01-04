@@ -726,18 +726,18 @@ namespace Models.DataHelper
             personRoom.Status = personFields.Status;
         }
         //网格员提交新增、修改、删除指定的人房信息
-        public IEnumerable<object> UpdatePersonHouseByNetGrid(string userName, PersonUpdateParamTesting personFields)
-        {          
+        public void UpdatePersonHouseByNetGrid(string userName, PersonUpdateParamTesting personFields)
+        {
             PersonHouseData targetPersonHouse = _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personFields.PersonId
                                                                 && phd.RoomName == personFields.RoomName
                                                                 && phd.BuildingName == personFields.BuildingName
                                                                 && phd.NetGrid == personFields.NetGrid
                                                                 && phd.CommunityName == personFields.CommunityName);
 
-            if(targetPersonHouse == null)
+            if (targetPersonHouse == null)
             {
                 targetPersonHouse = CreatePersonHouse(userName, personFields);
-                if (personFields.Operation != "creating"){
+                if (personFields.Operation != "creating") {
                     //修改或删除操作是对原有数据进行操作的，设定在对应的personRoom信息条中标明操作状态
                     UpdatePersonRoom(personFields);
                 }
@@ -746,16 +746,16 @@ namespace Models.DataHelper
             }
             else
             {
-                if(targetPersonHouse.Operation == "creating" && personFields.Operation == "updating")
+                if (targetPersonHouse.Operation == "creating" && personFields.Operation == "updating")
                 {
                     UdatePersonHouse(userName, targetPersonHouse, personFields);
                 }
-                else if(targetPersonHouse.Operation == "creating" && personFields.Operation == "deleting")
+                else if (targetPersonHouse.Operation == "creating" && personFields.Operation == "deleting")
                 {
                     _context.PersonHouseDatas.Remove(targetPersonHouse);
                 }
-               
-                if(targetPersonHouse.Operation == personFields.Operation)//只存在同为updating或deleting两种可能
+
+                if (targetPersonHouse.Operation == personFields.Operation)//只存在同为updating或deleting两种可能
                 {
                     UdatePersonHouse(userName, targetPersonHouse, personFields);
                     UpdatePersonRoom(personFields);
@@ -768,12 +768,12 @@ namespace Models.DataHelper
 
                     UpdatePersonRoom(personFields);
                 }
-            }          
-           
+            }
+
             _context.SaveChanges();
 
-            return GetPersonsByUser(userName);
-                        
+            //return GetPersonsByUser(userName);
+
         }
 
         //选中一条personHouseData数据

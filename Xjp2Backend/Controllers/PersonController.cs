@@ -121,7 +121,25 @@ namespace Xjp2Backend.Controllers
                 return new object[0];//不满足条件，就返回一个空对象数组
             }
 
-            return _repository.UpdatePersonHouseByNetGrid(userName, personFields);
+            _repository.UpdatePersonHouseByNetGrid(userName, personFields);
+
+            return _repository.GetPersonsByUser(userName);
+        }
+
+
+        //网格员修改指定人员信息
+        [HttpPost("[action]")]
+        public void UpdatePersonHouseByNetGrid_void([FromBody] PersonUpdateParamTesting personFields)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+
+            if (roleList[0].Name == "网格员")
+            {
+                _repository.UpdatePersonHouseByNetGrid(userName, personFields);
+            }
         }
 
         //返回指定网格员提交后数据（未审核）
