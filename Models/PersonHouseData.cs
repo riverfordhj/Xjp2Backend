@@ -8,7 +8,7 @@ namespace Models
     public class PersonHouseData
     {
         [Key]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [Required]
         //身份证

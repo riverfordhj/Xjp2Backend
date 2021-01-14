@@ -30,6 +30,7 @@ namespace Xjp2Backend
     {
         private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
         private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(SecretKey));
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         public Startup(IConfiguration configuration)
         {
@@ -165,6 +166,23 @@ namespace Xjp2Backend
 
             #endregion
 
+            //跨域设置
+            #region 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin()
+                                             .AllowAnyMethod()
+                                             .AllowAnyHeader();
+                                      //builder.WithOrigins("https://127.0.0.1:5502")
+                                      //              .AllowCredentials()
+                                      //              .AllowAnyMethod()
+                                      //              .AllowAnyHeader();
+                                  });
+            });
+            #endregion
 
 
             services.AddControllers();
@@ -191,6 +209,9 @@ namespace Xjp2Backend
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);//跨域
+           // app.UseResponseCaching();
 
             app.UseAuthentication();//身份验证
             app.UseAuthorization();

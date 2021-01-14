@@ -10,14 +10,14 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20201221142559_AddBlogCreatedTimestamp")]
-    partial class AddBlogCreatedTimestamp
+    [Migration("20210114034348_updatePersonHouseData")]
+    partial class updatePersonHouseData
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -277,7 +277,7 @@ namespace Models.Migrations
 
             modelBuilder.Entity("Models.PersonHouseData", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -387,7 +387,7 @@ namespace Models.Migrations
                     b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.ToTable("PersonHouseDatas");
                 });

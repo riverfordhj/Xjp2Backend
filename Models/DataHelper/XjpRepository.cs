@@ -554,6 +554,7 @@ namespace Models.DataHelper
                                  from pr in room.PersonRooms
                                  select new
                                  {
+                                    pr.Id,
                                     pr.Person.PersonId,
                                     pr.Person.Name,
                                     pr.Person.Phone,
@@ -572,6 +573,7 @@ namespace Models.DataHelper
                 var personHouseEditInfo = from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "rejected" && phd.Status != "approved" && phd.Operation == "creating" && phd.Editor == userName )
                                           select new
                                           {
+                                              phei.Id,
                                               phei.PersonId,
                                               phei.Name,
                                               phei.Phone,
@@ -607,7 +609,8 @@ namespace Models.DataHelper
         {
             return from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "rejected" && phd.Status != "approved" && phd.Editor == editor)
                    select new
-                   {
+                   { 
+                       phei.Id,
                        phei.PersonId,
                        phei.Name,
                        phei.Phone,
@@ -638,6 +641,7 @@ namespace Models.DataHelper
                 return from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "approved" && phd.CommunityName == communityName)
                         select new
                         {
+                            phei.Id,
                             phei.PersonId,
                             phei.Name,
                             phei.Phone,
@@ -657,6 +661,7 @@ namespace Models.DataHelper
             return from phei in _context.PersonHouseDatas.Where(phd => phd.Status == "approved" || phd.Status == "rejected" || phd.Status == "verified")
                     select new
                     {
+                        phei.Id,
                         phei.PersonId,
                         phei.Name,
                         phei.Phone,
