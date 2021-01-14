@@ -422,7 +422,7 @@ namespace Models.DataHelper
         // 获取所有字段
         public IEnumerable<string> GetFields()
         {
-            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "民族" };
+            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "性别","民族" };
             return fields;
         }
       
@@ -430,8 +430,11 @@ namespace Models.DataHelper
         //高级检索主入口函数
         public IEnumerable<object> GetDataByQuery(List<string[]> queries)
         {
+            //通过小区楼栋房间返回rooms
             IQueryable<Room> rooms = FilterRooms(queries);
+            //获取rooms内所有人
             IEnumerable<IntermediatePersonRoom> data = GetroomsWithPersons(rooms, queries);
+            //根据姓名、电话、身份证、年龄，性别过滤人
             data = FilterPersons(data , queries);
             return GetPersonsByQueryRoom(data);
 
@@ -518,7 +521,7 @@ namespace Models.DataHelper
                         //int end = int.Parse(age[1]);
                         if (query[1] == "介于")
                         {
-                            roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age > int.Parse(age[0]) && pr.Person.Age < int.Parse(age[1])).AsQueryable();
+                            roomsWithPersons = roomsWithPersons.AsEnumerable().Where(pr => pr.Person.Age >= int.Parse(age[0]) && pr.Person.Age <= int.Parse(age[1])).AsQueryable();
                         }
                         if (query[1] == "=")
                         {
@@ -534,7 +537,11 @@ namespace Models.DataHelper
                     {
                         return null;
                     }
-                }    
+                }
+                if (query[0] == "性别")
+                {
+                    roomsWithPersons = roomsWithPersons.Where(pr => pr.Person.Sex == query[2]);
+                }
             }
             return roomsWithPersons;
 
@@ -561,7 +568,7 @@ namespace Models.DataHelper
                                pr.PopulationCharacter,
                                SpecialGroup = psg // 特殊人群信息
                            };
-                return data;
+                return data.Take(1000);
         }          
         #endregion
 

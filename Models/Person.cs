@@ -52,6 +52,30 @@ namespace Models
                 }
             }
         }
+        [NotMapped]
+        public string Sex
+        {
+            get
+            {
+                try
+                {
+                    string sex;
+                    if ( int.Parse(PersonId.Substring(16, 1)) % 2 ==0)
+                    {
+                        sex = "女";
+                    }
+                    else
+                    {
+                        sex = "男";
+                    }
+                    return sex;
+                }
+                catch (Exception e)
+                {
+                    return null;
+                }
+            }
+        }
 
         //导航属性
         public List<PersonRoom> PersonRooms { get; set; }
