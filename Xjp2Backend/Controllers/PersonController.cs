@@ -58,8 +58,9 @@ namespace Xjp2Backend.Controllers
             var userName = claimsIdentity.Name;
             var user = _repository.GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if (roleList[0].Name != "网格员")
+            if (roleName != "网格员")
             {
                 return NotFound();
             }
@@ -75,8 +76,9 @@ namespace Xjp2Backend.Controllers
             var userName = claimsIdentity.Name;
             var user = _repository.GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if (roleList[0].Name != "网格员")
+            if (roleName != "网格员")
             {
                 return NotFound();
             }
@@ -115,8 +117,9 @@ namespace Xjp2Backend.Controllers
             var userName = claimsIdentity.Name;
             var user = _repository.GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if (roleList[0].Name != "网格员")
+            if (roleName != "网格员")
             {
                 return new object[0];//不满足条件，就返回一个空对象数组
             }
@@ -135,8 +138,9 @@ namespace Xjp2Backend.Controllers
             var userName = claimsIdentity.Name;
             var user = _repository.GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if (roleList[0].Name == "网格员")
+            if (roleName == "网格员")
             {
                 _repository.UpdatePersonHouseByNetGrid(userName, personFields);
             }
@@ -160,8 +164,9 @@ namespace Xjp2Backend.Controllers
             var userName = claimsIdentity.Name;
             var user = _repository.GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if (roleList[0].Name == "水岸星城")
+            if (roleName == "社区")
             {
                 _repository.VerifyByCommunity(verifyFileds);
             }

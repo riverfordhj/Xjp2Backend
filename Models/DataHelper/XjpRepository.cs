@@ -471,6 +471,13 @@ namespace Models.DataHelper
             //_context.Entry(user).Collection(u => u.RoleUsers).Load();
             return user;
         }
+
+        //根据alias（社区名称英文首字母缩写）返回社区中文名称
+        public String GetCommunityNameByAlias(string alias)
+        {
+            Community community = _context.Communitys.SingleOrDefault(c => c.Alias == alias);
+            return community.Name;
+        }
         
         //根据user，返回对应的小区
         public IQueryable<object> GetSubdivsionsByUser(string userName)
@@ -480,8 +487,9 @@ namespace Models.DataHelper
 
             var user = GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
-            if(roleList[0].Name == "网格员")
+            if (roleName == "网格员")
             {
                 return (from useRow in _context.Users.Where(u => u.UserName == userName)
                         from grid in useRow.NetGrid
@@ -493,9 +501,10 @@ namespace Models.DataHelper
             
             }
 
-            if (roleList[0].Name == "水岸星城")
+            if (roleName == "社区")
             {
-                return (from comm in _context.Communitys.Where(u => u.Name == "水岸星城")
+                var communityName = GetCommunityNameByAlias(userName);
+                return (from comm in _context.Communitys.Where(u => u.Name == communityName)
                         select new
                         {
                             comm.Subdivisions[0].Id,
@@ -503,11 +512,6 @@ namespace Models.DataHelper
 
                         });
             }
-
-            //if (roleList[0].Name == "Administrator" && roleList[1].Name == "网格员")
-            //{l
-            //    return _context.Subdivisions;
-            //}
 
             return _context.Subdivisions;
         }
@@ -543,9 +547,10 @@ namespace Models.DataHelper
         public IEnumerable<object> GetPersonsByUser(string userName){
             var user = GetUserByName(userName);
             var roleList = user.Roles;
+            var roleName = roleList[0].Name;
 
             //网格
-            if (roleList[0].Name == "网格员")
+            if (roleName == "网格员")
             {
                 var personHouseInfo = from u in _context.Users.Where(u => u.UserName == userName)
                                  from ng in u.NetGrid
@@ -594,9 +599,10 @@ namespace Models.DataHelper
             }
 
             //社区
-            if (roleList[0].Name == "水岸星城")
-            {                                       
-                return SearchPersonHouseInfo("水岸星城", null);
+            if (roleName == "社区")
+            {
+                var communityName = GetCommunityNameByAlias(userName);
+                return SearchPersonHouseInfo(communityName, null);
 
             }
 

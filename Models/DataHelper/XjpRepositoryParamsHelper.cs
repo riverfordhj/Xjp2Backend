@@ -33,13 +33,10 @@ namespace Models.DataHelper
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string CommunityName { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string PopulationCharacter { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string IsHouseholder { get; set; }
 
-        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string RelationWithHouseholder { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
