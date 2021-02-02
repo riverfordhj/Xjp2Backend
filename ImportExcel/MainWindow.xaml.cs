@@ -156,7 +156,7 @@ namespace ImportExcel
 
 
                     //小区
-                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区", ""));
+                    var subdivision = context.Subdivisions.FirstOrDefault(s => s.Name == item[3].Replace("小区", ""));
                     if (subdivision == null)
                     {
                         //CheckValue(item,3);
@@ -255,22 +255,6 @@ namespace ImportExcel
                         // person.CompanyInfo = companyinfo;
                         context.Persons.Add(person);
 
-
-                        //单位信息
-                        //if (item[11] != "")
-                        //{
-                        //    var companyinfo = new CompanyInfo
-                        //    {
-                        //        Name = item[11],
-                        //        Character = item[12],
-                        //        SocialId = item[13],
-                        //        ContactPerson = item[14],
-                        //        PersonId = item[15],
-                        //        Phone = item[16],
-                        //        Area = item[17]
-                        //    };
-                        //    context.CompanyInfos.Add(companyinfo);
-                        //}
                         //特殊人群
 
                         if (item[34] != "")
@@ -540,7 +524,63 @@ namespace ImportExcel
                 tbInfo.Text = err.Message;
             }
         }
+        //导入房间
+        private void ImportRooms(List<string> data)
+        {
+            for (_i = 0; _i < data.Count; _i++)
+            {
+                _currentLine = data[_i];
+                string[] item = _currentLine.Split(',');
 
+                string comName = item[0].Trim().Replace("社区", "");
+                string subName = item[3].Trim().Replace("小区", "");
+
+                string buildingName = item[4].Trim().Replace("栋", "");
+                string unit = item[5].Trim().Replace("单元", "");
+                string roomNO = item[6].Trim();
+                string roomN = unit + "-" + roomNO;
+
+                using (var context = new StreetContext())
+                {
+                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Name == subName && s.Name == buildingName);
+
+                    var importroom = context.Rooms.FirstOrDefault(r => r.Name == roomN && r.Building.Id == building.Id);
+                    if (importroom == null)
+                    {
+                        importroom = new Room
+                        {
+                            Name = roomN,
+                            Category = item[7],
+                            Use = item[8],
+                            Area = item[10],
+                            Other = item[9],
+
+                        };
+                        importroom.Building = building;
+                        context.Rooms.Add(importroom);
+                        context.SaveChanges();
+                    }
+                }
+            }
+            tbInfo.Text = "导入room完成!";
+            tbInfo_err.Text += _errorMessage;
+        }
+
+        private void bn_room_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                List<string> data = ReadExcelData(tbPath.Text, 4);
+                ImportRooms(data);
+
+            }
+            catch (Exception err)
+            {
+                tbInfo.Text = $"{err.Message}{ Environment.NewLine} {_i + 4}, {_currentLine}";
+                //tbInfo.Text = err.Message;
+            }
+        }
+        //数据比对
         private void CheckBuildingsRooms(List<string> data)
         {
             //if (data.Count > 0)
@@ -609,6 +649,8 @@ namespace ImportExcel
                 //tbInfo.Text = err.Message;
             }
         }
+
+       
     }
 }
 

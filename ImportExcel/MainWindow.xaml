@@ -8,7 +8,7 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
         <Button x:Name="bn_Open" Content="打开文件" HorizontalAlignment="Left" Margin="21,19,0,0" VerticalAlignment="Top" Width="71" Height="26" Click="bn_Open_Click" />
-        <TextBox x:Name="tbPath" Margin="192,66,19,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="33" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto"/>
+        <TextBox x:Name="tbPath" Margin="317,66,19,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="33" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto"/>
         <Button x:Name="bn_Add" Content="添加人房数据" HorizontalAlignment="Left" Margin="105,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_Add_Click" />
         <TextBox x:Name="tbInfo" Margin="21,112,222,36" TextWrapping="Wrap" HorizontalContentAlignment="Left" VerticalScrollBarVisibility="Auto" VerticalContentAlignment="Top"/>
         <Button x:Name="bnAddInitData" Content="添加初始数据" HorizontalAlignment="Left" Margin="612,19,0,0" VerticalAlignment="Top" Height="26" Width="88" Click="bnAddInitData_Click" RenderTransformOrigin="0.019,0.48"/>
@@ -23,6 +23,7 @@
         <Button x:Name="bn_AddAlias" Content="小区别名" HorizontalAlignment="Left" Margin="710,19,0,0" VerticalAlignment="Top" Height="26" Width="71" Click="bn_AddAlias_Click" RenderTransformOrigin="1.631,0.668" />
         <Button x:Name="bn_Moni" Content="模拟数据" HorizontalAlignment="Left" Margin="21,66,0,0" VerticalAlignment="Top" Width="71" Height="26" Click="bn_Moni_Click" />
         <Button x:Name="bn_bidui" Content="数据比对" HorizontalAlignment="Left" Margin="105,66,0,0" VerticalAlignment="Top" Width="71" Height="26" Click="bn_bidui_Click" />
+        <Button x:Name="bn_room" Content="空房导入" HorizontalAlignment="Left" Margin="192,66,0,0" VerticalAlignment="Top" Width="71" Height="26" Click="bn_room_Click" />
 
     </Grid>
 </Window>
