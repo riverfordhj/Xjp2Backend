@@ -14,8 +14,23 @@ namespace Models.DataHelper
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string PersonId { get; set; }
         public string Name { get; set; }
+        public string EthnicGroups { get; set; }
         public string Phone { get; set; }
+        public string DomicileAddress { get; set; }
+        public string Company { get; set; }
+        public string PoliticalState { get; set; }
+        public string OrganizationalRelation { get; set; }
+        public string IsOverseasChinese { get; set; }
+        public string MerriedStatus { get; set; }
+        public string Note { get; set; }
         public string Status { get; set; }
+        public string IsHouseholder { get; set; }
+        public string RelationWithHouseholder { get; set; }
+        public string IsOwner { get; set; }
+        public string IsLiveHere { get; set; }
+        public string PopulationCharacter { get; set; }
+        public string LodgingReason { get; set; }
+
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string RoomName { get; set; }
@@ -32,12 +47,6 @@ namespace Models.DataHelper
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string CommunityName { get; set; }
-
-        public string PopulationCharacter { get; set; }
-
-        public string IsHouseholder { get; set; }
-
-        public string RelationWithHouseholder { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Operation { get; set; }
