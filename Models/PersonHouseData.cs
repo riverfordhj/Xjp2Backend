@@ -82,9 +82,15 @@ namespace Models
         public string Status { get; set; }
         //楼栋名称
         public string BuildingName { get; set; }
+        //地址
+        public string Address { get; set; }
+        //小区名
+        public string SubdivisionName { get; set; }
         //网格号
         public string NetGrid { get; set; }
         //社区名
         public string CommunityName { get; set; }
+
+        public string StreetName { get; set; }
     }
 }

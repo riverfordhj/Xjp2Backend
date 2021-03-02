@@ -577,9 +577,15 @@ namespace Models.DataHelper
                        RoomName = room.Name,
                        RoomUse = room.Use,
                        room.Category,
+                       room.Area,
+                       room.Other,
+                       roomNote = room.Note,
+                       SubdivisionName = b.Subdivision.Name,
+                       b.Address,
                        BuildingName = b.Name,
                        NetGrid = ng.Name,
                        CommunityName = ng.Community.Name,
+                       StreetName = ng.Community.Street.Name,
                    };
 
         }
@@ -620,11 +626,15 @@ namespace Models.DataHelper
                                     RoomName = room.Name,
                                     RoomUse = room.Use,
                                     room.Category,
+                                    room.Area,
+                                    room.Other,
+                                    RoomNote = room.Note,
+                                    SubdivisionName = b.Subdivision.Name,
+                                    b.Address,
                                     BuildingName = b.Name,
                                     NetGrid = ng.Name,
                                     CommunityName = ng.Community.Name,
-                                  
-                                    
+                                    StreetName = ng.Community.Street.Name,
                                  };
 
                 var personHouseEditInfo = from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "rejected" && phd.Status != "approved" && phd.Operation == "creating" && phd.Editor == userName )
@@ -652,10 +662,15 @@ namespace Models.DataHelper
                                               phei.RoomName,
                                               phei.RoomUse,
                                               phei.Category,
+                                              phei.Area,
+                                              phei.Other,
+                                              phei.RoomNote,
+                                              phei.SubdivisionName,
+                                              phei.Address,
                                               phei.BuildingName,
                                               phei.NetGrid,
                                               phei.CommunityName,
-                                             
+                                              phei.StreetName
                                           };
 
                      return personHouseInfo.AsEnumerable().Union(personHouseEditInfo.AsEnumerable());
@@ -703,9 +718,15 @@ namespace Models.DataHelper
                        phei.RoomName,
                        phei.RoomUse,
                        phei.Category,
+                       phei.Area,
+                       phei.Other,
+                       phei.RoomNote,
+                       phei.SubdivisionName,
+                       phei.Address,
                        phei.BuildingName,
                        phei.NetGrid,
                        phei.CommunityName,
+                       phei.StreetName,
                        phei.Editor,
                        phei.EditTime,
                        phei.Operation,
@@ -745,9 +766,15 @@ namespace Models.DataHelper
                             phei.RoomName,
                             phei.RoomUse,
                             phei.Category,
+                            phei.Area,
+                            phei.Other,
+                            phei.RoomNote,
+                            phei.SubdivisionName,
+                            phei.Address,
                             phei.BuildingName,
                             phei.NetGrid,
                             phei.CommunityName,
+                            phei.StreetName,
                             phei.Editor,
                             phei.EditTime,
                             phei.Operation,
@@ -779,9 +806,15 @@ namespace Models.DataHelper
                         phei.RoomName,
                         phei.RoomUse,
                         phei.Category,
+                        phei.Area,
+                        phei.Other,
+                        phei.RoomNote,
+                        phei.SubdivisionName,
+                        phei.Address,
                         phei.BuildingName,
                         phei.NetGrid,
                         phei.CommunityName,
+                        phei.StreetName,
                         phei.Editor,
                         phei.EditTime,
                         phei.Operation,

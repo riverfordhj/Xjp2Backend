@@ -23,6 +23,8 @@ namespace Models.DataHelper
         public string IsOverseasChinese { get; set; }
         public string MerriedStatus { get; set; }
         public string Note { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Status { get; set; }
         public string IsHouseholder { get; set; }
         public string RelationWithHouseholder { get; set; }
@@ -47,6 +49,7 @@ namespace Models.DataHelper
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string CommunityName { get; set; }
+        public string StreetName { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Operation { get; set; }

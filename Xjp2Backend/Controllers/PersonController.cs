@@ -124,9 +124,19 @@ namespace Xjp2Backend.Controllers
             return _repository.GetPersonsByUser(userName);
         }
 
-
-        //网格员修改指定人员信息
+        //网格员批处理personHouse数据（新建）
         [HttpPost("[action]")]
+        public void BatchingPersonHouseData(List<PersonUpdateParamTesting> PersonHouseDatas)
+        { 
+            foreach(var personHouseItem in PersonHouseDatas)
+            {
+                UpdatePersonHouseByNetGrid(personHouseItem);
+            }
+        }
+
+
+            //网格员修改指定人员信息
+            [HttpPost("[action]")]
         public void UpdatePersonHouseByNetGrid_void([FromBody] PersonUpdateParamTesting personFields)
         {
             var userName = GetUserName();
