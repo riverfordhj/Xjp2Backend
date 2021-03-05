@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ModelsBuildingEconomy.buildingCompany
 {
-    public class Company_OtherInfo
+    public class CompanyOtherInfo
     {
         [Key]
         public int Id { get; set; }
@@ -17,7 +17,6 @@ namespace ModelsBuildingEconomy.buildingCompany
         public string Area { get; set; }
         public string SettlingTime { get; set; }
         public string MoveAwayTime { get; set; }
-        
         
     }
 }

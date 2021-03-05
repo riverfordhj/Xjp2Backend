@@ -30,6 +30,7 @@ namespace Xjp2Backend
     {
         private const string SecretKey = "iNivDmHLpUA223sqsfhqGbMRdRj1PVkH"; // todo: get this from somewhere secure
         private readonly SymmetricSecurityKey _signingKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(SecretKey));
+        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
         public Startup(IConfiguration configuration)
         {
@@ -145,10 +146,15 @@ namespace Xjp2Backend
             });
 
             #region Authorization
+
+            services.AddMvc();
             services.AddAuthorization(options =>
             {
-                //options.AddPolicy("Administrator", policy => policy.RequireRole("administrator"));
-                options.AddPolicy("Administrator", policy => policy.RequireClaim(ClaimTypes.Role, "administrator"));
+                //options.AddPolicy("Admin", policy => policy.RequireRole("Administrator"));
+                options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Administrator"));
+                options.AddPolicy("SAXC_Grid", policy => policy.RequireClaim(ClaimTypes.Role, "网格员"));
+                options.AddPolicy("SAXC", policy => policy.RequireClaim(ClaimTypes.Role, "水岸星城社区"));
+
                 options.AddPolicy("APIAccess", policy => policy.RequireClaim(ClaimTypes.Role, "api_access"));
 
                 options.AddPolicy("Permission", policy => policy.Requirements.Add(new PermissionRequirement()));
@@ -160,6 +166,23 @@ namespace Xjp2Backend
 
             #endregion
 
+            //跨域设置
+            #region 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: MyAllowSpecificOrigins,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin()
+                                             .AllowAnyMethod()
+                                             .AllowAnyHeader();
+                                      //builder.WithOrigins("https://127.0.0.1:5502")
+                                      //              .AllowCredentials()
+                                      //              .AllowAnyMethod()
+                                      //              .AllowAnyHeader();
+                                  });
+            });
+            #endregion
 
 
             services.AddControllers();
@@ -168,6 +191,11 @@ namespace Xjp2Backend
             //{
             //    options.Filters.Add(new ActionFilter());
             //}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            //services.AddControllers().AddNewtonsoftJson(option =>
+            //    //忽略循环引用
+            //    option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+            //);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -181,6 +209,9 @@ namespace Xjp2Backend
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors(MyAllowSpecificOrigins);//跨域
+           // app.UseResponseCaching();
 
             app.UseAuthentication();//身份验证
             app.UseAuthorization();

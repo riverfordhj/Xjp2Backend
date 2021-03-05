@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 
 namespace Models
 {
     public class PersonHouseData
     {
         [Key]
-        public int ID { get; set; }
+        public int Id { get; set; }
 
         [Required]
         //身份证
@@ -80,17 +80,17 @@ namespace Models
         public string Operation { get; set; }
         //状态
         public string Status { get; set; }
+        //楼栋名称
         public string BuildingName { get; set; }
         //地址
         public string Address { get; set; }
-        //小区
+        //小区名
         public string SubdivisionName { get; set; }
         //网格号
         public string NetGrid { get; set; }
         //社区名
         public string CommunityName { get; set; }
-        //街道
-        public string StreetName { get; set; }
 
+        public string StreetName { get; set; }
     }
 }

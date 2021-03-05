@@ -3,19 +3,21 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ModelsBuildingEconomy.buildingCompany;
 
 namespace ModelsBuildingEconomy.Migrations
 {
     [DbContext(typeof(xjpCompanyContext))]
-    partial class xjpCompanyContextModelSnapshot : ModelSnapshot
+    [Migration("20201031084920_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -79,6 +81,9 @@ namespace ModelsBuildingEconomy.Migrations
                     b.Property<int?>("CompanyOtherInfoId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("CompanyTaxInfoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Contacts")
                         .HasColumnType("nvarchar(max)");
 
@@ -123,6 +128,8 @@ namespace ModelsBuildingEconomy.Migrations
 
                     b.HasIndex("CompanyOtherInfoId");
 
+                    b.HasIndex("CompanyTaxInfoId");
+
                     b.ToTable("Company");
                 });
 
@@ -134,21 +141,6 @@ namespace ModelsBuildingEconomy.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("BuildingName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompletionTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ConstructionSite")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LegalEntity")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("StartTime")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Status")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("StreetName")
@@ -229,9 +221,6 @@ namespace ModelsBuildingEconomy.Migrations
                     b.Property<double>("BusinessTax")
                         .HasColumnType("float");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<double>("CorporateIncomeTax")
                         .HasColumnType("float");
 
@@ -282,8 +271,6 @@ namespace ModelsBuildingEconomy.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
-
                     b.ToTable("CompanyTaxInfo");
                 });
 
@@ -307,13 +294,10 @@ namespace ModelsBuildingEconomy.Migrations
                     b.HasOne("ModelsBuildingEconomy.buildingCompany.CompanyOtherInfo", "CompanyOtherInfo")
                         .WithMany()
                         .HasForeignKey("CompanyOtherInfoId");
-                });
 
-            modelBuilder.Entity("ModelsBuildingEconomy.buildingCompany.CompanyTaxInfo", b =>
-                {
-                    b.HasOne("ModelsBuildingEconomy.buildingCompany.Company", "Company")
-                        .WithMany("CompanyTaxInfo")
-                        .HasForeignKey("CompanyId");
+                    b.HasOne("ModelsBuildingEconomy.buildingCompany.CompanyTaxInfo", "CompanyTaxInfo")
+                        .WithMany()
+                        .HasForeignKey("CompanyTaxInfoId");
                 });
 #pragma warning restore 612, 618
         }

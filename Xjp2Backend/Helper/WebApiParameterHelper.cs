@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 /// </summary>
 namespace Xjp2Backend.Controllers
 {
+
     /// <summary>
     /// 接受前段登录参数
     /// </summary>
@@ -22,7 +23,6 @@ namespace Xjp2Backend.Controllers
         [StringLength(128, MinimumLength = 6, ErrorMessage = "minimum Length of {0} is 6.")]
         public string Password { get; set; }
     }
-
     public class RefreshTokenRequest
     {
         [Required(ErrorMessage = "{0} is required.")]
@@ -32,6 +32,58 @@ namespace Xjp2Backend.Controllers
         public string RefreshToken { get; set; }
     }
 
+    public class CompanyFieldsParameter
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BuildingName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string CompanyName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Contacts { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Phone { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BusinessDirection { get; set; }
+    }
+
+    public class BuildingFloor
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BuildingName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Floor { get; set; }
+
+    }
+
+
+    public class BuildingStatus
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BuildingName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string status { get; set; }
+    }
+
+
+    public class PersonUpdateParam
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string PersonId { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string PhoneNum { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Status { get; set; }
+    }
+
+ 
     public class PersonInRoomParameter
     {
         [Required(ErrorMessage = "{0} 不能为空！")]

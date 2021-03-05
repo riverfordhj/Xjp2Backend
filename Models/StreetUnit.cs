@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 
 namespace Models
 {
@@ -134,5 +136,17 @@ namespace Models
         //导航属性
         public List<PersonRoom> PersonRooms { get; set; }
         public Building Building { get; set; }
+
+        [NotMapped]
+        public List<Person> Persons
+        {
+            get
+            {
+                if (PersonRooms != null)
+                    return PersonRooms.Select(item => item.Person).ToList();
+                else
+                    return null;
+            }
+        }
     }
 }

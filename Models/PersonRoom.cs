@@ -25,7 +25,6 @@ namespace Models
         public string PopulationCharacter { get; set; }
         //寄住原因
         public string LodgingReason { get; set; }
-        //状态
         public string Status { get; set; }
 
         //关联属性

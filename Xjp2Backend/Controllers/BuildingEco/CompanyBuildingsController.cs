@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ModelsBuildingEconomy.buildingCompany;
+using ModelsBuildingEconomy.DataHelper;
 
 namespace Xjp2Backend.Controllers
 {
@@ -14,10 +15,11 @@ namespace Xjp2Backend.Controllers
     public class CompanyBuildingsController : ControllerBase
     {
         private readonly xjpCompanyContext _context;
-
+        private readonly companyRepository _repository;
         public CompanyBuildingsController(xjpCompanyContext context)
         {
             _context = context;// new xjpCompanyContext();
+            _repository = new companyRepository(_context);
         }
 
         // GET: api/CompanyBuildings
@@ -39,6 +41,37 @@ namespace Xjp2Backend.Controllers
             }
 
             return companyBuilding;
+        }
+
+        // GET: api/CompanyBuildings/GetBuildingInfoByStatus
+        [HttpGet("[action]")]
+        public async Task<ActionResult<object>> GetBuildingInfoByStatus(string status)
+        {
+            var companyBuildings = await _repository.GetBuildingInfoByStatus(status).ToListAsync();
+
+            if (companyBuildings == null)
+            {
+                return NotFound();
+            }
+
+            return companyBuildings;
+        }
+
+        // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
+        {
+            return await _repository.GetInfoByBuildingAndFloor(buildingName, floor).ToListAsync();
+        }
+
+        //GET: api/CompanyBuildings/GetFloorInfoByBuilding
+        [HttpGet("[action]/{id}")]
+        public async Task<IEnumerable<Object>> GetFloorInfoByBuilding(int id)
+        {
+            var info = _repository.GetFloorsByBuilding(id);
+
+            return await info.ToListAsync();
+
         }
 
         // PUT: api/CompanyBuildings/5
@@ -71,6 +104,18 @@ namespace Xjp2Backend.Controllers
             }
 
             return NoContent();
+        }
+
+        // POST: api/CompanyBuildings/UpdateBuildingStatus
+        [HttpPost("[action]")]
+        public async Task<IEnumerable<CompanyBuilding>> UpdateBuildingStatus([FromBody] BuildingStatus BS)
+        {
+            var targetBuilding = _context.CompanyBuilding.SingleOrDefault(cd => cd.BuildingName == BS.BuildingName);
+            targetBuilding.Status = BS.status;
+
+            await _context.SaveChangesAsync();
+            return _context.CompanyBuilding;
+
         }
 
         // POST: api/CompanyBuildings

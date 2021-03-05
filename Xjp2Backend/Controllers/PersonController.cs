@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,12 +31,50 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
-        // GET: api/GetSubdivsions
+        // GET: api/Person/GetSubdivsions
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<Subdivision>>> GetSubdivsions()
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivsions()
         {
             return await _context.Subdivisions.ToListAsync();
-                //ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        [Authorize]
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivsionsByUser()
+        {
+            var userName = GetUserName();
+            return await _repository.GetSubdivsionsByUser(userName).ToListAsync();
+        }
+
+        //GET: api/Person/GetBuildingsByNetGrid
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetBuildingsByNetGrid()
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+
+            if (roleName != "网格员")
+            {
+                return NotFound();
+            }
+
+            return await _repository.GetBuildingsByNetGrid(userName).ToListAsync();
+
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName)
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+
+            if (roleName != "网格员")
+            {
+                return NotFound();
+            }
+            return await _repository.GetRoomsByBuilding(userName, buildingName).ToListAsync();
         }
 
         // GET: api/GetBuildings/1
@@ -51,6 +91,112 @@ namespace Xjp2Backend.Controllers
             return await _context.Persons.ToListAsync();
         }
 
+        // GET: api/Person/GetPersonsByUser
+        [HttpGet("[action]")]
+        public IEnumerable<object> GetPersonsByUser()
+        {
+            var userName = GetUserName();
+            return  _repository.GetPersonsByUser(userName);
+        }
+
+        //[HttpPost("[action]")]
+        //public IEnumerable<object> GetPersonRoomsByUser_WithBuinldingAndRoom([FromBody])
+        //{
+        //    var userName = GetUserName();
+        //    return _repository.GetPersonRoomsByUser_WithBuinldingAndRoom(userName,buildingName, roomName)
+        //}
+
+       //网格员修改指定人员信息
+       [HttpPost("[action]")]
+        public IEnumerable<object> UpdatePersonHouseByNetGrid([FromBody] PersonUpdateParamTesting personFields)
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+
+            if (roleName != "网格员")
+            {
+                return new object[0];//不满足条件，就返回一个空对象数组
+            }
+
+            _repository.UpdatePersonHouseByNetGrid(userName, personFields);
+
+            return _repository.GetPersonsByUser(userName);
+        }
+
+        //网格员批处理personHouse数据（新建）
+        [HttpPost("[action]")]
+        public void BatchingPersonHouseData(List<PersonUpdateParamTesting> PersonHouseDatas)
+        { 
+            foreach(var personHouseItem in PersonHouseDatas)
+            {
+                UpdatePersonHouseByNetGrid(personHouseItem);
+            }
+        }
+
+
+            //网格员修改指定人员信息
+            [HttpPost("[action]")]
+        public void UpdatePersonHouseByNetGrid_void([FromBody] PersonUpdateParamTesting personFields)
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+
+            if (roleName == "网格员")
+            {
+                _repository.UpdatePersonHouseByNetGrid(userName, personFields);
+            }
+        }
+
+        //返回指定网格员提交后数据（未审核）
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> SearchPersonHouseByNetGrid()
+        {
+            var userName = GetUserName();
+            return await _repository.SearchPersonHouseByNetGrid(userName).ToListAsync();
+        }
+
+        //社区审核（确认）网格员的修改
+        [HttpPost("[action]")]
+        public void VerifyByCommunity([FromBody] VerifyAndConfirmParam verifyFileds)
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+
+            if (roleName == "社区")
+            {
+                _repository.VerifyByCommunity(verifyFileds);
+            }
+            
+        }
+
+        //街道批准社区的审核
+        [HttpPost("[action]")]
+        public IEnumerable<object> ConfirmByAdmin([FromBody] VerifyAndConfirmParam confirmFields)
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+
+            if (roleList[0].Name != "Administrator" || roleList[1].Name != "网格员")
+            {
+                return new object[0];//不满足条件，就返回一个空对象数组
+            }
+
+           return  _repository.ConfirmByAdmin(confirmFields, userName);
+        }
+
+        //返回人房数据的历史编辑数据
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetPersonHouseHistoryInfo()
+        {
+            //var claimsIdentity = User.Identity as ClaimsIdentity;
+            //var userName = claimsIdentity.Name;
+
+            return await _repository.PersonHouseHistoryInfo().ToListAsync();
+        }
+
         //获取特殊群体，吸毒、信访人员的信息
         // GET: api/SpecialGroups
         [HttpGet("[action]")]
@@ -60,11 +206,19 @@ namespace Xjp2Backend.Controllers
         }
 
         //通过楼栋查找人
-        // GET: api/GetPersonsByBuilding/1
+        // GET: api/api/Person/GetPersonsByBuilding_ZH/1
         [HttpGet("[action]/{id}")]
         public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
         {
             return _repository.GetPersonsByBuilding(id);
+        }
+
+        //通过楼栋查找人（返回中文数据）
+        // GET: api/GetPersonsByBuilding_ZH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByBuilding_ZH(int id)//Person
+        {
+            return _repository.GetPersonsByBuilding_ZH(id);
         }
 
         //通过小区查找人
@@ -114,7 +268,7 @@ namespace Xjp2Backend.Controllers
                 return NotFound();
         }
 
-        // GET: api/People/5
+        // GET: api/Person/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Person>> GetPerson(int id)
         {
@@ -126,6 +280,20 @@ namespace Xjp2Backend.Controllers
             }
 
             return person;
+        }
+
+        // GET: api/GetRoomByBuilding/5
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoomByBuilding(int id)
+        {
+            var rooms = await _context.Rooms.Where(r => r.Building.Id == id).ToListAsync();
+
+            if (rooms == null)
+            {
+                return NotFound();
+            }
+
+            return rooms;
         }
 
         // PUT: api/People/5
@@ -192,5 +360,26 @@ namespace Xjp2Backend.Controllers
         {
             return _context.Persons.Any(e => e.Id == id);
         }
+
+        //解析Token，返回userName
+        private string GetUserName()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userName = claimsIdentity.Name;
+            return userName;
+        }
+        //根据userName，返回对应的RoleList对象
+        private List<Role> GetRolesList(string userName)
+        {
+            var user = _repository.GetUserByName(userName);
+            var roleList = user.Roles;
+            return  roleList;
+        }
+
+        private string GetFirstRoleName(List<Role> roleList)
+        {
+            return roleList[0].Name;
+        }
+
     }
 }

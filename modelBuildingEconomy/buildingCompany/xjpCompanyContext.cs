@@ -34,7 +34,9 @@ namespace ModelsBuildingEconomy.buildingCompany
         public DbSet<Company> Company { get; set; }
 
         public DbSet<CompanyEconomy> CompanyEconomy { get; set; }
-        public DbSet<Company_OtherInfo> Company_OtherInfo { get; set; }
+        public DbSet<CompanyOtherInfo> CompanyOtherInfo { get; set; }
+        public DbSet<BuildingFloor> BuildingFloor { get; set; }
+        public DbSet<CompanyTaxInfo> CompanyTaxInfo { get; set; }
 
     }
 }
