@@ -87,7 +87,7 @@ namespace Xjp2Backend.Controllers
     public class PersonInRoomParameter
     {
         [Required(ErrorMessage = "{0} 不能为空！")]
-        public string SubdivisionName { get; set; }
+        public string AddressName { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空！")]
         public string BuildingName { get; set; }

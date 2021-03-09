@@ -9,6 +9,7 @@ namespace Models.DataHelper
         public int    RoomId;
         public string RoomNO;
         public string BulidingName;
+        public string BulidingAddress;
         public string SubdivsionName;
         public string CommunityName;
         public string PersonId;

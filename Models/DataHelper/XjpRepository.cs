@@ -57,7 +57,22 @@ namespace Models.DataHelper
         #region 社区
         public Community GetCommunity(string name)
         {
-            return _context.Communitys.Where(item => item.Name == name).FirstOrDefault();
+            return _context.Communitys.Where(item => item.Name == name || item.Alias.Contains(name)).FirstOrDefault();
+        }
+        #endregion
+
+
+        #region 网格
+        public IQueryable<NetGrid> GetNetGridInCommunity(int id)
+        {
+            return _context.NetGrids.Where(item => item.Community != null && item.Community.Id == id);
+        }
+        #endregion
+
+        #region building by网格
+        public IQueryable<Building> GetBuildingInNetGrid(int netid)
+        {
+            return _context.Buildings.Where(item => item.NetGrid != null && item.NetGrid.Id == netid);
         }
         #endregion
 
@@ -67,6 +82,7 @@ namespace Models.DataHelper
             return _context.Subdivisions.Where(item => item.Name == name || item.Alias.Contains(name)).FirstOrDefault();
         }
         #endregion
+
 
         #region building
         //public Building GetBuildingInCommunity(string commnunityName, string name)
@@ -88,7 +104,7 @@ namespace Models.DataHelper
             else
                 return null;
         }
-       
+
 
 
         /// <summary>
@@ -138,6 +154,7 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingName,
                                            SubdivsionName = room.Building.Subdivision.Name,
                                            CommunityName = room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
@@ -169,6 +186,7 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -246,21 +264,22 @@ namespace Models.DataHelper
 
         ///<summary>
         ///
-        /// 根据小区获得人员信息表
+        /// 根据网格获得人员信息表
         /// 
         ///</summary>
-        public IEnumerable<object> GetPersonsBySubdivision(int id)
+        public IEnumerable<object> GetPersonsByNetGrid(int id)
         {
             try
             {
                 //根据 room - person 数据
-                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id)
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.NetGrid.Id == id)
                                        from pr in room.PersonRooms
                                        select new
                                        {
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
                                            CommunityName = pr.Room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
@@ -284,6 +303,7 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -320,6 +340,7 @@ namespace Models.DataHelper
                                            RoomId = pr.Room.Id,
                                            RoomNO = pr.Room.Name,
                                            BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = pr.Room.Building.Address,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
                                            SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
                                            CommunityName = pr.Room.Building.Subdivision.Community.Name,
@@ -349,6 +370,7 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.Person,
                                pr.IsOwner,
                                pr.IsHouseholder,
@@ -385,6 +407,7 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = room.Building.Subdivision.Name,
                                            CommunityName = room.Building.Subdivision.Community.Name,
                                            pr.PersonId,
@@ -408,6 +431,7 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -441,15 +465,15 @@ namespace Models.DataHelper
         }
 
         /// <summary>
-        /// 通过社区名、楼栋名、房号，获取住房人信息
+        /// 通楼栋地址 、名、房号，获取住房人信息
         /// </summary>
         /// <param name="commnunityName"></param>
         /// <param name="buidlingName"></param>
         /// <param name="roomNO"></param>
         /// <returns></returns>
-        public IQueryable<Person> GetPersonsInRoom(string subdivisionName, string buidlingName, string roomNO)
+        public IQueryable<Person> GetPersonsInRoom(string addressName, string buidlingName, string roomNO)
         {
-            Room room = GetRoom(subdivisionName, buidlingName, roomNO);
+            Room room = _context.Rooms.SingleOrDefault(item => item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
 
             if (room != null)
             {
@@ -1146,6 +1170,7 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = room.Building.Subdivision.Name,
                                            CommunityName = room.Building.Subdivision.Community.Name,
                                            PersonId = pr.PersonId,
@@ -1229,6 +1254,7 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
