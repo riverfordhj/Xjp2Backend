@@ -168,7 +168,7 @@ namespace ImportExcel
                     //楼栋
 
                     //var building = netGrid.Buildings.SingleOrDefault(s => s.Name == item[4]);
-                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Id == subdivision.Id && s.Name == item[4].Replace("栋", ""));
+                    var building = context.Buildings.FirstOrDefault(s => s.NetGrid.Id == netGrid.Id && s.Address == item[2] && s.Name == item[4].Replace("栋", ""));
                     if (building == null)
                     {
                         building = new Building
@@ -313,26 +313,31 @@ namespace ImportExcel
                             context.OtherInfos.Add(otherInfos);
                         }
                     }
-                    //personroom 人房信息
-                    var personHouse = new PersonRoom
-                    {
-                        PersonId = item[20],
-                        IsHouseholder = (item[23] == "是"),
-                        RelationWithHouseholder = item[24],
-                        IsOwner = (item[25] == "是"),
-                        IsLiveHere = (item[26] == "是"),
-                        PopulationCharacter = item[32],
-                        LodgingReason = item[33]
-                    };
-
-                    personHouse.Person = person;
-                    personHouse.Room = room;
-                    context.PersonRooms.Add(personHouse);
+                    //personroom 人房信息  如果同一个身份证同一个房间号视为重复
+                    //if (context.PersonRooms.SingleOrDefault(r => r.PersonId == person.PersonId  && r.Room.Name !== roomName))
+                    //{
 
 
+                        var personHouse = new PersonRoom
+                        {
+                            PersonId = item[20],
+                            IsHouseholder = (item[23] == "是"),
+                            RelationWithHouseholder = item[24],
+                            IsOwner = (item[25] == "是"),
+                            IsLiveHere = (item[26] == "是"),
+                            PopulationCharacter = item[32],
+                            LodgingReason = item[33]
+                        };
 
-                    context.SaveChanges();
-                    _preItem = item;
+                        personHouse.Person = person;
+                        personHouse.Room = room;
+                        context.PersonRooms.Add(personHouse);
+
+
+
+                        context.SaveChanges();
+                        _preItem = item;
+                   // }
                 }
             }
             tbInfo.Text = "Add personroomdata OK!";
@@ -533,8 +538,8 @@ namespace ImportExcel
                 string[] item = _currentLine.Split(',');
 
                 string comName = item[0].Trim().Replace("社区", "");
-                string subName = item[3].Trim().Replace("小区", "");
-
+                //string subName = item[3].Trim().Replace("小区", "");
+                string adressName = item[2].Trim();
                 string buildingName = item[4].Trim().Replace("栋", "");
                 string unit = item[5].Trim().Replace("单元", "");
                 string roomNO = item[6].Trim();
@@ -542,7 +547,7 @@ namespace ImportExcel
 
                 using (var context = new StreetContext())
                 {
-                    var building = context.Buildings.SingleOrDefault(s => s.Subdivision.Name == subName && s.Name == buildingName);
+                    var building = context.Buildings.SingleOrDefault(s => s.Address == adressName && s.Name == buildingName);
 
                     var importroom = context.Rooms.FirstOrDefault(r => r.Name == roomN && r.Building.Id == building.Id);
                     if (importroom == null)
