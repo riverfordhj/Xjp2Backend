@@ -135,8 +135,8 @@ namespace Xjp2Backend.Controllers
         }
 
 
-            //网格员修改指定人员信息
-            [HttpPost("[action]")]
+        //网格员修改指定人员信息
+        [HttpPost("[action]")]
         public void UpdatePersonHouseByNetGrid_void([FromBody] PersonUpdateParamTesting personFields)
         {
             var userName = GetUserName();
