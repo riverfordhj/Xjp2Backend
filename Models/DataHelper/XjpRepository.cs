@@ -717,7 +717,7 @@ namespace Models.DataHelper
         //返回指定网格员编辑的数据
         public IQueryable<object> SearchPersonHouseByNetGrid(string editor)
         {
-            return from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "rejected" && phd.Status != "approved" && phd.Editor == editor)
+            return from phei in _context.PersonHouseDatas.Where(phd => phd.Status != "approved" && phd.Editor == editor)
                    select new
                    {
                        phei.Id,
@@ -949,7 +949,7 @@ namespace Models.DataHelper
                     _context.PersonHouseDatas.Remove(targetPersonHouse);
                 }
 
-                if (targetPersonHouse.Operation == personFields.Operation)//只存在同为updating或deleting两种可能
+                if (targetPersonHouse.Operation == personFields.Operation && personFields.Operation != "creating")//只允许同为updating或deleting两种可能
                 {
                     UpdatePersonHouse(userName, targetPersonHouse, personFields);
                     UpdatePersonRoomStatus(personFields);
