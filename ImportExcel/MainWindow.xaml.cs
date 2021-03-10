@@ -448,19 +448,16 @@ namespace ImportExcel
                 string[] item = _currentLine.Split(',');
                 using (var context = new StreetContext())
                 {
-                    string roomName = $"{item[9]}-{item[10]}";
-                    //水岸星城坐标导入
-                    //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Alias == item[6] && r.Name == roomName);
+                    string roomName = $"{item[7]}-{item[8]}";
                     //                经纬度坐标                                  //社区name——小区alias——楼栋id——房间号
-                    var room1 = context.Rooms.FirstOrDefault(r => r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
-                    //var room1 = context.Rooms.SingleOrDefault(r => r.Building.Subdivision.Community.Name == item[4].Replace("社区", "") && r.Building.Subdivision.Alias.Contains(item[7]) && r.Building.Name == item[8] && r.Name == roomName);
+                    var room1 = context.Rooms.FirstOrDefault(r => r.Building.Address== item[4] && r.Building.Name == item[6] && r.Name == roomName);              
                     if (room1 != null)
                     {
                         //经纬度
-                        room1.Longitude = Convert.ToDouble(item[11]);
-                        room1.Latitude = Convert.ToDouble(item[12]);
+                        room1.Longitude = Convert.ToDouble(item[9]);
+                        room1.Latitude = Convert.ToDouble(item[10]);
                         //楼高
-                        double h = (Convert.ToDouble(item[2]) + Convert.ToDouble(item[3]) / 2);
+                        double h = (Convert.ToDouble(item[0]) + Convert.ToDouble(item[1]) / 2);
                         room1.Height = Math.Round(h, 2);
                     }
                     context.SaveChanges();
