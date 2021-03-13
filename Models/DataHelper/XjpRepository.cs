@@ -156,7 +156,7 @@ namespace Models.DataHelper
                                            BulidingName = room.Building.Name,
                                            BulidingAddress = room.Building.Address, // pr.BulidingName,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -165,16 +165,7 @@ namespace Models.DataHelper
                                            pr.RelationWithHouseholder,
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
-                                       };
-
-                //组连接，附加特殊人群信息
-                //var ps = from p in _context.Persons
-                //         where p.PersonId == "35220119860918511X"
-                //         select new
-                //        {
-                //            p.PersonId,
-                //            p.Name
-                //        };
+                                       };              
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
@@ -194,8 +185,9 @@ namespace Models.DataHelper
                                pr.IsLiveHere,
                                pr.RelationWithHouseholder,
                                pr.LodgingReason,
-                               pr.PopulationCharacter,
-                               SpecialGroup = psg // 特殊人群信息
+                               pr.PopulationCharacter,                             
+                               SpecialGroup = psg, // 特殊人群信息
+                               //psg.Type,
                            };
 
                 //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
@@ -224,7 +216,7 @@ namespace Models.DataHelper
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -281,7 +273,7 @@ namespace Models.DataHelper
                                            BulidingName = pr.Room.Building.Name,
                                            BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
-                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -343,7 +335,7 @@ namespace Models.DataHelper
                                            BulidingAddress = pr.Room.Building.Address,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
                                            SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
-                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
                                            // person.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -409,7 +401,7 @@ namespace Models.DataHelper
                                            BulidingName = room.Building.Name,
                                            BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -422,8 +414,8 @@ namespace Models.DataHelper
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
-                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
-                           //where pr.PersonId = sg.PersonId
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId  //into psg // 根据身份证关联
+                           //where pr.PersonId = sg.PersonId join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId
                            select new
                            {
                                pr.RoomId,
@@ -439,8 +431,8 @@ namespace Models.DataHelper
                                pr.IsLiveHere,
                                pr.RelationWithHouseholder,
                                pr.LodgingReason,
-                               pr.PopulationCharacter,
-                               sg.Type,
+                               pr.PopulationCharacter, 
+                               sg.Type
                                //SpecialGroup = psg // 特殊人群信息
 
                            };
@@ -1172,7 +1164,7 @@ namespace Models.DataHelper
                                            BulidingName = room.Building.Name,
                                            BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
                                            PersonId = pr.PersonId,
                                            Age = pr.Person.Age,
                                            Person = pr.Person,

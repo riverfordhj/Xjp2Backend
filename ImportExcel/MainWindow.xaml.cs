@@ -314,11 +314,10 @@ namespace ImportExcel
                         }
                     }
                     //personroom 人房信息  如果同一个身份证同一个房间号视为重复
-                    //if (context.PersonRooms.SingleOrDefault(r => r.PersonId == person.PersonId  && r.Room.Name !== roomName))
-                    //{
-
-
-                        var personHouse = new PersonRoom
+                    var personHouse = context.PersonRooms.SingleOrDefault(r => r.PersonId == person.PersonId && r.Room.Name == roomName);
+                    if(personHouse == null)
+                    {
+                         personHouse = new PersonRoom
                         {
                             PersonId = item[20],
                             IsHouseholder = (item[23] == "是"),
@@ -337,7 +336,7 @@ namespace ImportExcel
 
                         context.SaveChanges();
                         _preItem = item;
-                   // }
+                    }
                 }
             }
             tbInfo.Text = "Add personroomdata OK!";
