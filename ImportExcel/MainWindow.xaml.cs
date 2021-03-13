@@ -156,12 +156,13 @@ namespace ImportExcel
 
 
                     //小区
-                    var subdivision = context.Subdivisions.FirstOrDefault(s => s.Name == item[3].Replace("小区", ""));
+                    var subdivision = context.Subdivisions.SingleOrDefault(s => s.Name == item[3].Replace("小区", ""));
                     if (subdivision == null)
                     {
                         //CheckValue(item,3);
                         subdivision = new Subdivision { Name = item[3].Replace("小区", "") };
                         subdivision.Street = street;
+                        subdivision.Community = community;
                         context.Subdivisions.Add(subdivision);
                     }
 

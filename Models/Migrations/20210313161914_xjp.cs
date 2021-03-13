@@ -57,7 +57,7 @@ namespace Models.Migrations
                 name: "PersonHouseDatas",
                 columns: table => new
                 {
-                    ID = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<string>(nullable: false),
                     Name = table.Column<string>(nullable: false),
@@ -99,7 +99,7 @@ namespace Models.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PersonHouseDatas", x => x.ID);
+                    table.PrimaryKey("PK_PersonHouseDatas", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
