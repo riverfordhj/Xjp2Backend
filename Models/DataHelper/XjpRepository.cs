@@ -1109,7 +1109,7 @@ namespace Models.DataHelper
         // 获取所有字段
         public IEnumerable<string> GetFields()
         {
-            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "性别","民族" };
+            String[] fields = { "社区", "网格","楼栋", "房间", "姓名", "电话", "身份证", "年龄", "性别","民族" };
             return fields;
         }
       
@@ -1133,9 +1133,13 @@ namespace Models.DataHelper
             var rooms = _context.Rooms.AsQueryable();
             foreach (var query in queries)
             {
-                if (query[0] == "小区")
+                if (query[0] == "社区")
                 {
-                    rooms = rooms.Where(r => r.Building.Subdivision.Name.Contains(query[2]));
+                    rooms = rooms.Where(r => r.Building.NetGrid.Community.Name.Contains(query[2]));
+                }
+                if (query[0] == "网格")
+                {
+                    rooms = rooms.Where(r => r.Building.NetGrid.Name.Contains(query[2]));
                 }
                 if (query[0] == "楼栋")
                 {
