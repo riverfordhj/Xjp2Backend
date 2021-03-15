@@ -62,11 +62,11 @@ namespace Xjp2Backend.Controllers
 
         //通过小区查找人
         // GET: api/GetPersonsBySubdivision/1
-        //[HttpGet("[action]/{id}")]
-        //public IEnumerable<Object> GetPersonsBySubdivision(int id)//Person
-        //{
-        //    return _repository.GetPersonsBySubdivision(id);
-        //}
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsBySubdivision(int id)//Person
+        {
+            return _repository.GetPersonsBySubdivision(id);
+        }
 
         //通过楼栋查找人
         // GET: api/api/Person/GetPersonsByBuilding_ZH/1

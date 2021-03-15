@@ -316,6 +316,68 @@ namespace Models.DataHelper
 
         }
 
+        ///<summary>
+        ///
+        /// 根据楼栋获得人员信息表
+        /// 
+        ///</summary>
+        public IEnumerable<object> GetPersonsBySubdivision(int id)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id)
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.BulidingAddress,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
         #region 姓名身份证号电话搜索
         ///<summery>
         ///通过姓名身份证号电话搜索

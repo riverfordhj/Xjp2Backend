@@ -174,7 +174,7 @@ namespace Xjp2Backend
                                   builder =>
                                   {
                                       builder.AllowAnyOrigin()
-                                             .AllowAnyMethod()
+                                             .WithMethods("PUT", "DELETE", "GET", "POST")
                                              .AllowAnyHeader();
                                       //builder.WithOrigins("https://127.0.0.1:5502")
                                       //              .AllowCredentials()
