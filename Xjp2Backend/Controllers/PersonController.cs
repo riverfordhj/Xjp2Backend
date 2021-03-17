@@ -287,7 +287,7 @@ namespace Xjp2Backend.Controllers
         }
 
 
-
+        //通过地址楼栋房间号获取该房间的所有人员信息
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)
         {
@@ -297,6 +297,19 @@ namespace Xjp2Backend.Controllers
             else
                 return NotFound();
         }
+        //通过地址楼栋房间号获取roomid
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoomId([FromBody] PersonInRoomParameter para)
+        {
+            var room = await _context.Rooms.Where(item => item.Building.Address == para.AddressName && item.Building.Name == para.BuildingName && item.Name == para.RoomNO).ToListAsync();
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            return room;
+        }
+ 
 
         // GET: api/Person/5
         [HttpGet("{id}")]
