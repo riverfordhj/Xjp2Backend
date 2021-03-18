@@ -250,6 +250,14 @@ namespace Xjp2Backend.Controllers
             return _repository.GetSpecialGroups();
         }
 
+        //通过网格查找人（返回中文数据）
+        // GET: api/GetPersonsByNetGrid_ZH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByNetGrid_ZH(int id)//Person
+        {
+            return _repository.GetPersonsByNetGrid_ZH(id);
+        }
+
         //通过楼栋查找人（返回中文数据）
         // GET: api/GetPersonsByBuilding_ZH/1
         [HttpGet("[action]/{id}")]
