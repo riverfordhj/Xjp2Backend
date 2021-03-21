@@ -525,7 +525,65 @@ namespace Models.DataHelper
 
         }
         #endregion
+        //获取特殊人群的位置信息信息(中文)
+        public IEnumerable<object> GetSpecialPersonLoction_ZH()
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           log = room.Longitude,
+                                           lat = room.Latitude,
+                                           floor = room.Name.Substring(2,1),
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
 
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
+                           select new
+                           {
+                               姓名 = pr.Person.Name,
+                               性别 = pr.sex,
+                               联系电话 = pr.Person.Phone,
+                               户籍地 = pr.Person.DomicileAddress,
+                               居住地址 = pr.BulidingName + '-' +pr.RoomNO,
+                               身份证号码 = pr.PersonId,
+                               经度 = pr.log,
+                               纬度 = pr.lat,
+                               楼层 = pr.floor,
+                               年龄 = pr.age,
+                               社区名 = pr.CommunityName,
+                               小区名 = pr.SubdivsionName,
+                               类型 = sg.Type,                       
+                           };
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
         /// <summary>
         /// 获取特殊人群
         /// </summary>

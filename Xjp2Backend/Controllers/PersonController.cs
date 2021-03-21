@@ -250,6 +250,14 @@ namespace Xjp2Backend.Controllers
             return _repository.GetSpecialGroups();
         }
 
+        //获取特殊群体，吸毒、信访人员的位置信息（返回中文数据）
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public IEnumerable<Object> GetSpecialPersonLoction_ZH()
+        {
+            return _repository.GetSpecialPersonLoction_ZH();
+        }
+
         //通过网格查找人（返回中文数据）
         // GET: api/GetPersonsByNetGrid_ZH/1
         [HttpGet("[action]/{id}")]
