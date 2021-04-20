@@ -362,6 +362,7 @@ namespace Xjp2Backend.Controllers
         }
 
         //解析Token，返回userName
+
         private string GetUserName()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;

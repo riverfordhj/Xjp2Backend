@@ -8,75 +8,58 @@ using Microsoft.AspNetCore.Mvc;
 namespace Xjp2Backend.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]//身份验证通过才能访问
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        [HttpGet("[action]")]
-        public ActionResult<IEnumerable<string>> GetTestValue()
-        {
-            return new string[] { "TestValue" };
-        }
-        [HttpGet("[action]")]
-        [Authorize(Policy = "APIAccess")]
-        public ActionResult<IEnumerable<string>> GetValueByGuestPolicy()
-        {
-            return new string[] { "use policy = APIAccess" };
-        }
-
+        //同属于策略“Admin”的成员才能访问
         [HttpGet("[action]")]
         [Authorize(Policy = "Admin")]
         public ActionResult<IEnumerable<string>> GetValueByAdminPolicy()
         {
-            return new string[] { "use policy = Administrator" };
+            return new string[] { "use policy = Admin" };
         }
-
+        //同属于角色“Administrator”的成员才能访问
         [HttpGet("[action]")]
         [Authorize(Roles = "Administrator")]
         public ActionResult<IEnumerable<string>> GetValueByAdminRole()
         {
             return new string[] { "use Roles = Administrator" };
         }
-
+        //同属于策略“Grider”的成员才能访问
         [HttpGet("[action]")]
-        [Authorize(Policy = "Permission")]
-        public ActionResult<IEnumerable<string>> GetAdminValue()
+        [Authorize(Policy = "Grider")]
+        public ActionResult<IEnumerable<string>> GetValueByGrider()
         {
-            return new string[] { "use Policy = Permission" };
+            return new string[] { "use Policy = Grider" };
         }
-
-        [HttpGet("[action]")]
-        [Authorize(Policy = "Permission")]
-        public ActionResult<IEnumerable<string>> GetGuestValue()
-        {
-            return new string[] { "use Policy = Permission" };
-        }
-
-        [HttpGet("[action]")]
-        [Authorize(Policy = "SAXC_Grid")]
-        public ActionResult<IEnumerable<string>> GetValueBySAXC_Grid()
-        {
-            return new string[] { "use Policy = saxc_Grid" };
-        }
-
+        //同属于角色“网格员”的成员才能访问
         [HttpGet("[action]")]
         [Authorize(Roles = "网格员")]
-        public ActionResult<IEnumerable<string>> GetValueBySAXC_Grid_Roles()
+        public ActionResult<IEnumerable<string>> GetValueByGriderRole()
         {
             return new string[] { "use Roles = 网格员" };
         }
-
+        //同属于策略“Audit”的成员才能访问
         [HttpGet("[action]")]
-        [Authorize(Policy = "SAXC")]
-        public ActionResult<IEnumerable<string>> GetValueBySAXC()
+        [Authorize(Policy = "Community")]
+        public ActionResult<IEnumerable<string>> GetValueByCommunity()
         {
-            return new string[] { "use Policy = saxc" };
+            return new string[] { "use Policy = Community" };
         }
-
+        //同属于角色“社区”的成员才能访问
         [HttpGet("[action]")]
-        [Authorize(Roles = "水岸星城社区")]
-        public ActionResult<IEnumerable<string>> GetValueBySAXC_Roles()
+        [Authorize(Roles = "社区")]
+        public ActionResult<IEnumerable<string>> GetValueByCommunityRoles()
         {
-            return new string[] { "use Roles = 水岸星城社区" };
+            return new string[] { "use Roles = 社区" };
+        }
+        //同属于策略“Audit”的成员才能访问
+        [HttpGet("[action]")]
+        [Authorize(Policy = "Audit")]
+        public ActionResult<IEnumerable<string>> GetValueByAudit()
+        {
+            return new string[] { "use Policy = Audit" };
         }
     }
 }
