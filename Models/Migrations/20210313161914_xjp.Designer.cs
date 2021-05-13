@@ -10,14 +10,14 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20210206092434_addFileds")]
-    partial class addFileds
+    [Migration("20210313161914_xjp")]
+    partial class xjp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.8")
+                .HasAnnotation("ProductVersion", "3.1.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 

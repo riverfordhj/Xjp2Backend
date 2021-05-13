@@ -9,10 +9,13 @@ namespace Models.DataHelper
         public int    RoomId;
         public string RoomNO;
         public string BulidingName;
+        public string BulidingAddress;
         public string SubdivsionName;
         public string CommunityName;
+        public string NetGridName;
         public string PersonId;
         public int    Age;
+        public string Sex;
         public Person Person;
         public string IsOwner;
         public string IsHouseholder;

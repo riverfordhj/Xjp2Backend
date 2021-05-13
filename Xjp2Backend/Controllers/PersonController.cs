@@ -31,6 +31,51 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
+        // GET: api/Person/GetCommunitys  获取社区
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetCommunitys()
+        {
+            return await _context.Communitys.ToListAsync();
+        }
+
+        // GET: api/Person/GetNetGridInCommuity 获取社区下的网格
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<IEnumerable<NetGrid>>> GetNetGridInCommunity(int id)
+        {
+            return await _repository.GetNetGridInCommunity(id).ToListAsync();
+        }
+
+        // GET: api/Person/GetBuildingInNetGrid  获取网格下的楼栋
+        [HttpGet("[action]/{netid}")]
+        public async Task<ActionResult<IEnumerable<Building>>> GetBuildingInNetGrid(int netid)
+        {
+            return await _repository.GetBuildingInNetGrid(netid).ToListAsync();
+        }
+
+        //通过网格查找人
+        // GET: api/GetPersonsBySubdivision/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByNetGrid(int id)//Person
+        {
+            return _repository.GetPersonsByNetGrid(id);
+        }
+
+        //通过小区查找人
+        // GET: api/GetPersonsBySubdivision/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsBySubdivision(int id)//Person
+        {
+            return _repository.GetPersonsBySubdivision(id);
+        }
+
+        //通过楼栋查找人
+        // GET: api/api/Person/GetPersonsByBuilding_ZH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
+        {
+            return _repository.GetPersonsByBuilding(id);
+        }
+
         // GET: api/Person/GetSubdivsions
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> GetSubdivsions()
@@ -64,7 +109,7 @@ namespace Xjp2Backend.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName)
+        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName, string address)
         {
             var userName = GetUserName();
             var roleList = GetRolesList(userName);
@@ -74,7 +119,7 @@ namespace Xjp2Backend.Controllers
             {
                 return NotFound();
             }
-            return await _repository.GetRoomsByBuilding(userName, buildingName).ToListAsync();
+            return await _repository.GetRoomsByBuilding(buildingName, address).ToListAsync();
         }
 
         // GET: api/GetBuildings/1
@@ -205,12 +250,20 @@ namespace Xjp2Backend.Controllers
             return _repository.GetSpecialGroups();
         }
 
-        //通过楼栋查找人
-        // GET: api/api/Person/GetPersonsByBuilding_ZH/1
-        [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> GetPersonsByBuilding(int id)//Person
+        //获取特殊群体，吸毒、信访人员的位置信息（返回中文数据）
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public IEnumerable<Object> GetSpecialPersonLoction_ZH()
         {
-            return _repository.GetPersonsByBuilding(id);
+            return _repository.GetSpecialPersonLoction_ZH();
+        }
+
+        //通过网格查找人（返回中文数据）
+        // GET: api/GetPersonsByNetGrid_ZH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetPersonsByNetGrid_ZH(int id)//Person
+        {
+            return _repository.GetPersonsByNetGrid_ZH(id);
         }
 
         //通过楼栋查找人（返回中文数据）
@@ -221,13 +274,6 @@ namespace Xjp2Backend.Controllers
             return _repository.GetPersonsByBuilding_ZH(id);
         }
 
-        //通过小区查找人
-        // GET: api/GetPersonsBySubdivision/1
-        [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> GetPersonsBySubdivision(int id)//Person
-        {
-            return _repository.GetPersonsBySubdivision(id);
-        }
 
         [HttpGet("[action]")]
         public IEnumerable<Object> GetFields()//Person
@@ -257,16 +303,29 @@ namespace Xjp2Backend.Controllers
         }
 
 
-
+        //通过地址楼栋房间号获取该房间的所有人员信息
         [HttpPost("[action]")]
         public async Task<ActionResult<IEnumerable<Person>>> GetPersonsInRoom([FromBody] PersonInRoomParameter para)
         {
-            var coll = _repository.GetPersonsInRoom(para.SubdivisionName, para.BuildingName, para.RoomNO);
+            var coll = _repository.GetPersonsInRoom(para.AddressName, para.BuildingName, para.RoomNO);
             if (coll != null)
                 return await coll.ToListAsync();
             else
                 return NotFound();
         }
+        //通过地址楼栋房间号获取roomid
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<Room>>> GetRoomId([FromBody] PersonInRoomParameter para)
+        {
+            var room = await _context.Rooms.Where(item => item.Building.Address == para.AddressName && item.Building.Name == para.BuildingName && item.Name == para.RoomNO).ToListAsync();
+            if (room == null)
+            {
+                return NotFound();
+            }
+
+            return room;
+        }
+ 
 
         // GET: api/Person/5
         [HttpGet("{id}")]

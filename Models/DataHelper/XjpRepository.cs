@@ -57,7 +57,22 @@ namespace Models.DataHelper
         #region 社区
         public Community GetCommunity(string name)
         {
-            return _context.Communitys.Where(item => item.Name == name).FirstOrDefault();
+            return _context.Communitys.Where(item => item.Name == name || item.Alias.Contains(name)).FirstOrDefault();
+        }
+        #endregion
+
+
+        #region 网格
+        public IQueryable<NetGrid> GetNetGridInCommunity(int id)
+        {
+            return _context.NetGrids.Where(item => item.Community != null && item.Community.Id == id);
+        }
+        #endregion
+
+        #region building by网格
+        public IQueryable<Building> GetBuildingInNetGrid(int netid)
+        {
+            return _context.Buildings.Where(item => item.NetGrid != null && item.NetGrid.Id == netid);
         }
         #endregion
 
@@ -67,6 +82,7 @@ namespace Models.DataHelper
             return _context.Subdivisions.Where(item => item.Name == name || item.Alias.Contains(name)).FirstOrDefault();
         }
         #endregion
+
 
         #region building
         //public Building GetBuildingInCommunity(string commnunityName, string name)
@@ -88,7 +104,7 @@ namespace Models.DataHelper
             else
                 return null;
         }
-       
+
 
 
         /// <summary>
@@ -125,8 +141,6 @@ namespace Models.DataHelper
         /// <returns></returns>
         public IEnumerable<object> GetPersonsByBuilding(int id)
         {
-            //HashSet<int> personIDs = _context.PersonRooms.Where(item => item.Room.Building.Id == id).Select(item => item.Person.Id).ToHashSet();
-            //return _context.Persons.Where(item => personIDs.Contains(item.Id));
 
             try
             {
@@ -138,8 +152,12 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingName,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           netGridName = room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -148,16 +166,7 @@ namespace Models.DataHelper
                                            pr.RelationWithHouseholder,
                                            pr.LodgingReason,
                                            pr.PopulationCharacter
-                                       };
-
-                //组连接，附加特殊人群信息
-                //var ps = from p in _context.Persons
-                //         where p.PersonId == "35220119860918511X"
-                //         select new
-                //        {
-                //            p.PersonId,
-                //            p.Name
-                //        };
+                                       };              
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
@@ -167,8 +176,12 @@ namespace Models.DataHelper
                                pr.RoomId,
                                pr.RoomNO,
                                pr.CommunityName,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -176,8 +189,9 @@ namespace Models.DataHelper
                                pr.IsLiveHere,
                                pr.RelationWithHouseholder,
                                pr.LodgingReason,
-                               pr.PopulationCharacter,
-                               SpecialGroup = psg // 特殊人群信息
+                               pr.PopulationCharacter,                             
+                               SpecialGroup = psg, // 特殊人群信息
+                               //psg.Type,
                            };
 
                 //var d = data.ToList();// ToLookup(sp => sp.p.PersonId, sp => sp.SpecialGroup);
@@ -189,6 +203,61 @@ namespace Models.DataHelper
                 return null;
             }
 
+
+        }
+        //获取网格的住户信息分析（中文）
+        public IEnumerable<object> GetPersonsByNetGrid_ZH(int id)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.NetGrid.Id == id)
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               性别 = pr.sex,
+                               年龄 = pr.age,
+                               房间号 = pr.RoomNO,
+                               社区名 = pr.CommunityName,
+                               小区名 = pr.SubdivsionName,
+                               楼栋名 = pr.BulidingName,
+                               产权人 = pr.IsOwner,
+                               户主 = pr.IsHouseholder,
+                               在此居住 = pr.IsLiveHere,
+                               与户主关系 = pr.RelationWithHouseholder,
+                               寄住原因 = pr.LodgingReason,
+                               人口性质 = pr.PopulationCharacter,
+                           };
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
 
         }
 
@@ -206,7 +275,9 @@ namespace Models.DataHelper
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -223,6 +294,8 @@ namespace Models.DataHelper
                            join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
                            select new
                            {
+                               性别 = pr.sex,
+                               年龄 = pr.age,
                                房间号 = pr.RoomNO,
                                社区名 = pr.CommunityName,
                                小区名 = pr.SubdivsionName,
@@ -246,23 +319,27 @@ namespace Models.DataHelper
 
         ///<summary>
         ///
-        /// 根据小区获得人员信息表
+        /// 根据网格获得人员信息表
         /// 
         ///</summary>
-        public IEnumerable<object> GetPersonsBySubdivision(int id)
+        public IEnumerable<object> GetPersonsByNetGrid(int id)
         {
             try
             {
                 //根据 room - person 数据
-                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id)
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.NetGrid.Id == id)
                                        from pr in room.PersonRooms
                                        select new
                                        {
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
-                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                                           netGridName = room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -282,8 +359,12 @@ namespace Models.DataHelper
                                pr.RoomId,
                                pr.RoomNO,
                                pr.CommunityName,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -294,6 +375,74 @@ namespace Models.DataHelper
                                pr.PopulationCharacter,
                                SpecialGroup = psg // 特殊人群信息
                            };         
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
+        ///<summary>
+        ///
+        /// 根据楼栋获得人员信息表
+        /// 
+        ///</summary>
+        public IEnumerable<object> GetPersonsBySubdivision(int id)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms.Where(r => r.Building.Subdivision.Id == id)
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                                           netGridName = room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.CommunityName,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.BulidingAddress,
+                               pr.PersonId,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
                 return data;
             }
             catch (Exception e)
@@ -320,9 +469,13 @@ namespace Models.DataHelper
                                            RoomId = pr.Room.Id,
                                            RoomNO = pr.Room.Name,
                                            BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = pr.Room.Building.Address,
                                            SubdivsionName = pr.Room.Building.Subdivision.Name,
                                            SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
-                                           CommunityName = pr.Room.Building.Subdivision.Community.Name,
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                                           netGridName = pr.Room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
                                            // person.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -345,10 +498,14 @@ namespace Models.DataHelper
                            {
                                pr.RoomId,
                                pr.RoomNO,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
                                pr.Person.PersonId,
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.Person,
                                pr.IsOwner,
                                pr.IsHouseholder,
@@ -368,7 +525,65 @@ namespace Models.DataHelper
 
         }
         #endregion
+        //获取特殊人群的位置信息信息(中文)
+        public IEnumerable<object> GetSpecialPersonLoction_ZH()
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from room in _context.Rooms
+                                       from pr in room.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           log = room.Longitude,
+                                           lat = room.Latitude,
+                                           floor = room.Name.Substring(2,1),
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
+                                           pr.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
 
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
+                           select new
+                           {
+                               姓名 = pr.Person.Name,
+                               性别 = pr.sex,
+                               联系电话 = pr.Person.Phone,
+                               户籍地 = pr.Person.DomicileAddress,
+                               居住地址 = pr.BulidingName + '-' +pr.RoomNO,
+                               身份证号码 = pr.PersonId,
+                               经度 = pr.log,
+                               纬度 = pr.lat,
+                               楼层 = pr.floor,
+                               年龄 = pr.age,
+                               社区名 = pr.CommunityName,
+                               小区名 = pr.SubdivsionName,
+                               类型 = sg.Type,                       
+                           };
+
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+        }
         /// <summary>
         /// 获取特殊人群
         /// </summary>
@@ -385,8 +600,12 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, // pr.BulidingAddress,
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           netGridName = room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
                                            pr.PersonId,
                                            pr.Person,
                                            IsOwner = pr.IsOwner ? "是" : "否",
@@ -399,15 +618,19 @@ namespace Models.DataHelper
                 var psdata = roomsWithPersons.ToList();
 
                 var data = from pr in psdata
-                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
-                           //where pr.PersonId = sg.PersonId
+                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId  //into psg // 根据身份证关联
+                           //where pr.PersonId = sg.PersonId join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId
                            select new
                            {
                                pr.RoomId,
                                pr.RoomNO,
                                pr.CommunityName,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
                                pr.Person,
                                pr.IsOwner,
@@ -415,8 +638,8 @@ namespace Models.DataHelper
                                pr.IsLiveHere,
                                pr.RelationWithHouseholder,
                                pr.LodgingReason,
-                               pr.PopulationCharacter,
-                               sg.Type,
+                               pr.PopulationCharacter, 
+                               sg.Type
                                //SpecialGroup = psg // 特殊人群信息
 
                            };
@@ -441,15 +664,15 @@ namespace Models.DataHelper
         }
 
         /// <summary>
-        /// 通过社区名、楼栋名、房号，获取住房人信息
+        /// 通楼栋地址 、名、房号，获取住房人信息
         /// </summary>
         /// <param name="commnunityName"></param>
         /// <param name="buidlingName"></param>
         /// <param name="roomNO"></param>
         /// <returns></returns>
-        public IQueryable<Person> GetPersonsInRoom(string subdivisionName, string buidlingName, string roomNO)
+        public IQueryable<Person> GetPersonsInRoom(string addressName, string buidlingName, string roomNO)
         {
-            Room room = GetRoom(subdivisionName, buidlingName, roomNO);
+            Room room = _context.Rooms.SingleOrDefault(item => item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
 
             if (room != null)
             {
@@ -526,22 +749,29 @@ namespace Models.DataHelper
                    select new
                    {
                        b.Id,
-                       buildingName = b.Name
+                       buildingName = b.Name,
+                       b.Address
                    };
         }
         //根据楼栋，返回房屋
-        public IQueryable<object> GetRoomsByBuilding(string userName, string buildingName)
+        public IQueryable<object> GetRoomsByBuilding(string buildingName, string address)
         {
-            return from u in _context.Users.Where(u => u.UserName == userName)
-                   from ng in u.NetGrid
-                   from b in ng.Buildings.Where(b => b.Name == buildingName)
+            return from b in _context.Buildings.Where(b => b.Name == buildingName && b.Address == address)
                    from r in b.Rooms
                    select new
                    {
                        r.Id,
-                       roomName = r.Name,
-                       netGrid = ng.Name,
-                       communityName = ng.Community.Name
+                       RoomName = r.Name,
+                       r.Category,
+                       r.Use,
+                       r.Area,
+                       r.Longitude,
+                       r.Latitude,
+                       r.Height,
+                       NetGridName = b.NetGrid.Name,
+                       CommunityName = b.NetGrid.Community.Name,
+                       b.Address,
+                       BuildingName = b.Name,
                    };
         }
 
@@ -848,6 +1078,7 @@ namespace Models.DataHelper
                         RoomName = personFields.RoomName,
                         RoomUse = personFields.RoomUse,
                         BuildingName = personFields.BuildingName,
+                        Address = personFields.Address,
                         NetGrid = personFields.NetGrid,
                         CommunityName = personFields.CommunityName,
                         Editor = userName,
@@ -880,6 +1111,7 @@ namespace Models.DataHelper
             targetPersonHouse.RoomUse = personFields.RoomUse;
             targetPersonHouse.Category = personFields.Category;
             targetPersonHouse.BuildingName = personFields.BuildingName;
+            targetPersonHouse.Address = personFields.Address;
             targetPersonHouse.NetGrid = personFields.NetGrid;
             targetPersonHouse.CommunityName = personFields.CommunityName;
             targetPersonHouse.Editor = userName;
@@ -891,8 +1123,8 @@ namespace Models.DataHelper
             var personRoom = _context.PersonRooms.SingleOrDefault(pr => pr.PersonId == personFields.PersonId
                                                                           && pr.Room.Name == personFields.RoomName
                                                                           && pr.Room.Building.Name == personFields.BuildingName
-                                                                          && pr.Room.Building.NetGrid.Name == personFields.NetGrid
-                                                                          && pr.Room.Building.NetGrid.Community.Name == personFields.CommunityName);
+                                                                          && pr.Room.Building.Address == personFields.Address );
+
             personRoom.Status = personFields.Status;
         }
         //网格员提交新增、修改、删除指定的人房信息
@@ -901,8 +1133,7 @@ namespace Models.DataHelper
             PersonHouseData targetPersonHouse = _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personFields.PersonId
                                                                 && phd.RoomName == personFields.RoomName
                                                                 && phd.BuildingName == personFields.BuildingName
-                                                                && phd.NetGrid == personFields.NetGrid
-                                                                && phd.CommunityName == personFields.CommunityName);
+                                                                && phd.Address == personFields.Address);
 
             if (targetPersonHouse == null)
             {
@@ -952,8 +1183,7 @@ namespace Models.DataHelper
             return _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personHouseFileds.PersonId
                                                                 && phd.RoomName == personHouseFileds.RoomName
                                                                 && phd.BuildingName == personHouseFileds.BuildingName
-                                                                && phd.NetGrid == personHouseFileds.NetGrid
-                                                                && phd.CommunityName == personHouseFileds.CommunityName);
+                                                                && phd.Address == personHouseFileds.Address );
         }
         //选中一条personRoom数据
         public PersonRoom PickPersonRoom(VerifyAndConfirmParam personHouseFileds)
@@ -961,15 +1191,13 @@ namespace Models.DataHelper
            return _context.PersonRooms.SingleOrDefault(pr => pr.PersonId == personHouseFileds.PersonId
                                                             && pr.Room.Name == personHouseFileds.RoomName
                                                             && pr.Room.Building.Name == personHouseFileds.BuildingName
-                                                            && pr.Room.Building.NetGrid.Name == personHouseFileds.NetGrid
-                                                            && pr.Room.Building.NetGrid.Community.Name == personHouseFileds.CommunityName);
+                                                            && pr.Room.Building.Address == personHouseFileds.Address );
         }
         //选中一个房间
-        public Room PickRoom(VerifyAndConfirmParam  personHouseFileds) { 
-            return _context.Rooms.SingleOrDefault(r => r.Name == personHouseFileds.RoomName
-                                                    && r.Building.Name == personHouseFileds.BuildingName
-                                                    && r.Building.NetGrid.Name == personHouseFileds.NetGrid
-                                                    && r.Building.NetGrid.Community.Name == personHouseFileds.CommunityName);
+        public Room PickRoom(string RoomName, string BuildingName, string Address) { 
+            return _context.Rooms.SingleOrDefault(r => r.Name == RoomName
+                                                    && r.Building.Name == BuildingName
+                                                    && r.Building.Address == Address );
         }
         //社区审核网格员的提交
         public void VerifyByCommunity(VerifyAndConfirmParam verifyFileds)
@@ -995,7 +1223,7 @@ namespace Models.DataHelper
             if (confirmFields.Status == "approved")//街道批准时，执行
             {
                 Person targetPerson = _context.Persons.SingleOrDefault(per => per.PersonId == confirmFields.PersonId);
-                Room targetRoom = PickRoom(confirmFields);
+                Room targetRoom = PickRoom(confirmFields.RoomName, confirmFields.BuildingName,confirmFields.Address);
                 //新建一条personRoom
                 if (personHouse.Operation == "creating" && personRoom == null && targetRoom != null)
                 {
@@ -1093,7 +1321,7 @@ namespace Models.DataHelper
         // 获取所有字段
         public IEnumerable<string> GetFields()
         {
-            String[] fields = { "小区", "楼栋", "房间", "姓名", "电话", "身份证", "年龄", "性别","民族" };
+            String[] fields = { "社区", "网格","楼栋", "房间", "姓名", "电话", "身份证", "年龄", "性别","民族" };
             return fields;
         }
       
@@ -1117,9 +1345,13 @@ namespace Models.DataHelper
             var rooms = _context.Rooms.AsQueryable();
             foreach (var query in queries)
             {
-                if (query[0] == "小区")
+                if (query[0] == "社区")
                 {
-                    rooms = rooms.Where(r => r.Building.Subdivision.Name.Contains(query[2]));
+                    rooms = rooms.Where(r => r.Building.NetGrid.Community.Name.Contains(query[2]));
+                }
+                if (query[0] == "网格")
+                {
+                    rooms = rooms.Where(r => r.Building.NetGrid.Name.Contains(query[2]));
                 }
                 if (query[0] == "楼栋")
                 {
@@ -1146,8 +1378,11 @@ namespace Models.DataHelper
                                            RoomId = room.Id,
                                            RoomNO = room.Name,
                                            BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address, 
                                            SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.Subdivision.Community.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           NetGridName = room.Building.NetGrid.Name,
+                                           Sex = pr.Person.Sex,
                                            PersonId = pr.PersonId,
                                            Age = pr.Person.Age,
                                            Person = pr.Person,
@@ -1229,7 +1464,11 @@ namespace Models.DataHelper
                                pr.CommunityName,
                                pr.SubdivsionName,
                                pr.BulidingName,
+                               pr.BulidingAddress,
                                pr.PersonId,
+                               pr.Age,
+                               pr.Sex,
+                               pr.NetGridName,
                                pr.Person,
                                pr.IsOwner,
                                pr.IsHouseholder,
@@ -1240,7 +1479,159 @@ namespace Models.DataHelper
                                SpecialGroup = psg // 特殊人群信息
                            };
                 return data.Take(1000);
-        }          
+        }
+        #endregion
+
+        #region 房屋管理
+        //根据单元数、楼层数批量新建房屋
+        public IEnumerable<object> BatchingRoomsCreating(RoomCreatingParam batchingParam)
+        {
+            Building targetBuilding = PickBuilding(batchingParam.BuildingName, batchingParam.Address);
+            if(targetBuilding == null)
+            {
+                targetBuilding = new Building
+                {
+                    Name = batchingParam.BuildingName,
+                    Address = batchingParam.Address
+                };
+                NetGrid targetNetGrid = PickNetGrid(batchingParam.NetGridName, batchingParam.CommunityName);
+                targetBuilding.NetGrid = targetNetGrid;
+                _context.Buildings.Add(targetBuilding);
+            
+                for(int u = 1; u <= batchingParam.Units; u++)
+                {
+                    for (int f = 1; f <= batchingParam.Floors; f++)
+                    {
+                        Room Room1 = new Room
+                        {
+                            Name = $"{u}-{f}01"
+                        };
+                        Room Room2 = new Room
+                        {
+                            Name = $"{u}-{f}02"
+                        };
+                        Room1.Building = targetBuilding;
+                        Room2.Building = targetBuilding;
+                        _context.Rooms.Add(Room1);
+                        _context.Rooms.Add(Room2);
+                    }
+                }
+                _context.SaveChanges();
+            }
+            else
+            {
+                return Enumerable.Empty<object>();
+            }
+
+            return GetRooms(batchingParam.BuildingName, batchingParam.NetGridName, batchingParam.CommunityName);
+        }
+        //根据导入的Excel表格数据批量新建房屋
+        public object BatchingCreateRoomsWithExcel(RoomCreatingParam_Other batchingParam)
+        {
+            Building targetBuilding = PickBuilding(batchingParam.BuildingName, batchingParam.Address);
+            NetGrid targetNetGrid = PickNetGrid(batchingParam.NetGridName, batchingParam.CommunityName);
+            Room targetRoom = PickRoom(batchingParam.RoomName, batchingParam.BuildingName, batchingParam.Address);
+           
+            if (targetBuilding == null)//目标楼栋不存在时，判定属于目标楼栋的房屋不可能存在: 新建该房屋
+            {
+                targetBuilding = new Building
+                {
+                    Name = batchingParam.BuildingName,
+                    Address = batchingParam.Address,
+                };
+                targetBuilding.NetGrid = targetNetGrid;
+                _context.Buildings.Add(targetBuilding);
+
+                CreateRoom(batchingParam, targetBuilding);
+                return batchingParam;//返回新建的房屋的数据
+            }
+            else if(targetBuilding != null && targetRoom == null)//目标楼栋存在且目标房屋不存在时: 新建该房屋
+            {
+                targetBuilding.NetGrid = targetNetGrid;
+                CreateRoom(batchingParam, targetBuilding);
+                return batchingParam;//返回新建的房屋的数据
+            }
+            return  new object();//若目标房屋已存在：返回一个空对象
+        }
+        //创建单个房屋
+        public void CreateRoom(RoomCreatingParam_Other batchingParam, Building targetBuilding)
+        {
+            Room newRoom = new Room
+            {
+                Name = batchingParam.RoomName,
+                Category = batchingParam.Category,
+                Use = batchingParam.Use,
+                Area = batchingParam.Area,
+                Longitude = batchingParam.Longitude,
+                Latitude = batchingParam.Latitude,
+                Height = batchingParam.Height,
+            };
+            newRoom.Building = targetBuilding;
+            _context.Rooms.Add(newRoom);
+            _context.SaveChanges();
+        }
+        //选择指定楼栋
+        public Building PickBuilding(string BuildingName, string Address)
+        {
+            return _context.Buildings.SingleOrDefault(b => b.Name == BuildingName 
+                                                        && b.Address == Address );
+        }
+        //选择指定网格
+        public NetGrid PickNetGrid(string NetGridName,string CommunityName )
+        {
+            return _context.NetGrids.SingleOrDefault(n => n.Name == NetGridName && n.Community.Name == CommunityName);
+        }
+        //选择指定社区、网格、楼栋中的房屋数据
+        public IEnumerable<object> GetRooms(string BuildingName, string NetGridName, string CommunityName)
+        {
+            return from r in _context.Rooms.Where(r => r.Building.Name == BuildingName
+                                                   && r.Building.NetGrid.Name == NetGridName
+                                                   && r.Building.NetGrid.Community.Name == CommunityName)
+                   select new { 
+                       r.Id,
+                       r.Name,
+                       r.Alias,
+                       r.Category,
+                       r.Use,
+                       r.Area,
+                       r.Longitude,
+                       r.Latitude,
+                       r.Height,
+                       r.Other,
+                       r.Note,
+                       buildingName = r.Building.Name,
+                       buildingAddress = r.Building.Address,
+                       netGridName = r.Building.NetGrid.Name,
+                       communityName = r.Building.NetGrid.Community.Name
+                   };
+        }
+        //修改指定房屋信息
+        public IQueryable<object> UpdateRoom(Room targetRoom, RoomCreatingParam_Other roomData)
+        {
+            if (targetRoom != null)
+            {
+                targetRoom.Name = roomData.RoomName;
+                targetRoom.Category = roomData.Category;
+                targetRoom.Use = roomData.Use;
+                targetRoom.Area = roomData.Area;
+                targetRoom.Longitude = roomData.Longitude;
+                targetRoom.Latitude = roomData.Latitude;
+                targetRoom.Height = roomData.Height;
+            }
+            _context.SaveChanges();
+
+            return GetRoomsByBuilding(roomData.BuildingName, roomData.Address);
+        }
+        public IQueryable<object> DeleteRoom(Room targetRoom, RoomCreatingParam_Other roomData)
+        {
+            var personCount = _context.PersonRooms.Where(pr => pr.Room.Id == roomData.id).ToArray().Length;
+            if (targetRoom != null && personCount == 0)
+            {
+                _context.Rooms.Remove(targetRoom);
+                _context.SaveChanges();
+            }
+            return GetRoomsByBuilding(roomData.BuildingName, roomData.Address);
+        }
         #endregion
 
         public bool Save()

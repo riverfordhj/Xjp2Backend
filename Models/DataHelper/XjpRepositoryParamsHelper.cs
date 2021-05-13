@@ -25,6 +25,9 @@ namespace Models.DataHelper
         public string Note { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Address { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Status { get; set; }
         public string IsHouseholder { get; set; }
         public string RelationWithHouseholder { get; set; }
@@ -67,6 +70,9 @@ namespace Models.DataHelper
         public string BuildingName { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string Address { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
         public string NetGrid { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
@@ -74,6 +80,43 @@ namespace Models.DataHelper
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Status { get; set; }
+    }
+
+    public class RoomCreatingParam
+    {
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string CommunityName { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string NetGridName { get; set; }
+    
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public string BuildingName { get; set; }
+
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public int Units { get; set; }
+
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public int Floors { get; set; }
+        public string Address { get; set; }
+
+    }
+
+    public class RoomCreatingParam_Other 
+    { 
+        public int id { get; set; }
+        public string CommunityName { get; set; }
+        public string NetGridName { get; set; }
+        public string BuildingName { get; set; }
+        public string Address { get; set; }
+        public string RoomName { get; set; }
+        public string Category { get; set; }
+        public string Use { get; set; }
+        public string Area { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+        public double Height { get; set; }
     }
 
 }
