@@ -109,7 +109,7 @@ namespace Xjp2Backend.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName)
+        public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName, string address)
         {
             var userName = GetUserName();
             var roleList = GetRolesList(userName);
@@ -119,7 +119,7 @@ namespace Xjp2Backend.Controllers
             {
                 return NotFound();
             }
-            return await _repository.GetRoomsByBuilding(userName, buildingName).ToListAsync();
+            return await _repository.GetRoomsByBuilding(buildingName, address).ToListAsync();
         }
 
         // GET: api/GetBuildings/1
@@ -421,6 +421,7 @@ namespace Xjp2Backend.Controllers
         }
 
         //解析Token，返回userName
+
         private string GetUserName()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;

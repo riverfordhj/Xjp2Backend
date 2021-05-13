@@ -150,14 +150,10 @@ namespace Xjp2Backend
             services.AddMvc();
             services.AddAuthorization(options =>
             {
-                //options.AddPolicy("Admin", policy => policy.RequireRole("Administrator"));
                 options.AddPolicy("Admin", policy => policy.RequireClaim(ClaimTypes.Role, "Administrator"));
-                options.AddPolicy("SAXC_Grid", policy => policy.RequireClaim(ClaimTypes.Role, "网格员"));
-                options.AddPolicy("SAXC", policy => policy.RequireClaim(ClaimTypes.Role, "水岸星城社区"));
-
-                options.AddPolicy("APIAccess", policy => policy.RequireClaim(ClaimTypes.Role, "api_access"));
-
-                options.AddPolicy("Permission", policy => policy.Requirements.Add(new PermissionRequirement()));
+                options.AddPolicy("Grider", policy => policy.RequireClaim(ClaimTypes.Role, "网格员"));
+                options.AddPolicy("Community", policy => policy.RequireClaim(ClaimTypes.Role, "社区"));
+                options.AddPolicy("Audit", policy => policy.RequireClaim(ClaimTypes.Role, "Administrator","社区"));
             });
             services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
             services.AddSingleton<IAuthorizationHandler, ResourceAuthorizationHandler>();
@@ -174,7 +170,7 @@ namespace Xjp2Backend
                                   builder =>
                                   {
                                       builder.AllowAnyOrigin()
-                                             .WithMethods("PUT", "DELETE", "GET", "POST")
+                                             .WithMethods("PUT","DELETE","GET","POST")
                                              .AllowAnyHeader();
                                       //builder.WithOrigins("https://127.0.0.1:5502")
                                       //              .AllowCredentials()
