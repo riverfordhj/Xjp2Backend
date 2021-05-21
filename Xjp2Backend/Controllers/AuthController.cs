@@ -26,7 +26,7 @@ namespace Xjp2Backend.Controllers
         private readonly IMemoryCache _cache;
 
         private XjpRepository _repository = null;
-
+        private readonly StreetContext _context;
         public AuthController(StreetContext xjpContext, IJwtFactory jwtFactory, IOptions<JwtIssuerOptions> jwtOptions, IUserService userService, IMemoryCache cache)
         {
             _jwtFactory = jwtFactory;
@@ -34,6 +34,7 @@ namespace Xjp2Backend.Controllers
             _userService = userService;
             _cache = cache;
 
+            _context = xjpContext;
             _repository = new XjpRepository(xjpContext);
         }
 
@@ -111,6 +112,68 @@ namespace Xjp2Backend.Controllers
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userName = claimsIdentity.Name;
             return Ok(claimsIdentity.Claims.ToList().Select(r=> new { r.Type, r.Value}));
+        }
+
+        //更新用户密码
+        [HttpPost("[action]")]
+        public object UpdatePassword([FromBody] UpdatePasswordParam FormObj)
+        {
+            var res = _context.Users.SingleOrDefault(u => u.UserName == FormObj.Account);
+            if(res == null)
+            {
+                return new
+                {
+                    message = "该用户不存在"
+                };
+            }
+            else if(res.Password != FormObj.LastPassword)
+            {
+                return new
+                {
+                    message = "密码错误"
+                };
+            }
+            else
+            {
+                res.Password = FormObj.Password;
+                _context.SaveChanges();
+                return new
+                {
+                    message = "密码修改成功"
+                };
+            }
+           
+        }
+        //返回所有用户信息
+        [HttpGet("[action]")]
+        [Authorize(Roles = "Administrator")]
+        public IEnumerable<object> GetUsersData()
+        {
+            return from u in _context.Users.Where(u => true)
+                   select new
+                   {
+                       u.Id,
+                       u.UserName,
+                       u.Password,
+                       u.phone
+                   };
+                   
+        }
+
+        [HttpPost("[action]")]
+        public IEnumerable<object> ResetPassword(List<ResetUserPasswordParam> FormList)
+        {
+            foreach(var item in FormList)
+            {
+                var res = _context.Users.SingleOrDefault(u => u.UserName == item.UserName);
+                if(res != null)
+                {
+                    res.Password = "123456";
+                    _context.SaveChanges();
+                }
+            }
+
+            return GetUsersData();
         }
     }
 }
