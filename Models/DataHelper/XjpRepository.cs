@@ -1189,7 +1189,7 @@ namespace Models.DataHelper
                 NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
                 //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
                 Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
-                if (!((resNetGrid != null) && resRoom != null))
+                if (!(resNetGrid != null && resRoom != null))
                 {
                     latchValue = false;
                     dataList.Add(new
@@ -1209,10 +1209,11 @@ namespace Models.DataHelper
                 var personHouseItem = PersonHouseDatas[j];
 
                 PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
-                if (targetPersonHouse != null)
+                if (targetPersonHouse == null)
                 {
                     targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
                     _context.PersonHouseDatas.Add(targetPersonHouse);
+                    _context.SaveChanges();
                     dataList.Add(new
                     {
                         message = "ok",
@@ -1228,11 +1229,7 @@ namespace Models.DataHelper
                     });
                 }
             }
-            var personList = GetPersonsByUser(userName);
-            var resList = new List<object> { };
-            resList.Add(personList);
-            resList.Add(dataList);
-            return resList;
+            return dataList;
         }
 
         //选中一条personHouseData数据

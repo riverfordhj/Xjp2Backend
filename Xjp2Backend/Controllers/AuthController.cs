@@ -54,11 +54,16 @@ namespace Xjp2Backend.Controllers
                 ModelState.AddModelError("login_failure", "Invalid username.");
                 return BadRequest(ModelState);
             }
-            if (!request.Password.Equals(user.Password))
+            if (!passwordHasher.VerifyHashedPassword(request.Password, user.Password))
             {
                 ModelState.AddModelError("login_failure", "Invalid password.");
                 return BadRequest(ModelState);
             }
+            //if (!request.Password.Equals(user.Password))
+            //{
+            //    ModelState.AddModelError("login_failure", "Invalid password.");
+            //    return BadRequest(ModelState);
+            //}
 
             string refreshToken = Guid.NewGuid().ToString();
             var claimsIdentity = _jwtFactory.GenerateClaimsIdentity(user);
@@ -126,7 +131,7 @@ namespace Xjp2Backend.Controllers
                     message = "该用户不存在"
                 };
             }
-            else if(res.Password != FormObj.LastPassword)
+            else if(!passwordHasher.VerifyHashedPassword(FormObj.LastPassword, res.Password))
             {
                 return new
                 {
@@ -135,7 +140,7 @@ namespace Xjp2Backend.Controllers
             }
             else
             {
-                res.Password = FormObj.Password;
+                res.Password = passwordHasher.HashPassword(FormObj.Password);
                 _context.SaveChanges();
                 return new
                 {
@@ -168,7 +173,7 @@ namespace Xjp2Backend.Controllers
                 var res = _context.Users.SingleOrDefault(u => u.UserName == item.UserName);
                 if(res != null)
                 {
-                    res.Password = "123456";
+                    res.Password = passwordHasher.HashPassword("123456");
                     _context.SaveChanges();
                 }
             }
