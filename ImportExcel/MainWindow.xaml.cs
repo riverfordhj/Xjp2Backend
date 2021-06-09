@@ -224,11 +224,6 @@ namespace ImportExcel
 
                     //人
                     var person = context.Persons.SingleOrDefault(p => p.PersonId == item[20]);
-
-
-
-
-
                     //检测空名空身份证号
                     if (!CheckItem(item))
                         continue;
@@ -332,12 +327,10 @@ namespace ImportExcel
                         personHouse.Person = person;
                         personHouse.Room = room;
                         context.PersonRooms.Add(personHouse);
-
-
-
-                        context.SaveChanges();
-                        _preItem = item;
+                       
                     }
+                    context.SaveChanges();
+                    _preItem = item;
                 }
             }
             tbInfo.Text = "Add personroomdata OK!";
@@ -535,7 +528,7 @@ namespace ImportExcel
                 string[] item = _currentLine.Split(',');
 
                 string comName = item[0].Trim().Replace("社区", "");
-                //string subName = item[3].Trim().Replace("小区", "");
+                string netName = item[1].Trim().Replace("网格", "");
                 string adressName = item[2].Trim();
                 string buildingName = item[4].Trim().Replace("栋", "");
                 string unit = item[5].Trim().Replace("单元", "");
@@ -544,7 +537,21 @@ namespace ImportExcel
 
                 using (var context = new StreetContext())
                 {
-                    var building = context.Buildings.SingleOrDefault(s => s.Address == adressName && s.Name == buildingName);
+
+                    var netGrid = context.NetGrids.FirstOrDefault(n => n.Community.Name == comName && n.Name == netName);
+
+                    var building = context.Buildings.FirstOrDefault(s => s.Address == adressName && s.Name == buildingName);
+                    if(building == null)
+                    {
+                        building = new Building
+                        {
+                            Name = buildingName,
+                            //房屋地址
+                            Address = adressName,
+                        };
+                        building.NetGrid = netGrid;
+                        context.Buildings.Add(building);
+                    }
 
                     var importroom = context.Rooms.FirstOrDefault(r => r.Name == roomN && r.Building.Id == building.Id);
                     if (importroom == null)
