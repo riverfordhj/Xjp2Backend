@@ -98,21 +98,13 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
         public IEnumerable<object> BatchingCreateRooms([FromBody] RoomCreatingParam batchingParam)
         {
-
             return _repositoty.BatchingRoomsCreating(batchingParam);
         }
 
         [HttpPost("[action]")]
         public IEnumerable<object> BatchingCreateRoomsWithExcel(List<RoomCreatingParam_Other> RoomsList)
         {
-            var dataList = new List<object> { };
-            foreach (var item in RoomsList)
-            {
-                var createdRoom = _repositoty.BatchingCreateRoomsWithExcel(item);
-                dataList.Add(createdRoom);
-            }
-
-            return dataList;
+            return _repositoty.BatchingCreateRoomsWithExcel(RoomsList);
         }
 
         [HttpPost("[action]")]

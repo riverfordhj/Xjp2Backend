@@ -1127,64 +1127,133 @@ namespace Models.DataHelper
 
             personRoom.Status = personFields.Status;
         }
+       
         //网格员提交新增、修改、删除指定的人房信息
         public void UpdatePersonHouseByNetGrid(string userName, PersonUpdateParamTesting personFields)
         {
-            PersonHouseData targetPersonHouse = _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personFields.PersonId
-                                                                && phd.RoomName == personFields.RoomName
-                                                                && phd.BuildingName == personFields.BuildingName
-                                                                && phd.Address == personFields.Address);
-
-            if (targetPersonHouse == null)
+            Room targetRoom = PickRoom(personFields.RoomName, personFields.BuildingName, personFields.Address);
+            PersonHouseData targetPersonHouse = PickPersonHouse(personFields.PersonId, personFields.RoomName, personFields.BuildingName, personFields.Address) ;
+              
+            if(targetRoom != null)
             {
-                targetPersonHouse = CreatePersonHouse(userName, personFields);
-                if (personFields.Operation != "creating") {
-                    //修改或删除操作是对原有数据进行操作的，设定在对应的personRoom信息条中标明操作状态
-                    UpdatePersonRoomStatus(personFields);
-                }
-                _context.PersonHouseDatas.Add(targetPersonHouse);
-
-            }
-            else
-            {
-                if (targetPersonHouse.Operation == "creating" && personFields.Operation == "updating")
+                if (targetPersonHouse == null)
                 {
-                    UpdatePersonHouse(userName, targetPersonHouse, personFields);
+                    targetPersonHouse = CreatePersonHouse(userName, personFields);
+                    if (personFields.Operation != "creating")
+                    {
+                        //修改或删除操作是对原有数据进行操作的，设定在对应的personRoom信息条中标明操作状态
+                        UpdatePersonRoomStatus(personFields);
+                    }
+                    _context.PersonHouseDatas.Add(targetPersonHouse);
+
                 }
-                else if (targetPersonHouse.Operation == "creating" && personFields.Operation == "deleting")
+                else
                 {
-                    _context.PersonHouseDatas.Remove(targetPersonHouse);
+                    if (targetPersonHouse.Operation == "creating" && personFields.Operation == "updating")
+                    {
+                        UpdatePersonHouse(userName, targetPersonHouse, personFields);
+                    }
+                    else if (targetPersonHouse.Operation == "creating" && personFields.Operation == "deleting")
+                    {
+                        _context.PersonHouseDatas.Remove(targetPersonHouse);
+                    }
+
+                    if (targetPersonHouse.Operation == personFields.Operation && personFields.Operation != "creating")//只允许同为updating或deleting两种可能
+                    {
+                        UpdatePersonHouse(userName, targetPersonHouse, personFields);
+                        UpdatePersonRoomStatus(personFields);
+                    }
+                    else if ((targetPersonHouse.Operation == "deleting" && personFields.Operation == "updating") || (targetPersonHouse.Operation == "updating" && personFields.Operation == "deleting"))
+                    {
+                        UpdatePersonHouse(userName, targetPersonHouse, personFields);
+
+                        targetPersonHouse.Operation = personFields.Operation;//对原有数据进行修改转删除或删除转修改，需改变操作类型。
+
+                        UpdatePersonRoomStatus(personFields);
+                    }
                 }
 
-                if (targetPersonHouse.Operation == personFields.Operation && personFields.Operation != "creating")//只允许同为updating或deleting两种可能
-                {
-                    UpdatePersonHouse(userName, targetPersonHouse, personFields);
-                    UpdatePersonRoomStatus(personFields);
-                }
-                else if ((targetPersonHouse.Operation == "deleting" && personFields.Operation == "updating") || (targetPersonHouse.Operation == "updating" && personFields.Operation == "deleting"))
-                {
-                    UpdatePersonHouse(userName, targetPersonHouse, personFields);
-
-                    targetPersonHouse.Operation = personFields.Operation;//对原有数据进行修改转删除或删除转修改，需改变操作类型。
-
-                    UpdatePersonRoomStatus(personFields);
-                }
-            }
-
-            _context.SaveChanges();
+                _context.SaveChanges();
+            }          
 
             //return GetPersonsByUser(userName);
 
         }
+        public List<object> CreatePersonHouse_batching(string userName, List<PersonUpdateParamTesting> PersonHouseDatas)
+        {
+            var dataList = new List<object> { };
+            bool latchValue = true;
+            for (int i = 0; i < PersonHouseDatas.Count; i++)
+            {
+                var personHouse = PersonHouseDatas[i];
+                NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
+                //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
+                Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
+                if (!(resNetGrid != null && resRoom != null))
+                {
+                    latchValue = false;
+                    dataList.Add(new
+                    {
+                        message = "房屋地址不正确(填写错误或超出权限)",
+                        index = i
+                    });
+                }
+            }
+            if (!latchValue)
+            {
+                return dataList;//中止函数执行，并返回错误消息数组
+            }
+
+            for (int j = 0; j < PersonHouseDatas.Count; j++)
+            {
+                var personHouseItem = PersonHouseDatas[j];
+
+                PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
+                if (targetPersonHouse == null)
+                {
+                    targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
+                    _context.PersonHouseDatas.Add(targetPersonHouse);
+                    _context.SaveChanges();
+                    dataList.Add(new
+                    {
+                        message = "ok",
+                        index = j
+                    }); 
+                }
+                else
+                {
+                    dataList.Add(new
+                    {
+                        message = "已存在",
+                        index = j
+                    });
+                }
+            }
+            return dataList;
+        }
 
         //选中一条personHouseData数据
-        public PersonHouseData PickPersonHouse(VerifyAndConfirmParam personHouseFileds)
+        public PersonHouseData PickPersonHouse(string PersonId, string RoomName,string BuildingName, string Address)
         {
-            return _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == personHouseFileds.PersonId
-                                                                && phd.RoomName == personHouseFileds.RoomName
-                                                                && phd.BuildingName == personHouseFileds.BuildingName
-                                                                && phd.Address == personHouseFileds.Address );
+            return _context.PersonHouseDatas.SingleOrDefault(phd => phd.PersonId == PersonId
+                                                                && phd.RoomName == RoomName
+                                                                && phd.BuildingName == BuildingName
+                                                                && phd.Address == Address );
         }
+
+        public bool GetUserNameByNetGrid(string TarUserName, string NetGrid, string CommunityName)
+        {
+            var res_query = _context.Users.SingleOrDefault(u => u.UserName == TarUserName);
+
+            List<NetGrid> res = res_query.NetGrid;
+            foreach(var item in res)
+            {
+                var xx = item;
+            }
+            return true;
+
+        }
+       
         //选中一条personRoom数据
         public PersonRoom PickPersonRoom(VerifyAndConfirmParam personHouseFileds)
         {
@@ -1202,7 +1271,7 @@ namespace Models.DataHelper
         //社区审核网格员的提交
         public void VerifyByCommunity(VerifyAndConfirmParam verifyFileds)
         {
-            PersonHouseData personHouse = PickPersonHouse(verifyFileds);
+            PersonHouseData personHouse = PickPersonHouse(verifyFileds.PersonId, verifyFileds.RoomName, verifyFileds.BuildingName, verifyFileds.Address);
             PersonRoom personRoom = PickPersonRoom(verifyFileds);
             personHouse.Status = verifyFileds.Status;
             if(personRoom != null)
@@ -1216,7 +1285,7 @@ namespace Models.DataHelper
         //街道审批社区的审核
         public IEnumerable<object> ConfirmByAdmin(VerifyAndConfirmParam confirmFields, string userName)
         {
-            PersonHouseData personHouse = PickPersonHouse(confirmFields);
+            PersonHouseData personHouse = PickPersonHouse(confirmFields.PersonId, confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
             PersonRoom personRoom = PickPersonRoom(confirmFields);
             personHouse.Status = confirmFields.Status;//personHouseData的状态总会改变
 
@@ -1526,12 +1595,48 @@ namespace Models.DataHelper
             return GetRooms(batchingParam.BuildingName, batchingParam.NetGridName, batchingParam.CommunityName);
         }
         //根据导入的Excel表格数据批量新建房屋
-        public object BatchingCreateRoomsWithExcel(RoomCreatingParam_Other batchingParam)
+        public IEnumerable<object> BatchingCreateRoomsWithExcel(List<RoomCreatingParam_Other> RoomsList)
+        {
+            var dataList = new List<object> { };
+            bool latchValue = true;
+            for (int i = 0; i < RoomsList.Count; i++)
+            {
+                var item = RoomsList[i];
+                var res = PickNetGrid(item.NetGridName, item.CommunityName);
+                if (res == null)
+                {
+                    latchValue = false;
+                    var info = new
+                    {
+                        index = i,
+                        message = "网格不存在"
+                    };
+                    dataList.Add(info);
+                    
+                }
+            }//检查输入的所有网格是否都存在
+            if (!latchValue)
+            {
+                return dataList;
+            }
+            else
+            {
+                foreach (var item in RoomsList)
+                {
+                    var createdRoom = CreateRoomsWithExcel(item);
+                    dataList.Add(createdRoom);
+                }
+                return dataList;
+            }
+        }
+       
+        //新建房屋
+        public object CreateRoomsWithExcel(RoomCreatingParam_Other batchingParam)
         {
             Building targetBuilding = PickBuilding(batchingParam.BuildingName, batchingParam.Address);
             NetGrid targetNetGrid = PickNetGrid(batchingParam.NetGridName, batchingParam.CommunityName);
             Room targetRoom = PickRoom(batchingParam.RoomName, batchingParam.BuildingName, batchingParam.Address);
-           
+          
             if (targetBuilding == null)//目标楼栋不存在时，判定属于目标楼栋的房屋不可能存在: 新建该房屋
             {
                 targetBuilding = new Building
@@ -1539,21 +1644,52 @@ namespace Models.DataHelper
                     Name = batchingParam.BuildingName,
                     Address = batchingParam.Address,
                 };
-                targetBuilding.NetGrid = targetNetGrid;
                 _context.Buildings.Add(targetBuilding);
 
+                targetBuilding.NetGrid = targetNetGrid;
                 CreateRoom(batchingParam, targetBuilding);
-                return batchingParam;//返回新建的房屋的数据
+                return GetRoomInfo(batchingParam.RoomName, batchingParam.BuildingName, batchingParam.Address);//返回新建的房屋的数据
             }
-            else if(targetBuilding != null && targetRoom == null)//目标楼栋存在且目标房屋不存在时: 新建该房屋
+            else if (targetBuilding != null && targetRoom == null)//目标楼栋存在且目标房屋不存在时: 新建该房屋
             {
                 targetBuilding.NetGrid = targetNetGrid;
                 CreateRoom(batchingParam, targetBuilding);
-                return batchingParam;//返回新建的房屋的数据
+                return GetRoomInfo(batchingParam.RoomName, batchingParam.BuildingName, batchingParam.Address);//返回新建的房屋的数据
             }
-            return  new object();//若目标房屋已存在：返回一个空对象
+            else
+            {
+                return new
+                {
+                    message = "已存在"
+                };//若目标房屋已存在，返回该提示对象
+            }
+            
         }
-        //创建单个房屋
+        public object GetRoomInfo(string RoomName, string BuildingName, string Address)
+        {
+            var Room_query = from room in _context.Rooms.Where(r => r.Name == RoomName
+                                                 && r.Building.Name == BuildingName
+                                                 && r.Building.Address == Address)
+                             select new
+                             {
+                                 room.Id,
+                                 RoomName = room.Name,
+                                 room.Category,
+                                 room.Use,
+                                 room.Area,
+                                 room.Longitude,
+                                 room.Latitude,
+                                 room.Height,
+                                 NetGridName = room.Building.NetGrid.Name,
+                                 CommunityName = room.Building.NetGrid.Community.Name,
+                                 room.Building.Address,
+                                 BuildingName = room.Building.Name,
+                             };
+            return Room_query.ToList()[0];       
+               
+        }
+
+        //单个房屋入库
         public void CreateRoom(RoomCreatingParam_Other batchingParam, Building targetBuilding)
         {
             Room newRoom = new Room
@@ -1579,7 +1715,7 @@ namespace Models.DataHelper
         //选择指定网格
         public NetGrid PickNetGrid(string NetGridName,string CommunityName )
         {
-            return _context.NetGrids.SingleOrDefault(n => n.Name == NetGridName && n.Community.Name == CommunityName);
+            return _context.NetGrids.FirstOrDefault(n => n.Name == NetGridName && n.Community.Name == CommunityName);
         }
         //选择指定社区、网格、楼栋中的房屋数据
         public IEnumerable<object> GetRooms(string BuildingName, string NetGridName, string CommunityName)
@@ -1589,7 +1725,7 @@ namespace Models.DataHelper
                                                    && r.Building.NetGrid.Community.Name == CommunityName)
                    select new { 
                        r.Id,
-                       r.Name,
+                       roomName = r.Name,
                        r.Alias,
                        r.Category,
                        r.Use,

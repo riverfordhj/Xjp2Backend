@@ -171,12 +171,12 @@ namespace Xjp2Backend.Controllers
 
         //网格员批处理personHouse数据（新建）
         [HttpPost("[action]")]
-        public void BatchingPersonHouseData(List<PersonUpdateParamTesting> PersonHouseDatas)
-        { 
-            foreach(var personHouseItem in PersonHouseDatas)
-            {
-                UpdatePersonHouseByNetGrid(personHouseItem);
-            }
+        public List<object> BatchingPersonHouseData(List<PersonUpdateParamTesting> PersonHouseDatas)
+        {
+            var userName = GetUserName();
+
+            return _repository.CreatePersonHouse_batching(userName, PersonHouseDatas);
+            
         }
 
 
