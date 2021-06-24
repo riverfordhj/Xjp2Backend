@@ -540,7 +540,7 @@ namespace ImportExcel
 
                     var netGrid = context.NetGrids.FirstOrDefault(n => n.Community.Name == comName && n.Name == netName);
 
-                    var building = context.Buildings.FirstOrDefault(s => s.Address == adressName && s.Name == buildingName);
+                    var building = context.Buildings.FirstOrDefault(s =>s.NetGrid.Id == netGrid.Id && s.Address == adressName && s.Name == buildingName);
                     if(building == null)
                     {
                         building = new Building
@@ -553,7 +553,7 @@ namespace ImportExcel
                         context.Buildings.Add(building);
                     }
 
-                    var importroom = context.Rooms.FirstOrDefault(r => r.Name == roomN && r.Building.Id == building.Id);
+                    var importroom = context.Rooms.FirstOrDefault(r => r.Building.NetGrid.Id == netGrid.Id  && r.Building.Id == building.Id && r.Name == roomN);
                     if (importroom == null)
                     {
                         importroom = new Room

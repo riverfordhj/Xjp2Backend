@@ -87,6 +87,8 @@ namespace Xjp2Backend.Controllers
     public class PersonInRoomParameter
     {
         [Required(ErrorMessage = "{0} 不能为空！")]
+        public string NetGridName { get; set; }
+        [Required(ErrorMessage = "{0} 不能为空！")]
         public string AddressName { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空！")]

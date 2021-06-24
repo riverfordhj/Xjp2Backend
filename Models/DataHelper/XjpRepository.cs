@@ -670,9 +670,9 @@ namespace Models.DataHelper
         /// <param name="buidlingName"></param>
         /// <param name="roomNO"></param>
         /// <returns></returns>
-        public IQueryable<Person> GetPersonsInRoom(string addressName, string buidlingName, string roomNO)
+        public IQueryable<Person> GetPersonsInRoom(string netName, string addressName, string buidlingName, string roomNO)
         {
-            Room room = _context.Rooms.FirstOrDefault(item => item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
+            Room room = _context.Rooms.FirstOrDefault(item =>item.Building.NetGrid.Name == netName && item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
 
             if (room != null)
             {
