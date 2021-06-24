@@ -185,7 +185,7 @@ namespace ImportExcel
                     }
 
                     //房屋
-                    string roomName = $"{item[5].Replace("单元", "")}-{item[6].Replace("号", "")}";
+                    string roomName = $"{item[5].Trim().Replace("单元", "")}-{item[6].Trim().Replace("号", "")}";
                     var room = context.Rooms.SingleOrDefault(r => r.Building.Id == building.Id && r.Name == roomName);
                     if (room == null)
                     {
@@ -443,7 +443,7 @@ namespace ImportExcel
                 {
                     string roomName = $"{item[7]}-{item[8]}";
                     //                经纬度坐标                                  //社区name——小区alias——楼栋id——房间号
-                    var room1 = context.Rooms.FirstOrDefault(r => r.Building.Address== item[4] && r.Building.Name == item[6] && r.Name == roomName);              
+                    var room1 = context.Rooms.FirstOrDefault(r => r.Building.Address == item[4] && r.Building.Name == item[6] && r.Name == roomName);              
                     if (room1 != null)
                     {
                         //经纬度

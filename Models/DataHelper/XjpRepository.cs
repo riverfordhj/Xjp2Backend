@@ -672,7 +672,7 @@ namespace Models.DataHelper
         /// <returns></returns>
         public IQueryable<Person> GetPersonsInRoom(string addressName, string buidlingName, string roomNO)
         {
-            Room room = _context.Rooms.SingleOrDefault(item => item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
+            Room room = _context.Rooms.FirstOrDefault(item => item.Building.Address == addressName && item.Building.Name == buidlingName && item.Name == roomNO);
 
             if (room != null)
             {
