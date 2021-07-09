@@ -54,16 +54,16 @@ namespace Xjp2Backend.Controllers
                 ModelState.AddModelError("login_failure", "Invalid username.");
                 return BadRequest(ModelState);
             }
-            //if (!passwordHasher.VerifyHashedPassword(request.Password, user.Password))
-            //{
-            //    ModelState.AddModelError("login_failure", "Invalid password.");
-            //    return BadRequest(ModelState);
-            //}
-            if (!request.Password.Equals(user.Password))
+            if (!passwordHasher.VerifyHashedPassword(request.Password, user.Password))
             {
                 ModelState.AddModelError("login_failure", "Invalid password.");
                 return BadRequest(ModelState);
             }
+            //if (!request.Password.Equals(user.Password))
+            //{
+            //    ModelState.AddModelError("login_failure", "Invalid password.");
+            //    return BadRequest(ModelState);
+            //}
 
             string refreshToken = Guid.NewGuid().ToString();
             var claimsIdentity = _jwtFactory.GenerateClaimsIdentity(user);
