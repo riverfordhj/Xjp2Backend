@@ -17,6 +17,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using ModelCompany;
 using Models;
 using Models.Authentication.JWT;
 using Models.Authentication.JWT.AuthHelper;
@@ -101,6 +102,7 @@ namespace Xjp2Backend
             //services.AddDbContext<XjpContext>(opt => opt.UseInMemoryDatabase("XjpDB"));
             services.AddDbContext<StreetContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpDatabase")));
             services.AddDbContext<xjpCompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpBuildingEcoDatabase")));
+            services.AddDbContext<CompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpCompanyInfoDatabase")));
 
             //读取徐家棚数据库连接字符串，保持到全局静态变量中
             SystemParameterHelper.XjpDBConnectionString = Configuration.GetConnectionString("XjpDatabase");
