@@ -57,12 +57,12 @@ namespace Xjp2Backend.Controllers
             return companyBuildings;
         }
 
-        // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
-        {
-            return await _repository.GetInfoByBuildingAndFloor(buildingName, floor).ToListAsync();
-        }
+        //// GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
+        //[HttpGet("[action]")]
+        //public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
+        //{
+        //    return await _repository.GetInfoByBuildingAndFloor(buildingName, floor).ToListAsync();
+        //}
 
         //GET: api/CompanyBuildings/GetFloorInfoByBuilding
         [HttpGet("[action]/{id}")]

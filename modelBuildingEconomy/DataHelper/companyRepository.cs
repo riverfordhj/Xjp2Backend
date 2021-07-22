@@ -200,19 +200,19 @@ namespace ModelsBuildingEconomy.DataHelper
 
         }
 
-        public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
-        {
-            var floorInfo = from bf in _context.BuildingFloor.Where(bf => bf.BuildingName == buildingName && bf.FloorNum == floorNum)
-                            select new
-                            {
-                                bf.Long,
-                                bf.Lat,
-                                bf.Height
-                            };
+        //public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
+        //{
+        //    var floorInfo = from bf in _context.BuildingFloor.Where(bf => bf.BuildingName == buildingName && bf.FloorNum == floorNum)
+        //                    select new
+        //                    {
+        //                        bf.Long,
+        //                        bf.Lat,
+        //                        bf.Height
+        //                    };
                             
-            return floorInfo;
+        //    return floorInfo;
 
-        }
+        //}
 
 
 

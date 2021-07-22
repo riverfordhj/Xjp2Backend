@@ -49,12 +49,12 @@ namespace Xjp2Backend.Controllers
 
 
         // GET: api/Companies/getCompanysByBuilding/1
-        [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> GetCompanysByBuilding(int id)
-        {
-            return _repository.GetCompanysByBuilding(id);
+        //[HttpGet("[action]/{id}")]
+        //public IEnumerable<Object> GetCompanysByBuilding(int id)
+        //{
+        //    return _repository.GetCompanysByBuilding(id);
 
-        }
+        //}
 
         // GET: api/Companies/GetCompanysByBuildingWithCH/1
         [HttpGet("[action]/{id}")]
@@ -188,24 +188,24 @@ namespace Xjp2Backend.Controllers
 
 
         //POST: api/Companies/GetInfoByFloor
-        [HttpPost("[action]")]
-        public async Task<IEnumerable<Object>> GetInfoByFloor([FromBody] BuildingFloor BF)
-        {
-            var info = _repository.GetCompanysByFloor(BF.BuildingName, BF.Floor);
+        //[HttpPost("[action]")]
+        //public async Task<IEnumerable<Object>> GetInfoByFloor([FromBody] BuildingFloor BF)
+        //{
+        //    var info = _repository.GetCompanysByFloor(BF.BuildingName, BF.Floor);
 
-            return await info.ToListAsync();
+        //    return await info.ToListAsync();
 
-        }
+        //}
 
         //POST: api/Companies/GetCompanysByFloor_ZH
-        [HttpPost("[action]")]
-        public async Task<IEnumerable<Object>> GetCompanysByFloor_ZH([FromBody] BuildingFloor BF)
-        {
-            var info = _repository.GetCompanysByFloor_ZH(BF.BuildingName, BF.Floor);
-            
-            return await info.ToListAsync();
-       
-        }
+        //[HttpPost("[action]")]
+        //public async Task<IEnumerable<Object>> GetCompanysByFloor_ZH([FromBody] BuildingFloor BF)
+        //{
+        //    var info = _repository.GetCompanysByFloor_ZH(BF.BuildingName, BF.Floor);
+
+        //    return await info.ToListAsync();
+
+        //}
 
         // POST: api/Companies/DeleteCompanyByName
         [HttpPost("[action]")]
