@@ -35,14 +35,26 @@ namespace Xjp2Backend.Controllers
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> GetCommunitys()
         {
-            return await _context.Communitys.ToListAsync();
+            var userName = GetUserName();
+            return await _repository.GetCommunitysByUserName(userName).ToListAsync();
         }
 
         // GET: api/Person/GetNetGridInCommuity 获取社区下的网格
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<IEnumerable<NetGrid>>> GetNetGridInCommunity(int id)
         {
-            return await _repository.GetNetGridInCommunity(id).ToListAsync();
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
+            if (roleName == "网格员")
+            {
+                return await _repository.GetNetGridByUserName(userName).ToListAsync();
+            }
+            else
+            {
+                return await _repository.GetNetGridInCommunity(id).ToListAsync();
+            }
+           
         }
 
         // GET: api/Person/GetBuildingInNetGrid  获取网格下的楼栋

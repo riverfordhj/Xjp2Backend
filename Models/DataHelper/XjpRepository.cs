@@ -1386,6 +1386,44 @@ namespace Models.DataHelper
 
         #endregion
 
+        #region 二维人员查询
+
+        //通过用户名获取社区
+        public IQueryable<object> GetCommunitysByUserName(string userName)
+        {
+            var roleName = GetRoleName(userName);
+            if (roleName == "网格员")
+            {
+                var community = from u in _context.Users.Where(u => u.UserName == userName)
+                                from ng in u.NetGrid
+                                select new
+                                {
+                                    id = ng.Community.Id,
+                                    Name = ng.Community.Name,
+                                };
+                return community;
+
+            }
+            else
+            if (roleName == "社区")
+            {   
+                return _context.Communitys.Where(c => c.Alias == userName);
+            }
+            else
+            {
+                return _context.Communitys;
+            }
+                        
+        }
+        //通过用户名获取 网格等
+        public IQueryable<NetGrid> GetNetGridByUserName(string userName)
+        {
+            return _context.NetGrids.Where(n => n.User.UserName == userName);        
+
+        }
+        #endregion
+
+
         #region 高级检索
         // 获取所有字段
         public IEnumerable<string> GetFields()
