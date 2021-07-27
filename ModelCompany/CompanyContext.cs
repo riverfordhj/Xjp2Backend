@@ -17,9 +17,9 @@ namespace ModelCompany
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
-            string cs = @"Server=(localdb)\mssqllocaldb;Database=CompanyInfoDB;Integrated Security=True";
+            //string cs = @"Server=(localdb)\mssqllocaldb;Database=CompanyInfoDB;Integrated Security=True";
             //string cs = @"Server=localhost\SQLEXPRESS2019;Database=XjpStreetDB;Uid=sa;Password=sa;Integrated Security=false";
-            optionsBuilder.UseSqlServer(cs);
+            //optionsBuilder.UseSqlServer(cs);
         }
 
 
