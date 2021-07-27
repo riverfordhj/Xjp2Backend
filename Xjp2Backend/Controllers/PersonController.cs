@@ -295,10 +295,11 @@ namespace Xjp2Backend.Controllers
 
         //通过name\身份证、电话号查找人
         // GET: api/GetPersonsBySearch/1
-        [HttpPost("[action]")]
-        public IEnumerable<Object> GetPersonsBySearch([FromBody] QueryParameter para)//Person
+        [HttpGet("[action]/{serchName}")]
+        public IEnumerable<Object> GetPersonsBySearch(string serchName)//Person
         {
-            return _repository.GetPersonsBySearch(para.SubdivisionId ,para.Name);
+            var userName = GetUserName();
+            return _repository.GetPersonsBySearch(userName,serchName);
         }
 
         //高级检索

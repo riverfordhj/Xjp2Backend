@@ -453,78 +453,7 @@ namespace Models.DataHelper
 
         }
 
-        #region 姓名身份证号电话搜索
-        ///<summery>
-        ///通过姓名身份证号电话搜索
-        /// </summery>
-        public IEnumerable<object> GetPersonsBySearch(string SubdivisionId, string Name)
-        {
-            try
-            {
-                //根据 room - person 数据
-                var roomsWithPersons = from person in _context.Persons.Where(r => r.Name.Contains(Name) || r.PersonId == Name || r.Phone == Name)
-                                       from pr in person.PersonRooms
-                                       select new
-                                       {
-                                           RoomId = pr.Room.Id,
-                                           RoomNO = pr.Room.Name,
-                                           BulidingName = pr.Room.Building.Name,
-                                           BulidingAddress = pr.Room.Building.Address,
-                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
-                                           SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
-                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
-                                           netGridName = pr.Room.Building.NetGrid.Name,
-                                           age = pr.Person.Age,
-                                           sex = pr.Person.Sex,
-                                           // person.PersonId,
-                                           pr.Person,
-                                           IsOwner = pr.IsOwner ? "是" : "否",
-                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
-                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
-                                           pr.RelationWithHouseholder,
-                                           pr.LodgingReason,
-                                           pr.PopulationCharacter
-                                       };
-                if (SubdivisionId != null && SubdivisionId != string.Empty)
-                {
-                    roomsWithPersons = roomsWithPersons.Where(item => item.SubdivisionId == SubdivisionId || item.SubdivsionName == SubdivisionId);       //.Contains(SubdivisionId));  //== SubdivisionId );
 
-                }
-                var psdata = roomsWithPersons.ToList();
-
-                var data = from pr in psdata
-                           join sg in _context.SpecialGroups on pr.Person.PersonId equals sg.PersonId into psg // 根据身份证关联
-                           select new
-                           {
-                               pr.RoomId,
-                               pr.RoomNO,
-                               pr.netGridName,
-                               pr.age,
-                               pr.sex,
-                               pr.Person.PersonId,
-                               pr.CommunityName,
-                               pr.SubdivsionName,
-                               pr.BulidingName,
-                               pr.BulidingAddress,
-                               pr.Person,
-                               pr.IsOwner,
-                               pr.IsHouseholder,
-                               pr.IsLiveHere,
-                               pr.RelationWithHouseholder,
-                               pr.LodgingReason,
-                               pr.PopulationCharacter,
-                               SpecialGroup = psg // 特殊人群信息
-                           };
-                return data;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-
-        }
-        #endregion
         //获取特殊人群的位置信息信息(中文)
         public IEnumerable<object> GetSpecialPersonLoction_ZH()
         {
@@ -1386,7 +1315,7 @@ namespace Models.DataHelper
 
         #endregion
 
-        #region 二维人员查询
+        #region 二维人员查询20210724
 
         //通过用户名获取社区
         public IQueryable<object> GetCommunitysByUserName(string userName)
@@ -1808,6 +1737,161 @@ namespace Models.DataHelper
         }
         #endregion
 
+        #region 姓名身份证号电话搜索
+        ///<summery>
+        ///通过姓名身份证号电话搜索
+        /// </summery>
+        public IEnumerable<object> GetPersonsBySearch(string userName, string serchName)
+        {
+            //通过角色返回rooms
+            IQueryable<Room> rooms = FilterRoomsByRole(userName);
+            if(rooms != null)
+            {
+                //获取rooms内所有人
+                IEnumerable<IntermediatePersonRoom> data = GetroomsWithPersonsByRole(rooms);
+                //根据姓名、电话、身份证过滤人
+                data = FilterPersonsByRole(data, serchName);
+                return GetPersonsByQueryRoom(data);
+            }
+            else
+            {
+                return GetPersonsBystreet(serchName);
+            }
+        
+        }
+        #endregion
+        #region 按权限获取人房 20210726
+        //第一步：前端传来的角色过滤房间
+        private IQueryable<Room> FilterRoomsByRole(string userName)
+        {
+            var rooms = _context.Rooms.AsQueryable();
+            var roleName = GetRoleName(userName);
+            if (roleName == "网格员")
+            {
+                NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                var netidUser = netgrid.Id;
+                //网格
+                rooms = rooms.Where(r => r.Building.NetGrid.Id == netidUser);
+                return rooms;
+
+            }
+            else
+            if (roleName == "社区")
+            {
+                Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                var communityName = community.Name;
+                //社区
+                rooms = rooms.Where(r => r.Building.NetGrid.Community.Name == communityName);
+                return rooms;
+            }
+            else
+            {
+                return null;
+            }
+        }
+        //第二步：获取过滤后的rooms内的所有人,构造二维数据表
+        private IEnumerable<IntermediatePersonRoom> GetroomsWithPersonsByRole(IQueryable<Room> rooms)
+        {
+            try
+            {
+                var roomsWithPersons = from room in rooms
+                                       from pr in room.PersonRooms
+                                       select new IntermediatePersonRoom
+                                       {
+                                           RoomId = room.Id,
+                                           RoomNO = room.Name,
+                                           BulidingName = room.Building.Name,
+                                           BulidingAddress = room.Building.Address,
+                                           SubdivsionName = room.Building.Subdivision.Name,
+                                           CommunityName = room.Building.NetGrid.Community.Name,
+                                           NetGridName = room.Building.NetGrid.Name,
+                                           Sex = pr.Person.Sex,
+                                           PersonId = pr.PersonId,
+                                           Age = pr.Person.Age,
+                                           Person = pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           RelationWithHouseholder = pr.RelationWithHouseholder,
+                                           LodgingReason = pr.LodgingReason,
+                                           PopulationCharacter = pr.PopulationCharacter
+                                       };
+                return roomsWithPersons;
+
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        public IEnumerable<object> GetPersonsBystreet(string Name)
+        {
+            try
+            {
+                //根据 room - person 数据
+                var roomsWithPersons = from person in _context.Persons.Where(r => r.Name.Contains(Name) || r.PersonId == Name || r.Phone == Name)
+                                       from pr in person.PersonRooms
+                                       select new
+                                       {
+                                           RoomId = pr.Room.Id,
+                                           RoomNO = pr.Room.Name,
+                                           BulidingName = pr.Room.Building.Name,
+                                           BulidingAddress = pr.Room.Building.Address,
+                                           SubdivsionName = pr.Room.Building.Subdivision.Name,
+                                           SubdivisionId = pr.Room.Building.Subdivision.Id.ToString(),
+                                           CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                                           netGridName = pr.Room.Building.NetGrid.Name,
+                                           age = pr.Person.Age,
+                                           sex = pr.Person.Sex,
+                                           // person.PersonId,
+                                           pr.Person,
+                                           IsOwner = pr.IsOwner ? "是" : "否",
+                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
+                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
+                                           pr.RelationWithHouseholder,
+                                           pr.LodgingReason,
+                                           pr.PopulationCharacter
+                                       };
+                var psdata = roomsWithPersons.ToList();
+
+                var data = from pr in psdata
+                           join sg in _context.SpecialGroups on pr.Person.PersonId equals sg.PersonId into psg // 根据身份证关联
+                           select new
+                           {
+                               pr.RoomId,
+                               pr.RoomNO,
+                               pr.netGridName,
+                               pr.age,
+                               pr.sex,
+                               pr.Person.PersonId,
+                               pr.CommunityName,
+                               pr.SubdivsionName,
+                               pr.BulidingName,
+                               pr.BulidingAddress,
+                               pr.Person,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               SpecialGroup = psg // 特殊人群信息
+                           };
+                return data;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+        private IEnumerable<IntermediatePersonRoom> FilterPersonsByRole(IEnumerable<IntermediatePersonRoom> roomsWithPersons, string serchName)
+        {
+            roomsWithPersons = roomsWithPersons.Where(pr =>pr.Person.Name.Contains(serchName) || pr.Person.PersonId == serchName || pr.Person.Phone == serchName);
+            return roomsWithPersons;
+        }
+        #endregion
         public bool Save()
         {
             return (_context.SaveChanges() >= 0);

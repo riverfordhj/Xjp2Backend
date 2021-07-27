@@ -101,7 +101,7 @@ namespace Xjp2Backend
             //配置数据库context
             //services.AddDbContext<XjpContext>(opt => opt.UseInMemoryDatabase("XjpDB"));
             services.AddDbContext<StreetContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpDatabase")));
-            services.AddDbContext<xjpCompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpBuildingEcoDatabase")));
+            //services.AddDbContext<xjpCompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpBuildingEcoDatabase")));
             services.AddDbContext<CompanyContext>(options => options.UseSqlServer(Configuration.GetConnectionString("XjpCompanyInfoDatabase")));
 
             //读取徐家棚数据库连接字符串，保持到全局静态变量中

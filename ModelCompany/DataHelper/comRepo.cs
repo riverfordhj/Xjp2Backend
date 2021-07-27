@@ -46,20 +46,13 @@ namespace ModelCompany.DataHelper
             var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
                        from cb in companyBD.CompanyBasicInfo
                        from co in cb.CompanyOtherInfo
-                       //from room in cb.CompanyRoom
                        select new
                        {
                            buildingName = companyBD.BuildingName,
                            area = co.OfficeArea,
-                           ///roomName = cb.CompanyRoom.Name,
+                           cb.CompanyRoom,
                            cb
                        };
-            //var ss = from cc in _context.CompanyBasicInfo.Where(b =>b.CompanyBuildings.Id == id)
-            //         from bb in cc.CompanyRoom.First()
-            //         select new
-            //         {
-
-            //         };
             return data;
 
         }
