@@ -31,6 +31,13 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
+        // GET: api/Person/GetCommunitys  获取社区人
+        [HttpGet("[action]")]
+        public  IEnumerable<object> GetCommunityPersons()
+        {
+            var userName = GetUserName();
+            return  _repository.GetPersonsByCommunity(userName);
+        }
         // GET: api/Person/GetCommunitys  获取社区
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> GetCommunitys()
@@ -257,9 +264,10 @@ namespace Xjp2Backend.Controllers
         //获取特殊群体，吸毒、信访人员的信息
         // GET: api/SpecialGroups
         [HttpGet("[action]")]
-        public IEnumerable<Object> GetSpecialGroups()//Person
+        public async Task<ActionResult<IEnumerable<Object>>> GetSpecialGroups()//Person
         {
-            return _repository.GetSpecialGroups();
+            var userName = GetUserName();
+            return await _repository.GetSpecialGroups(userName).ToListAsync();
         }
 
         //获取特殊群体，吸毒、信访人员的位置信息（返回中文数据）
@@ -306,13 +314,14 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
          public IEnumerable<Object> GetDataByQuery([FromBody] QueryDataParameterCollection dataForms)//Person
         {
+            var userName = GetUserName();
             List<string[]> items = new List<string[]>();
             foreach (var item in dataForms.Items)
             {
                 String[] query = { item.Field, item.Operato, item.Sname };
                 items.Add(query);
             }
-            return _repository.GetDataByQuery(items);
+            return _repository.GetDataByQuery(userName,items);
         }
 
 
