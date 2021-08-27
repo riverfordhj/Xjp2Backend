@@ -54,6 +54,16 @@ namespace Xjp2Backend.Controllers
             
         }
 
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetBuildingFloor(string buildingName)
+        {
+            return await _repository.GetBuildingFloor(buildingName).ToListAsync();
+        }
+        //[HttpGet("[action]")]
+        //public async Task<IEnumerable<object>> GetInfoByBuildingFloor(string buildingName, string floor)
+        //{
+        //    return await _repository.GetInfoByBuildingFloor(buildingName, floor).ToListAsync();
+        //}
         // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
         [HttpGet("[action]")]
         public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
@@ -61,5 +71,19 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetInfoByBuildingAndFloor(buildingName, floor).ToListAsync();
         }
 
+        // GET: api/Companies/GetWholeCompanys_ZH
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<Object>> GetWholeCompanys_ZH()
+        {
+            return await _repository.GetWholeCompanys_ZH().ToListAsync();
+        }
+
+        // GET: api/Companies/GetCompanysByBuildingWithCH/1
+        [HttpGet("[action]/{id}")]
+        public IEnumerable<Object> GetCompanysByBuilding_ZH(int id)
+        {
+            return _repository.GetCompanysByBuilding_ZH(id);
+
+        }
     }
 }

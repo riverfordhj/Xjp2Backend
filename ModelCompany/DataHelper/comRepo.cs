@@ -56,7 +56,17 @@ namespace ModelCompany.DataHelper
             return data;
 
         }
+        public IQueryable<object> GetBuildingFloor(string buildingName)
+        {
+            var floorInfo = from croom in _context.CompanyRoom.Where(bf => bf.CompanyBuildings.BuildingName == buildingName)                        
+                            select new
+                            {
+                                croom.FloorNum,              
+                            };
 
+            return floorInfo; //.Select(p =>p.FloorNum).Distinct();
+
+        }
         public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
         {
             var floorInfo = from broom in _context.CompanyRoom.Where(bf => bf.CompanyBuildings.BuildingName == buildingName && bf.Name == floorNum)
@@ -70,5 +80,51 @@ namespace ModelCompany.DataHelper
             return floorInfo;
 
         }
+
+        #region 楼宇统计分析
+        //筛选出指定楼栋的公司信息（中文），用于透视表统计
+        public IQueryable<object> GetCompanysByBuilding_ZH(int id)
+        {
+            var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
+                       from company in companyBD.CompanyBasicInfo
+                       from co in company.CompanyOtherInfo
+                       select new
+                       {
+                           楼宇名称 = companyBD.BuildingName,
+                           企业名称 = company.CompanyName,
+                           企业类型 = company.EnterpriseType,
+                           注册资本 = company.RegisteredCapital,
+                           工商注册地址 = company.RegisteredAddress,
+                          // 税后统计区 = company.TaxStatisticsArea,
+                           租赁或购买 = company.OfficeSpaceType,
+                           楼层 = company.FloorNum,
+                           企业面积 = co.OfficeArea
+                       };
+
+            return data;
+
+        }
+        //返回所有公司信息（中文），用于透视表统计
+        public IQueryable<object> GetWholeCompanys_ZH()
+        {
+            var data = from companyBD in _context.CompanyBasicInfo
+                       from co in companyBD.CompanyOtherInfo
+                       select new
+                       {
+                           楼宇名称 = companyBD.CompanyBuildings.BuildingName,
+                           企业名称 = companyBD.CompanyName,
+                           企业类型 = companyBD.EnterpriseType,
+                           注册资本 = companyBD.RegisteredCapital,
+                           工商注册地址 = companyBD.RegisteredAddress,
+                           //税后统计区 = companyBD.TaxStatisticsArea,
+                           租赁或购买 = companyBD.OfficeSpaceType,
+                           楼层 = companyBD.FloorNum,
+                           企业面积 = co.OfficeArea
+                       };
+
+
+            return data;
+        }
+        #endregion
     }
 }

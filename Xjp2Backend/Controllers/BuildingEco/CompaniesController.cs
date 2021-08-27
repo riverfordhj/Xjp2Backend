@@ -40,12 +40,7 @@ namespace Xjp2Backend.Controllers
 
         }
 
-        // GET: api/Companies/GetWholeCompanys_ZH
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<Object>> GetWholeCompanys_ZH()
-        {
-            return await _repository.GetWholeCompanys_ZH().ToListAsync();
-        }
+
 
 
         // GET: api/Companies/getCompanysByBuilding/1
@@ -56,13 +51,7 @@ namespace Xjp2Backend.Controllers
 
         //}
 
-        // GET: api/Companies/GetCompanysByBuildingWithCH/1
-        [HttpGet("[action]/{id}")]
-        public IEnumerable<Object> GetCompanysByBuilding_ZH(int id)
-        {
-            return _repository.GetCompanysByBuilding_ZH(id);
 
-        }
 
 
         // GET: api/Companies/GetBuildingEcoFields
