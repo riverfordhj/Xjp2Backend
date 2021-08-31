@@ -85,5 +85,11 @@ namespace Xjp2Backend.Controllers
             return _repository.GetCompanysByBuilding_ZH(id);
 
         }
+        // 检索公司
+        [HttpGet("[action]/{serchName}")]
+        public IEnumerable<Object> GetCompanyBySearch(string serchName)//Person
+        {
+            return _repository.GetCompanyBySearch(serchName);
+        }
     }
 }

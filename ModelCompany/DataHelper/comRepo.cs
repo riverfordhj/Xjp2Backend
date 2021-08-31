@@ -50,11 +50,26 @@ namespace ModelCompany.DataHelper
                        {
                            buildingName = companyBD.BuildingName,
                            area = co.OfficeArea,
+                           floorNum = cb.FloorNum,
                            cb.CompanyRoom,
                            cb
                        };
             return data;
 
+        }
+        public IEnumerable<object> GetCompanyBySearch(string serchName)
+        {
+            var data = from cb in _context.CompanyBasicInfo.Where(c =>c.CompanyName.Contains(serchName) || c.UnifiedSocialCreditCode.Contains(serchName))                     
+                       from co in cb.CompanyOtherInfo
+                       select new
+                       {
+                           buildingName = cb.CompanyBuildings.BuildingName,
+                           area = co.OfficeArea,
+                           floorNum = cb.FloorNum,
+                           cb.CompanyRoom,
+                           cb
+                       };
+            return data;
         }
         public IQueryable<object> GetBuildingFloor(string buildingName)
         {
@@ -88,6 +103,7 @@ namespace ModelCompany.DataHelper
             var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
                        from company in companyBD.CompanyBasicInfo
                        from co in company.CompanyOtherInfo
+                       from tax in company.CompanyTax
                        select new
                        {
                            楼宇名称 = companyBD.BuildingName,
@@ -98,7 +114,10 @@ namespace ModelCompany.DataHelper
                           // 税后统计区 = company.TaxStatisticsArea,
                            租赁或购买 = company.OfficeSpaceType,
                            楼层 = company.FloorNum,
-                           企业面积 = co.OfficeArea
+                           企业面积 = co.OfficeArea,
+                           年份 = tax.Year,
+                           税收 = tax.Tax,
+                           营收 = tax.Revenue,
                        };
 
             return data;
