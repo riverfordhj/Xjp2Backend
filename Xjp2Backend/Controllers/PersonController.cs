@@ -126,7 +126,22 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetBuildingsByNetGrid(userName).ToListAsync();
 
         }
+        //GET: api/Person/GetSubdivisionByNetGrid
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivisionByNetGrid()
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
 
+            if (roleName != "网格员")
+            {
+                return NotFound();
+            }
+
+            return await _repository.GetSubdivisionByNetGrid(userName).ToListAsync();
+
+        }
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName, string address)
         {

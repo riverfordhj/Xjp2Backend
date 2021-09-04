@@ -677,6 +677,19 @@ namespace Models.DataHelper
             return _context.Subdivisions;
         }
 
+        //根据网格员，返回相应小区
+        public IQueryable<object> GetSubdivisionByNetGrid(string userName)
+        {
+            return from u in _context.Users.Where(u => u.UserName == userName)
+                   from ng in u.NetGrid
+                   from b in ng.Buildings
+                   select new
+                   {
+                       id = b.Subdivision.Id,
+                       subdivisionName = b.Subdivision.Name,
+                   };
+        }
+
         //根据网格员，返回相应楼栋
         public IQueryable<object> GetBuildingsByNetGrid(string userName)
         {
@@ -1016,6 +1029,7 @@ namespace Models.DataHelper
                         RoomUse = personFields.RoomUse,
                         BuildingName = personFields.BuildingName,
                         Address = personFields.Address,
+                        SubdivisionName = personFields.SubdivisionName,
                         NetGrid = personFields.NetGrid,
                         CommunityName = personFields.CommunityName,
                         Editor = userName,
@@ -1120,53 +1134,61 @@ namespace Models.DataHelper
         {
             var dataList = new List<object> { };
             bool latchValue = true;
-            for (int i = 0; i < PersonHouseDatas.Count; i++)
+            try
             {
-                var personHouse = PersonHouseDatas[i];
-                NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
-                //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
-                Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
-                if (!(resNetGrid != null && resRoom != null))
+                for (int i = 0; i < PersonHouseDatas.Count; i++)
                 {
-                    latchValue = false;
-                    dataList.Add(new
+                    var personHouse = PersonHouseDatas[i];
+                    NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
+                    //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
+                    Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
+                    if (!(resNetGrid != null && resRoom != null))
                     {
-                        message = "房屋地址不正确(填写错误或超出权限)",
-                        index = i
-                    });
+                        latchValue = false;
+                        dataList.Add(new
+                        {
+                            message = "房屋地址不正确(填写错误或超出权限)",
+                            index = i
+                        });
+                    }
                 }
+                if (!latchValue)
+                {
+                    return dataList;//中止函数执行，并返回错误消息数组
+                }
+
+                for (int j = 0; j < PersonHouseDatas.Count; j++)
+                {
+                    var personHouseItem = PersonHouseDatas[j];
+
+                    PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
+                    if (targetPersonHouse == null)
+                    {
+                        targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
+                        _context.PersonHouseDatas.Add(targetPersonHouse);
+                        _context.SaveChanges();
+                        dataList.Add(new
+                        {
+                            message = "ok",
+                            index = j
+                        });
+                    }
+                    else
+                    {
+                        dataList.Add(new
+                        {
+                            message = "已存在",
+                            index = j
+                        });
+                    }
+                }
+                return dataList;
             }
-            if (!latchValue)
+            catch (Exception e)
             {
-                return dataList;//中止函数执行，并返回错误消息数组
+                return null;
             }
 
-            for (int j = 0; j < PersonHouseDatas.Count; j++)
-            {
-                var personHouseItem = PersonHouseDatas[j];
-
-                PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
-                if (targetPersonHouse == null)
-                {
-                    targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
-                    _context.PersonHouseDatas.Add(targetPersonHouse);
-                    _context.SaveChanges();
-                    dataList.Add(new
-                    {
-                        message = "ok",
-                        index = j
-                    }); 
-                }
-                else
-                {
-                    dataList.Add(new
-                    {
-                        message = "已存在",
-                        index = j
-                    });
-                }
-            }
-            return dataList;
         }
 
         //选中一条personHouseData数据
