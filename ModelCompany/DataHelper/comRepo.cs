@@ -73,7 +73,7 @@ namespace ModelCompany.DataHelper
         }
         public IQueryable<object> GetBuildingFloor(string buildingName)
         {
-            var floorInfo = from croom in _context.CompanyRoom.Where(bf => bf.CompanyBuildings.BuildingName == buildingName)                        
+            var floorInfo = from croom in _context.CompanyBasicInfo.Where(c => c.CompanyBuildings.BuildingName == buildingName)                        
                             select new
                             {
                                 croom.FloorNum,              
