@@ -1244,98 +1244,108 @@ namespace Models.DataHelper
         //街道审批社区的审核
         public IEnumerable<object> ConfirmByAdmin(VerifyAndConfirmParam confirmFields, string userName)
         {
-            PersonHouseData personHouse = PickPersonHouse(confirmFields.PersonId, confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
-            PersonRoom personRoom = PickPersonRoom(confirmFields);
-            personHouse.Status = confirmFields.Status;//personHouseData的状态总会改变
-
-            if (confirmFields.Status == "approved")//街道批准时，执行
+            try
             {
-                Person targetPerson = _context.Persons.SingleOrDefault(per => per.PersonId == confirmFields.PersonId);
-                Room targetRoom = PickRoom(confirmFields.RoomName, confirmFields.BuildingName,confirmFields.Address);
-                //新建一条personRoom
-                if (personHouse.Operation == "creating" && personRoom == null && targetRoom != null)
-                {
-                    targetRoom.Use = personHouse.RoomUse;//更改房屋用途
-                    targetRoom.Category = personHouse.Category;//更改房屋性质(类别)
-                    //（以上room属性的修改会影响到关联此room的所有personRoom信息）
+                PersonHouseData personHouse = PickPersonHouse(confirmFields.PersonId, confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
+                PersonRoom personRoom = PickPersonRoom(confirmFields);
+                personHouse.Status = confirmFields.Status;//personHouseData的状态总会改变
 
-                    if (targetPerson == null)
+                if (confirmFields.Status == "approved")//街道批准时，执行
+                {
+                    Person targetPerson = _context.Persons.SingleOrDefault(per => per.PersonId == confirmFields.PersonId);
+                    Room targetRoom = PickRoom(confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
+                    //新建一条personRoom
+                    if (personHouse.Operation == "creating" && personRoom == null && targetRoom != null)
                     {
-                        targetPerson = new Person
+                        targetRoom.Use = personHouse.RoomUse;//更改房屋用途
+                        targetRoom.Category = personHouse.Category;//更改房屋性质(类别)
+                                                                   //（以上room属性的修改会影响到关联此room的所有personRoom信息）
+
+                        if (targetPerson == null)
+                        {
+                            targetPerson = new Person
+                            {
+                                PersonId = personHouse.PersonId,
+                                Name = personHouse.Name,
+                                EthnicGroups = personHouse.EthnicGroups,
+                                Phone = personHouse.Phone,
+                                DomicileAddress = personHouse.DomicileAddress,
+                                Company = personHouse.Company,
+                                PoliticalState = personHouse.PoliticalState,
+                                OrganizationalRelation = personHouse.OrganizationalRelation,
+                                IsOverseasChinese = personHouse.IsOverseasChinese,
+                                MerriedStatus = personHouse.MerriedStatus,
+                                Note = personHouse.Note
+                            };
+                            _context.Persons.Add(targetPerson);
+                        }
+
+                        
+
+                        PersonRoom newPersonRoom = new PersonRoom
                         {
                             PersonId = personHouse.PersonId,
-                            Name = personHouse.Name,
-                            EthnicGroups = personHouse.EthnicGroups,
-                            Phone = personHouse.Phone,
-                            DomicileAddress = personHouse.DomicileAddress,
-                            Company = personHouse.Company,
-                            PoliticalState = personHouse.PoliticalState,
-                            OrganizationalRelation = personHouse.OrganizationalRelation,
-                            IsOverseasChinese = personHouse.IsOverseasChinese,
-                            MerriedStatus = personHouse.MerriedStatus,
-                            Note = personHouse.Note
+                            IsHouseholder = personHouse.IsHouseholder,
+                            RelationWithHouseholder = personHouse.RelationWithHouseholder,
+                            IsOwner = personHouse.IsOwner,
+                            IsLiveHere = personHouse.IsLiveHere,
+                            PopulationCharacter = personHouse.PopulationCharacter,
+                            LodgingReason = personHouse.LodgingReason,
+                            Status = null
                         };
-                    }
-                  
-                    _context.Persons.Add(targetPerson);
+                        newPersonRoom.Person = targetPerson;//targetPerson为null时，关联新增的person信息；不为null时，关联该targetPerson
+                        newPersonRoom.Room = targetRoom;
+                        _context.PersonRooms.Add(newPersonRoom);
 
-                    PersonRoom newPersonRoom = new PersonRoom
-                    {
-                        PersonId = personHouse.PersonId,
-                        IsHouseholder = personHouse.IsHouseholder,
-                        RelationWithHouseholder = personHouse.RelationWithHouseholder,
-                        IsOwner = personHouse.IsOwner,
-                        IsLiveHere = personHouse.IsLiveHere,
-                        PopulationCharacter = personHouse.PopulationCharacter,
-                        LodgingReason = personHouse.LodgingReason,
-                        Status = null
-                    };
-                    newPersonRoom.Person = targetPerson;//targetPerson为null时，关联新增的person信息；不为null时，关联该targetPerson
-                    newPersonRoom.Room = targetRoom;
-                    _context.PersonRooms.Add(newPersonRoom);
-
-                }else if(personHouse.Operation == "updating" && targetPerson != null && targetRoom != null)
-                {
-                    targetPerson.Name = personHouse.Name;
-                    targetPerson.EthnicGroups = personHouse.EthnicGroups;
-                    targetPerson.Phone = personHouse.Phone;
-                    targetPerson.DomicileAddress = personHouse.DomicileAddress;
-                    targetPerson.Company = personHouse.Company;
-                    targetPerson.PoliticalState = personHouse.PoliticalState;
-                    targetPerson.OrganizationalRelation = personHouse.OrganizationalRelation;
-                    targetPerson.IsOverseasChinese = personHouse.IsOverseasChinese;
-                    targetPerson.MerriedStatus = personHouse.MerriedStatus;
-                    targetPerson.Note = personHouse.Note;
-                    personRoom.IsHouseholder = personHouse.IsHouseholder;
-                    personRoom.RelationWithHouseholder = personHouse.RelationWithHouseholder;
-                    personRoom.IsOwner = personHouse.IsOwner;
-                    personRoom.IsLiveHere = personHouse.IsLiveHere;
-                    personRoom.PopulationCharacter = personHouse.PopulationCharacter;
-                    personRoom.LodgingReason = personHouse.LodgingReason;
-                    personRoom.Status = null;
-                    targetRoom.Use = personHouse.RoomUse;
-                    targetRoom.Category = personHouse.Category;
-                }
-                else if(personHouse.Operation == "deleting")
-                {
-                    _context.PersonRooms.Remove(personRoom);
-                    var pr_count = _context.PersonRooms.Where(pr => pr.PersonId == confirmFields.PersonId).ToArray().Length;
-                    if(pr_count == 0)
-                    {
-                        _context.Persons.Remove(targetPerson);
                     }
-                   
+                    else if (personHouse.Operation == "updating" && targetPerson != null && targetRoom != null)
+                    {
+                        targetPerson.Name = personHouse.Name;
+                        targetPerson.EthnicGroups = personHouse.EthnicGroups;
+                        targetPerson.Phone = personHouse.Phone;
+                        targetPerson.DomicileAddress = personHouse.DomicileAddress;
+                        targetPerson.Company = personHouse.Company;
+                        targetPerson.PoliticalState = personHouse.PoliticalState;
+                        targetPerson.OrganizationalRelation = personHouse.OrganizationalRelation;
+                        targetPerson.IsOverseasChinese = personHouse.IsOverseasChinese;
+                        targetPerson.MerriedStatus = personHouse.MerriedStatus;
+                        targetPerson.Note = personHouse.Note;
+                        personRoom.IsHouseholder = personHouse.IsHouseholder;
+                        personRoom.RelationWithHouseholder = personHouse.RelationWithHouseholder;
+                        personRoom.IsOwner = personHouse.IsOwner;
+                        personRoom.IsLiveHere = personHouse.IsLiveHere;
+                        personRoom.PopulationCharacter = personHouse.PopulationCharacter;
+                        personRoom.LodgingReason = personHouse.LodgingReason;
+                        personRoom.Status = null;
+                        targetRoom.Use = personHouse.RoomUse;
+                        targetRoom.Category = personHouse.Category;
+                    }
+                    else if (personHouse.Operation == "deleting")
+                    {
+                        _context.PersonRooms.Remove(personRoom);
+                        var pr_count = _context.PersonRooms.Where(pr => pr.PersonId == confirmFields.PersonId).ToArray().Length;
+                        if (pr_count == 0)
+                        {
+                            _context.Persons.Remove(targetPerson);
+                        }
+
+                    }
                 }
+                else if (confirmFields.Status == "rejected" && personRoom != null)//街道不批准时，执行
+                {
+                    personRoom.Status = confirmFields.Status;
+                }
+
+
+                _context.SaveChanges();
+
+                return GetPersonsByUser(userName);
             }
-            else if(confirmFields.Status == "rejected" && personRoom != null)//街道不批准时，执行
+            catch (Exception e)
             {
-                personRoom.Status = confirmFields.Status;
+                return null;
             }
 
-
-            _context.SaveChanges();
-
-            return GetPersonsByUser(userName);
         }
 
         public IQueryable<object> PersonHouseHistoryInfo()
