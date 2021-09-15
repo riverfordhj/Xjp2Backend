@@ -527,68 +527,7 @@ namespace Models.DataHelper
             }
 
         }
-        /// <summary>
-        /// 获取特殊人群
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<object> GetSpecialGroups(string userName)
-        {
-            try
-            {
-                var data = from sg in _context.SpecialGroups
-                           join  p in _context.Persons on sg.PersonId equals p.PersonId  
-                           from  pr in p.PersonRooms                        
-                           select new
-                           {
-                               RoomId = pr.Room.Id,
-                               RoomNO = pr.Room.Name,
-                               netid = pr.Room.Building.NetGrid.Id,
-                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
-                               netGridName = pr.Room.Building.NetGrid.Name,
-                               age = p.Age,
-                               sex = p.Sex,
-                               SubdivsionName =pr.Room.Building.Subdivision.Name,
-                               BulidingName = pr.Room.Building.Name,
-                               BulidingAddress = pr.Room.Building.Address,
-                               p.PersonId,
-                               person = p,
-                               pr.IsOwner,
-                               pr.IsHouseholder,
-                               pr.IsLiveHere,
-                               pr.RelationWithHouseholder,
-                               pr.LodgingReason,
-                               pr.PopulationCharacter, 
-                               sg.Type                            
 
-                           };
-                var roleName = GetRoleName(userName);
-                if (roleName == "网格员")
-                {
-                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
-                    var netidUser = netgrid.Id;
-                    //网格
-                    return data = data.Where(r => r.netid == netidUser);                  
-                }
-                else
-                if (roleName == "社区")
-                {
-                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
-                    var communityName = community.Name;
-                    //社区
-                    return data = data.Where(r => r.CommunityName == communityName);
-                }
-                else
-                {
-                    return data;
-                }         
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-
-        }
         /// <summary>
         /// 根据房间号，获取住房人员信息列表
         /// </summary>
@@ -621,9 +560,308 @@ namespace Models.DataHelper
         }
         #endregion
 
+        #region 公共服务
+
+        //获取特殊人群类型
+        public IQueryable<object> GetSpecialGroupsType()
+        {
+            var SpecialGroupsType = from sgt in _context.SpecialGroups
+                                    select new
+                                    {
+                                        sgt.Type,
+                                    };
+
+            return SpecialGroupsType.Distinct();
+
+        }
+        //按权限获取特殊人群
+        public IQueryable<object> GetSpecialGroups(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.SpecialGroups
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
+        //获取低保户类型
+        public IQueryable<object> GetPoorType()
+        {
+            var poorType = from sgt in _context.PoorPeoples
+                                    select new
+                                    {
+                                        sgt.Type,
+                                    };
+
+            return poorType.Distinct();
+
+        }
+        //按权限获取低保户
+        public IQueryable<object> GetPoorpeople(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.PoorPeoples
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
+        //获取残疾人类型和级别
+        public IQueryable<object> GetDisabilityType()
+        {
+            var poorType = from sgt in _context.Disability
+                           select new
+                           {
+                               sgt.Type,
+                           };
+
+            return poorType.Distinct();
+
+        }
+        public IQueryable<object> GetDisabilitylevel()
+        {
+            var level = from sgt in _context.Disability
+                           select new
+                           {
+                               sgt.Class,
+                           };
+
+            return level.Distinct();
+
+        }
+        //按权限获取残疾人信息
+        public IQueryable<object> GetDisability(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.Disability
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+                               level = sg.Class,
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
+        //获取退伍军人类型
+        public IQueryable<object> GetMilitaryType()
+        {
+            var poorType = from sgt in _context.MilitaryService
+                           select new
+                           {
+                               sgt.Type,
+                           };
+
+            return poorType.Distinct();
+
+        }
+        //按权限获取退伍军人
+        public IQueryable<object> GetMilitaryService(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.MilitaryService
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        #endregion
 
         #region 用户、角色
-        
+
         public User GetUserByName(string name)
         {
             var user = _context.Users.Include(u => u.RoleUsers).ThenInclude(ru => ru.Role).SingleOrDefault(r => r.UserName.Equals(name));

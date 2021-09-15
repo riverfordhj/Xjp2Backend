@@ -79,7 +79,7 @@ namespace ModelCompany.DataHelper
                                 croom.FloorNum,              
                             };
 
-            return floorInfo; //.Select(p =>p.FloorNum).Distinct();
+            return floorInfo; 
 
         }
         public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
