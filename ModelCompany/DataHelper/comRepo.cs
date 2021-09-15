@@ -128,6 +128,7 @@ namespace ModelCompany.DataHelper
         {
             var data = from companyBD in _context.CompanyBasicInfo
                        from co in companyBD.CompanyOtherInfo
+                       from tax in companyBD.CompanyTax
                        select new
                        {
                            楼宇名称 = companyBD.CompanyBuildings.BuildingName,
@@ -138,7 +139,10 @@ namespace ModelCompany.DataHelper
                            //税后统计区 = companyBD.TaxStatisticsArea,
                            租赁或购买 = companyBD.OfficeSpaceType,
                            楼层 = companyBD.FloorNum,
-                           企业面积 = co.OfficeArea
+                           企业面积 = co.OfficeArea,
+                           年份 = tax.Year,
+                           税收 = tax.Tax,
+                           营收 = tax.Revenue,
                        };
 
 
