@@ -1,0 +1,1 @@
+﻿Delete from PersonRooms where RoomId >= 68907 and RoomId<= 69506

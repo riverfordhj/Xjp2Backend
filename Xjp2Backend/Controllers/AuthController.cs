@@ -46,7 +46,6 @@ namespace Xjp2Backend.Controllers
         [HttpPost("[action]")]
         public async Task<IActionResult> Login([FromBody]LoginRequest request)
         {
-            //var user = _userService.GetUserByName(request.UserName);
             var user = _repository.GetUserByName(request.UserName);
 
             if (user == null)
