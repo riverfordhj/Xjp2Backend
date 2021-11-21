@@ -187,18 +187,7 @@ namespace ModelsBuildingEconomy.DataHelper
             return data;
         }
 
-        //返回指定楼栋的楼层信息
-        public IQueryable<object> GetFloorsByBuilding(int id)
-        {
-            var floorsInfo = from bd in _context.CompanyBuilding.Where(cb => cb.Id == id)
-                             select new
-                             {
-                                 bd.Floor
-                             };
 
-            return floorsInfo;
-
-        }
 
         //public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
         //{

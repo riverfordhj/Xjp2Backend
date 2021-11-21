@@ -24,11 +24,17 @@ namespace ModelCompany.DataHelper
         {
             try
             {
-                var roomsWithCompany = from croom in _context.CompanyRoom.Where(r => r.CompanyBuildings.BuildingName == buildingName && r.Name == roomName)                    
+                var roomsWithCompany = from croom in _context.CompanyRoom.Where(r => r.CompanyBuildings.BuildingName == buildingName && r.Name == roomName)  
+                                       from oth in croom.CompanyBasicInfo.CompanyOtherInfo
                                        select new
                                        {
                                            croom.CompanyBasicInfo,
                                            croom.CompanyBuildings.BuildingName,
+                                           EmployeesNum = oth.EmployeesNum,
+                                           BachelorAboveNum = oth.BachelorAboveNum,
+                                           PatentNum = oth.PatentNum,
+                                           OfficeArea = oth.OfficeArea,
+                                           ctax = croom.CompanyBasicInfo.CompanyTax,
                                        };
          
                 return roomsWithCompany;
@@ -46,17 +52,47 @@ namespace ModelCompany.DataHelper
             var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
                        from cb in companyBD.CompanyBasicInfo
                        from co in cb.CompanyOtherInfo
+                       //from ctax in cb.CompanyTax
                        select new
                        {
                            buildingName = companyBD.BuildingName,
                            area = co.OfficeArea,
                            floorNum = cb.FloorNum,
+                           EmployeesNum = co.EmployeesNum,
+                           BachelorAboveNum = co.BachelorAboveNum,
+                           PatentNum = co.PatentNum,
                            cb.CompanyRoom,
+                           ctax = cb.CompanyTax,
                            cb
                        };
             return data;
 
         }
+
+         public IQueryable<object> GetRoomByBuilding(string buildingName)
+        {
+            var roomInfo = from croom in _context.CompanyRoom.Where(cr => cr.CompanyBuildings.BuildingName == buildingName)
+                            select new
+                            {
+                                croom.Name,
+                            };
+
+            return roomInfo;
+
+        }
+
+        public IQueryable<object> GetBuildingFloor(string buildingName)
+        {
+            var floorInfo = from croom in _context.CompanyBasicInfo.Where(c => c.CompanyBuildings.BuildingName == buildingName)
+                            select new
+                            {
+                                croom.FloorNum,
+                            };
+
+            return floorInfo;
+
+        }
+
         public IEnumerable<object> GetCompanyBySearch(string serchName)
         {
             var data = from cb in _context.CompanyBasicInfo.Where(c =>c.CompanyName.Contains(serchName) || c.UnifiedSocialCreditCode.Contains(serchName))                     
@@ -71,17 +107,7 @@ namespace ModelCompany.DataHelper
                        };
             return data;
         }
-        public IQueryable<object> GetBuildingFloor(string buildingName)
-        {
-            var floorInfo = from croom in _context.CompanyBasicInfo.Where(c => c.CompanyBuildings.BuildingName == buildingName)                        
-                            select new
-                            {
-                                croom.FloorNum,              
-                            };
 
-            return floorInfo; 
-
-        }
         public IQueryable<object> GetInfoByBuildingAndFloor(string buildingName, string floorNum)
         {
             var floorInfo = from broom in _context.CompanyRoom.Where(bf => bf.CompanyBuildings.BuildingName == buildingName && bf.Name == floorNum)
@@ -93,6 +119,18 @@ namespace ModelCompany.DataHelper
                             };
 
             return floorInfo;
+
+        }
+        //返回指定楼栋的楼层信息
+        public IQueryable<object> GetFloorsByBuilding(int id)
+        {
+            var floorsInfo = from bd in _context.CompanyBasicInfo.Where(cb => cb.CompanyBuildings.Id == id)
+                             select new
+                             {
+                                 bd.FloorNum
+                             };
+
+            return floorsInfo;
 
         }
 
