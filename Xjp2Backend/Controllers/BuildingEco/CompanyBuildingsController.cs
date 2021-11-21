@@ -65,14 +65,14 @@ namespace Xjp2Backend.Controllers
         //}
 
         //GET: api/CompanyBuildings/GetFloorInfoByBuilding
-        [HttpGet("[action]/{id}")]
-        public async Task<IEnumerable<Object>> GetFloorInfoByBuilding(int id)
-        {
-            var info = _repository.GetFloorsByBuilding(id);
+        //[HttpGet("[action]/{id}")]
+        //public async Task<IEnumerable<Object>> GetFloorInfoByBuilding(int id)
+        //{
+        //    var info = _repository.GetFloorsByBuilding(id);
 
-            return await info.ToListAsync();
+        //    return await info.ToListAsync();
 
-        }
+        //}
 
         // PUT: api/CompanyBuildings/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for

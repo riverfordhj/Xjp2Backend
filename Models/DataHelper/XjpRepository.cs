@@ -527,68 +527,7 @@ namespace Models.DataHelper
             }
 
         }
-        /// <summary>
-        /// 获取特殊人群
-        /// </summary>
-        /// <returns></returns>
-        public IQueryable<object> GetSpecialGroups(string userName)
-        {
-            try
-            {
-                var data = from sg in _context.SpecialGroups
-                           join  p in _context.Persons on sg.PersonId equals p.PersonId  
-                           from  pr in p.PersonRooms                        
-                           select new
-                           {
-                               RoomId = pr.Room.Id,
-                               RoomNO = pr.Room.Name,
-                               netid = pr.Room.Building.NetGrid.Id,
-                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
-                               netGridName = pr.Room.Building.NetGrid.Name,
-                               age = p.Age,
-                               sex = p.Sex,
-                               SubdivsionName =pr.Room.Building.Subdivision.Name,
-                               BulidingName = pr.Room.Building.Name,
-                               BulidingAddress = pr.Room.Building.Address,
-                               p.PersonId,
-                               person = p,
-                               pr.IsOwner,
-                               pr.IsHouseholder,
-                               pr.IsLiveHere,
-                               pr.RelationWithHouseholder,
-                               pr.LodgingReason,
-                               pr.PopulationCharacter, 
-                               sg.Type                            
 
-                           };
-                var roleName = GetRoleName(userName);
-                if (roleName == "网格员")
-                {
-                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
-                    var netidUser = netgrid.Id;
-                    //网格
-                    return data = data.Where(r => r.netid == netidUser);                  
-                }
-                else
-                if (roleName == "社区")
-                {
-                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
-                    var communityName = community.Name;
-                    //社区
-                    return data = data.Where(r => r.CommunityName == communityName);
-                }
-                else
-                {
-                    return data;
-                }         
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-
-
-        }
         /// <summary>
         /// 根据房间号，获取住房人员信息列表
         /// </summary>
@@ -621,9 +560,308 @@ namespace Models.DataHelper
         }
         #endregion
 
+        #region 公共服务
+
+        //获取特殊人群类型
+        public IQueryable<object> GetSpecialGroupsType()
+        {
+            var SpecialGroupsType = from sgt in _context.SpecialGroups
+                                    select new
+                                    {
+                                        sgt.Type,
+                                    };
+
+            return SpecialGroupsType.Distinct();
+
+        }
+        //按权限获取特殊人群
+        public IQueryable<object> GetSpecialGroups(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.SpecialGroups
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
+        //获取低保户类型
+        public IQueryable<object> GetPoorType()
+        {
+            var poorType = from sgt in _context.PoorPeoples
+                                    select new
+                                    {
+                                        sgt.Type,
+                                    };
+
+            return poorType.Distinct();
+
+        }
+        //按权限获取低保户
+        public IQueryable<object> GetPoorpeople(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.PoorPeoples
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+
+
+        }
+
+        //获取残疾人类型和级别
+        public IQueryable<object> GetDisabilityType()
+        {
+            var poorType = from sgt in _context.Disability
+                           select new
+                           {
+                               sgt.Type,
+                           };
+
+            return poorType.Distinct();
+
+        }
+        public IQueryable<object> GetDisabilitylevel()
+        {
+            var level = from sgt in _context.Disability
+                           select new
+                           {
+                               sgt.Class,
+                           };
+
+            return level.Distinct();
+
+        }
+        //按权限获取残疾人信息
+        public IQueryable<object> GetDisability(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.Disability
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+                               level = sg.Class,
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+
+        //获取退伍军人类型
+        public IQueryable<object> GetMilitaryType()
+        {
+            var poorType = from sgt in _context.MilitaryService
+                           select new
+                           {
+                               sgt.Type,
+                           };
+
+            return poorType.Distinct();
+
+        }
+        //按权限获取退伍军人
+        public IQueryable<object> GetMilitaryService(string userName)
+        {
+            try
+            {
+                var data = from sg in _context.MilitaryService
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
+                           select new
+                           {
+                               RoomId = pr.Room.Id,
+                               RoomNO = pr.Room.Name,
+                               netid = pr.Room.Building.NetGrid.Id,
+                               CommunityName = pr.Room.Building.NetGrid.Community.Name,
+                               netGridName = pr.Room.Building.NetGrid.Name,
+                               age = p.Age,
+                               sex = p.Sex,
+                               SubdivsionName = pr.Room.Building.Subdivision.Name,
+                               BulidingName = pr.Room.Building.Name,
+                               BulidingAddress = pr.Room.Building.Address,
+                               p.PersonId,
+                               person = p,
+                               pr.IsOwner,
+                               pr.IsHouseholder,
+                               pr.IsLiveHere,
+                               pr.RelationWithHouseholder,
+                               pr.LodgingReason,
+                               pr.PopulationCharacter,
+                               sg.Type,
+
+                           };
+                var roleName = GetRoleName(userName);
+                if (roleName == "网格员")
+                {
+                    NetGrid netgrid = _context.NetGrids.SingleOrDefault(n => n.User.UserName == userName);
+                    var netidUser = netgrid.Id;
+                    //网格
+                    return data = data.Where(r => r.netid == netidUser);
+                }
+                else
+                if (roleName == "社区")
+                {
+                    Community community = _context.Communitys.SingleOrDefault(c => c.Alias == userName);
+                    var communityName = community.Name;
+                    //社区
+                    return data = data.Where(r => r.CommunityName == communityName);
+                }
+                else
+                {
+                    return data;
+                }
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        #endregion
 
         #region 用户、角色
-        
+
         public User GetUserByName(string name)
         {
             var user = _context.Users.Include(u => u.RoleUsers).ThenInclude(ru => ru.Role).SingleOrDefault(r => r.UserName.Equals(name));
@@ -675,6 +913,19 @@ namespace Models.DataHelper
             }
 
             return _context.Subdivisions;
+        }
+
+        //根据网格员，返回相应小区
+        public IQueryable<object> GetSubdivisionByNetGrid(string userName)
+        {
+            return from u in _context.Users.Where(u => u.UserName == userName)
+                   from ng in u.NetGrid
+                   from b in ng.Buildings
+                   select new
+                   {
+                       id = b.Subdivision.Id,
+                       subdivisionName = b.Subdivision.Name,
+                   };
         }
 
         //根据网格员，返回相应楼栋
@@ -1016,6 +1267,7 @@ namespace Models.DataHelper
                         RoomUse = personFields.RoomUse,
                         BuildingName = personFields.BuildingName,
                         Address = personFields.Address,
+                        SubdivisionName = personFields.SubdivisionName,
                         NetGrid = personFields.NetGrid,
                         CommunityName = personFields.CommunityName,
                         Editor = userName,
@@ -1120,53 +1372,61 @@ namespace Models.DataHelper
         {
             var dataList = new List<object> { };
             bool latchValue = true;
-            for (int i = 0; i < PersonHouseDatas.Count; i++)
+            try
             {
-                var personHouse = PersonHouseDatas[i];
-                NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
-                //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
-                Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
-                if (!(resNetGrid != null && resRoom != null))
+                for (int i = 0; i < PersonHouseDatas.Count; i++)
                 {
-                    latchValue = false;
-                    dataList.Add(new
+                    var personHouse = PersonHouseDatas[i];
+                    NetGrid resNetGrid = PickNetGrid(personHouse.NetGrid, personHouse.CommunityName);
+                    //bool res = GetUserNameByNetGrid(userName , personHouse.NetGrid, personHouse.CommunityName);
+                    Room resRoom = PickRoom(personHouse.RoomName, personHouse.BuildingName, personHouse.Address);
+                    if (!(resNetGrid != null && resRoom != null))
                     {
-                        message = "房屋地址不正确(填写错误或超出权限)",
-                        index = i
-                    });
+                        latchValue = false;
+                        dataList.Add(new
+                        {
+                            message = "房屋地址不正确(填写错误或超出权限)",
+                            index = i
+                        });
+                    }
                 }
+                if (!latchValue)
+                {
+                    return dataList;//中止函数执行，并返回错误消息数组
+                }
+
+                for (int j = 0; j < PersonHouseDatas.Count; j++)
+                {
+                    var personHouseItem = PersonHouseDatas[j];
+
+                    PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
+                    if (targetPersonHouse == null)
+                    {
+                        targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
+                        _context.PersonHouseDatas.Add(targetPersonHouse);
+                        _context.SaveChanges();
+                        dataList.Add(new
+                        {
+                            message = "ok",
+                            index = j
+                        });
+                    }
+                    else
+                    {
+                        dataList.Add(new
+                        {
+                            message = "已存在",
+                            index = j
+                        });
+                    }
+                }
+                return dataList;
             }
-            if (!latchValue)
+            catch (Exception e)
             {
-                return dataList;//中止函数执行，并返回错误消息数组
+                return null;
             }
 
-            for (int j = 0; j < PersonHouseDatas.Count; j++)
-            {
-                var personHouseItem = PersonHouseDatas[j];
-
-                PersonHouseData targetPersonHouse = PickPersonHouse(personHouseItem.PersonId, personHouseItem.RoomName, personHouseItem.BuildingName, personHouseItem.Address);
-                if (targetPersonHouse == null)
-                {
-                    targetPersonHouse = CreatePersonHouse(userName, personHouseItem);
-                    _context.PersonHouseDatas.Add(targetPersonHouse);
-                    _context.SaveChanges();
-                    dataList.Add(new
-                    {
-                        message = "ok",
-                        index = j
-                    }); 
-                }
-                else
-                {
-                    dataList.Add(new
-                    {
-                        message = "已存在",
-                        index = j
-                    });
-                }
-            }
-            return dataList;
         }
 
         //选中一条personHouseData数据
@@ -1222,98 +1482,108 @@ namespace Models.DataHelper
         //街道审批社区的审核
         public IEnumerable<object> ConfirmByAdmin(VerifyAndConfirmParam confirmFields, string userName)
         {
-            PersonHouseData personHouse = PickPersonHouse(confirmFields.PersonId, confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
-            PersonRoom personRoom = PickPersonRoom(confirmFields);
-            personHouse.Status = confirmFields.Status;//personHouseData的状态总会改变
-
-            if (confirmFields.Status == "approved")//街道批准时，执行
+            try
             {
-                Person targetPerson = _context.Persons.SingleOrDefault(per => per.PersonId == confirmFields.PersonId);
-                Room targetRoom = PickRoom(confirmFields.RoomName, confirmFields.BuildingName,confirmFields.Address);
-                //新建一条personRoom
-                if (personHouse.Operation == "creating" && personRoom == null && targetRoom != null)
-                {
-                    targetRoom.Use = personHouse.RoomUse;//更改房屋用途
-                    targetRoom.Category = personHouse.Category;//更改房屋性质(类别)
-                    //（以上room属性的修改会影响到关联此room的所有personRoom信息）
+                PersonHouseData personHouse = PickPersonHouse(confirmFields.PersonId, confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
+                PersonRoom personRoom = PickPersonRoom(confirmFields);
+                personHouse.Status = confirmFields.Status;//personHouseData的状态总会改变
 
-                    if (targetPerson == null)
+                if (confirmFields.Status == "approved")//街道批准时，执行
+                {
+                    Person targetPerson = _context.Persons.SingleOrDefault(per => per.PersonId == confirmFields.PersonId);
+                    Room targetRoom = PickRoom(confirmFields.RoomName, confirmFields.BuildingName, confirmFields.Address);
+                    //新建一条personRoom
+                    if (personHouse.Operation == "creating" && personRoom == null && targetRoom != null)
                     {
-                        targetPerson = new Person
+                        targetRoom.Use = personHouse.RoomUse;//更改房屋用途
+                        targetRoom.Category = personHouse.Category;//更改房屋性质(类别)
+                                                                   //（以上room属性的修改会影响到关联此room的所有personRoom信息）
+
+                        if (targetPerson == null)
+                        {
+                            targetPerson = new Person
+                            {
+                                PersonId = personHouse.PersonId,
+                                Name = personHouse.Name,
+                                EthnicGroups = personHouse.EthnicGroups,
+                                Phone = personHouse.Phone,
+                                DomicileAddress = personHouse.DomicileAddress,
+                                Company = personHouse.Company,
+                                PoliticalState = personHouse.PoliticalState,
+                                OrganizationalRelation = personHouse.OrganizationalRelation,
+                                IsOverseasChinese = personHouse.IsOverseasChinese,
+                                MerriedStatus = personHouse.MerriedStatus,
+                                Note = personHouse.Note
+                            };
+                            _context.Persons.Add(targetPerson);
+                        }
+
+                        
+
+                        PersonRoom newPersonRoom = new PersonRoom
                         {
                             PersonId = personHouse.PersonId,
-                            Name = personHouse.Name,
-                            EthnicGroups = personHouse.EthnicGroups,
-                            Phone = personHouse.Phone,
-                            DomicileAddress = personHouse.DomicileAddress,
-                            Company = personHouse.Company,
-                            PoliticalState = personHouse.PoliticalState,
-                            OrganizationalRelation = personHouse.OrganizationalRelation,
-                            IsOverseasChinese = personHouse.IsOverseasChinese,
-                            MerriedStatus = personHouse.MerriedStatus,
-                            Note = personHouse.Note
+                            IsHouseholder = personHouse.IsHouseholder,
+                            RelationWithHouseholder = personHouse.RelationWithHouseholder,
+                            IsOwner = personHouse.IsOwner,
+                            IsLiveHere = personHouse.IsLiveHere,
+                            PopulationCharacter = personHouse.PopulationCharacter,
+                            LodgingReason = personHouse.LodgingReason,
+                            Status = null
                         };
-                    }
-                  
-                    _context.Persons.Add(targetPerson);
+                        newPersonRoom.Person = targetPerson;//targetPerson为null时，关联新增的person信息；不为null时，关联该targetPerson
+                        newPersonRoom.Room = targetRoom;
+                        _context.PersonRooms.Add(newPersonRoom);
 
-                    PersonRoom newPersonRoom = new PersonRoom
-                    {
-                        PersonId = personHouse.PersonId,
-                        IsHouseholder = personHouse.IsHouseholder,
-                        RelationWithHouseholder = personHouse.RelationWithHouseholder,
-                        IsOwner = personHouse.IsOwner,
-                        IsLiveHere = personHouse.IsLiveHere,
-                        PopulationCharacter = personHouse.PopulationCharacter,
-                        LodgingReason = personHouse.LodgingReason,
-                        Status = null
-                    };
-                    newPersonRoom.Person = targetPerson;//targetPerson为null时，关联新增的person信息；不为null时，关联该targetPerson
-                    newPersonRoom.Room = targetRoom;
-                    _context.PersonRooms.Add(newPersonRoom);
-
-                }else if(personHouse.Operation == "updating" && targetPerson != null && targetRoom != null)
-                {
-                    targetPerson.Name = personHouse.Name;
-                    targetPerson.EthnicGroups = personHouse.EthnicGroups;
-                    targetPerson.Phone = personHouse.Phone;
-                    targetPerson.DomicileAddress = personHouse.DomicileAddress;
-                    targetPerson.Company = personHouse.Company;
-                    targetPerson.PoliticalState = personHouse.PoliticalState;
-                    targetPerson.OrganizationalRelation = personHouse.OrganizationalRelation;
-                    targetPerson.IsOverseasChinese = personHouse.IsOverseasChinese;
-                    targetPerson.MerriedStatus = personHouse.MerriedStatus;
-                    targetPerson.Note = personHouse.Note;
-                    personRoom.IsHouseholder = personHouse.IsHouseholder;
-                    personRoom.RelationWithHouseholder = personHouse.RelationWithHouseholder;
-                    personRoom.IsOwner = personHouse.IsOwner;
-                    personRoom.IsLiveHere = personHouse.IsLiveHere;
-                    personRoom.PopulationCharacter = personHouse.PopulationCharacter;
-                    personRoom.LodgingReason = personHouse.LodgingReason;
-                    personRoom.Status = null;
-                    targetRoom.Use = personHouse.RoomUse;
-                    targetRoom.Category = personHouse.Category;
-                }
-                else if(personHouse.Operation == "deleting")
-                {
-                    _context.PersonRooms.Remove(personRoom);
-                    var pr_count = _context.PersonRooms.Where(pr => pr.PersonId == confirmFields.PersonId).ToArray().Length;
-                    if(pr_count == 0)
-                    {
-                        _context.Persons.Remove(targetPerson);
                     }
-                   
+                    else if (personHouse.Operation == "updating" && targetPerson != null && targetRoom != null)
+                    {
+                        targetPerson.Name = personHouse.Name;
+                        targetPerson.EthnicGroups = personHouse.EthnicGroups;
+                        targetPerson.Phone = personHouse.Phone;
+                        targetPerson.DomicileAddress = personHouse.DomicileAddress;
+                        targetPerson.Company = personHouse.Company;
+                        targetPerson.PoliticalState = personHouse.PoliticalState;
+                        targetPerson.OrganizationalRelation = personHouse.OrganizationalRelation;
+                        targetPerson.IsOverseasChinese = personHouse.IsOverseasChinese;
+                        targetPerson.MerriedStatus = personHouse.MerriedStatus;
+                        targetPerson.Note = personHouse.Note;
+                        personRoom.IsHouseholder = personHouse.IsHouseholder;
+                        personRoom.RelationWithHouseholder = personHouse.RelationWithHouseholder;
+                        personRoom.IsOwner = personHouse.IsOwner;
+                        personRoom.IsLiveHere = personHouse.IsLiveHere;
+                        personRoom.PopulationCharacter = personHouse.PopulationCharacter;
+                        personRoom.LodgingReason = personHouse.LodgingReason;
+                        personRoom.Status = null;
+                        targetRoom.Use = personHouse.RoomUse;
+                        targetRoom.Category = personHouse.Category;
+                    }
+                    else if (personHouse.Operation == "deleting")
+                    {
+                        _context.PersonRooms.Remove(personRoom);
+                        var pr_count = _context.PersonRooms.Where(pr => pr.PersonId == confirmFields.PersonId).ToArray().Length;
+                        if (pr_count == 0)
+                        {
+                            _context.Persons.Remove(targetPerson);
+                        }
+
+                    }
                 }
+                else if (confirmFields.Status == "rejected" && personRoom != null)//街道不批准时，执行
+                {
+                    personRoom.Status = confirmFields.Status;
+                }
+
+
+                _context.SaveChanges();
+
+                return GetPersonsByUser(userName);
             }
-            else if(confirmFields.Status == "rejected" && personRoom != null)//街道不批准时，执行
+            catch (Exception e)
             {
-                personRoom.Status = confirmFields.Status;
+                return null;
             }
 
-
-            _context.SaveChanges();
-
-            return GetPersonsByUser(userName);
         }
 
         public IQueryable<object> PersonHouseHistoryInfo()

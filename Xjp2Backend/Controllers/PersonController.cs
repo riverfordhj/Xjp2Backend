@@ -126,7 +126,22 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetBuildingsByNetGrid(userName).ToListAsync();
 
         }
+        //GET: api/Person/GetSubdivisionByNetGrid
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> GetSubdivisionByNetGrid()
+        {
+            var userName = GetUserName();
+            var roleList = GetRolesList(userName);
+            var roleName = GetFirstRoleName(roleList);
 
+            if (roleName != "网格员")
+            {
+                return NotFound();
+            }
+
+            return await _repository.GetSubdivisionByNetGrid(userName).ToListAsync();
+
+        }
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<object>>> GetRoomsByBuildingAndNetgrid(string buildingName, string address)
         {
@@ -261,7 +276,14 @@ namespace Xjp2Backend.Controllers
             return await _repository.PersonHouseHistoryInfo().ToListAsync();
         }
 
+        #region 公共服务api
+
         //获取特殊群体，吸毒、信访人员的信息
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetSpecialGroupsType()
+        {
+            return await _repository.GetSpecialGroupsType().ToListAsync();
+        }
         // GET: api/SpecialGroups
         [HttpGet("[action]")]
         public async Task<ActionResult<IEnumerable<Object>>> GetSpecialGroups()//Person
@@ -269,6 +291,57 @@ namespace Xjp2Backend.Controllers
             var userName = GetUserName();
             return await _repository.GetSpecialGroups(userName).ToListAsync();
         }
+
+
+        //获取低保户
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetPoorType()
+        {
+            return await _repository.GetPoorType().ToListAsync();
+        }
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetPoorpeople()//Person
+        {
+            var userName = GetUserName();
+            return await _repository.GetPoorpeople(userName).ToListAsync();
+        }
+
+        //获取残疾人
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetDisabilityType()
+        {
+            return await _repository.GetDisabilityType().ToListAsync();
+        }
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetDisabilitylevel()
+        {
+            return await _repository.GetDisabilitylevel().ToListAsync();
+        }
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetDisability()//Person
+        {
+            var userName = GetUserName();
+            return await _repository.GetDisability(userName).ToListAsync();
+        }
+
+        //获取退伍军人
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetMilitaryType()
+        {
+            return await _repository.GetMilitaryType().ToListAsync();
+        }
+        // GET: api/SpecialGroups
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Object>>> GetMilitaryService()//Person
+        {
+            var userName = GetUserName();
+            return await _repository.GetMilitaryService(userName).ToListAsync();
+        }
+
+        #endregion
+
 
         //获取特殊群体，吸毒、信访人员的位置信息（返回中文数据）
         // GET: api/SpecialGroups

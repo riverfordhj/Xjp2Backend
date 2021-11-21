@@ -44,6 +44,7 @@ namespace Models.DataHelper
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string Address { get; set; }
+        public string SubdivisionName { get; set; }
 
         [Required(ErrorMessage = "{0} 不能为空! ")]
         public string NetGrid { get; set; }
