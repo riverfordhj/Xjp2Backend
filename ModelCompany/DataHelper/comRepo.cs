@@ -187,5 +187,92 @@ namespace ModelCompany.DataHelper
             return data;
         }
         #endregion
+
+
+
+
+
+
+        public IQueryable<object> GetByBuilding(int id)
+        {
+            //查询到一栋楼宇所有的公司
+            var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
+                       from cb in companyBD.CompanyBasicInfo
+                       from co in cb.CompanyOtherInfo
+                           //from ctax in cb.CompanyTax
+                       select new
+                       {
+                           buildingName = companyBD.BuildingName,
+                           area = co.OfficeArea,
+                           floorNum = cb.FloorNum,
+                           EmployeesNum = co.EmployeesNum,
+                           BachelorAboveNum = co.BachelorAboveNum,
+                           PatentNum = co.PatentNum,
+                           cb.CompanyRoom,
+                           ctax = cb.CompanyTax,
+                           cb
+                       };
+            return data;
+
+        }
+
+        //返回指定楼栋税收前十
+        public IQueryable<object> GetCountTaxByBuilding(string buildingName)
+        {
+            var countTax = (from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                            orderby ct.Tax descending
+                            select ct).Take(10);
+            return countTax;
+        }
+
+        //返回指定楼栋营收前十
+        public IQueryable<object> GetCountRevenueByBuilding(string buildingName)
+        {
+            var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                                orderby cr.Revenue descending
+                                select cr).Take(10);
+            return countRevenue;
+        }
+
+        //返回指定楼栋总税收、总营收
+        public IQueryable<object> GetTotalTaRByBuilding(string buildingName)
+        {
+            var totalTax = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                           group tt by tt.Year into g
+                           select new
+                           {
+                               g.Key,
+                               tTax = g.Sum(tt => tt.Tax),
+                               tRevenue = g.Sum(tt => tt.Revenue)
+                           };
+            return totalTax;
+        }
+
+        //返回指定楼栋产业分类
+        public IQueryable<object> GetIndustryTypeByBuilding(string buildingName)
+        {
+            var companyCount = from ct in _context.CompanyBasicInfo.Where(cb => cb.CompanyBuildings.BuildingName == buildingName)
+                               group ct by ct.IndustryCode into g
+                               select new
+                               {
+                                   g.Key,
+                                   companyCount = g.Count()
+                               };
+            return companyCount;
+        }
+
+
+        //返回指定楼栋总体企业数量
+        public IQueryable<object> GetCompanyCountByBuilding(string buildingName)
+        {
+            var companyCount = from ct in _context.CompanyBasicInfo.Where(cb => cb.CompanyBuildings.BuildingName == buildingName)
+                               group ct by ct.CompanyBuildings.BuildingName into g
+                               select new
+                               {
+                                   g.Key,
+                                   companyCount = g.Count()
+                               };
+            return companyCount;
+        }
     }
 }
