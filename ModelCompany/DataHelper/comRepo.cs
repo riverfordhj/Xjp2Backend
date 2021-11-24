@@ -251,7 +251,7 @@ namespace ModelCompany.DataHelper
                            group tt by tt.Year into g
                            select new
                            {
-                               g.Key,
+                               g.Key,              
                                companyCount = g.Count(),
                                tTax = g.Sum(tt => tt.Tax).ToString("F2"),
                                tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
