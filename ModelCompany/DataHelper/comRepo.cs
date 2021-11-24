@@ -224,7 +224,7 @@ namespace ModelCompany.DataHelper
                             select new
                             {
                                 ct.CompanyBasicInfo.CompanyName,
-                                ct.Tax
+                                cTax = ct.Tax.ToString("F2")
                             }).Take(10);
             return countTax;
         }
@@ -237,7 +237,7 @@ namespace ModelCompany.DataHelper
                                 select new 
                                 {
                                     cr.CompanyBasicInfo.CompanyName,
-                                    cr.Revenue
+                                    cRevenue = cr.Revenue.ToString("F2")
                                 }).Take(10);
             return countRevenue;
         }
@@ -250,8 +250,9 @@ namespace ModelCompany.DataHelper
                            select new
                            {
                                g.Key,
-                               tTax = g.Sum(tt => tt.Tax),
-                               tRevenue = g.Sum(tt => tt.Revenue)
+                               companyCount = g.Count(),
+                               tTax = g.Sum(tt => tt.Tax).ToString("F2"),
+                               tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
                            };
             return totalTax;
         }
@@ -259,27 +260,18 @@ namespace ModelCompany.DataHelper
         //返回指定楼栋产业分类及产业总营收、税收
         public IQueryable<object> GetIndustryTypeByBuilding(string buildingName)
         {
+            string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业", 
+                "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业", 
+                "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
             var companyCount = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
                                group tt by tt.CompanyBasicInfo.IndustryCode into g
                                select new
                                {
                                    g.Key,
-                                   companyCount = g.Count(),
-                                   industryRevenue = g.Sum(tt => tt.Revenue),
-                                   industryTax = g.Sum(tt => tt.Tax)
-                               };
-            return companyCount;
-        }
-
-        //返回指定楼栋总体企业数量
-        public IQueryable<object> GetCompanyCountByBuilding(string buildingName)
-        {
-            var companyCount = from ct in _context.CompanyBasicInfo.Where(cb => cb.CompanyBuildings.BuildingName == buildingName)
-                               group ct by ct.CompanyBuildings.BuildingName into g
-                               select new
-                               {
-                                   g.Key,
-                                   companyCount = g.Count()
+                                   industryName = industryName[int.Parse(g.Key)],
+                                   industryCompanyCount = g.Count(),
+                                   industryRevenue = g.Sum(tt => tt.Revenue).ToString("F2"),
+                                   industryTax = g.Sum(tt => tt.Tax).ToString("F2")
                                };
             return companyCount;
         }

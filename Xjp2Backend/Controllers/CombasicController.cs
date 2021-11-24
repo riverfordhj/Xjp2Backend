@@ -91,12 +91,6 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetIndustryTypeByBuilding(buildingName).ToListAsync();
         }
 
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<object>> GetCompanyCountByBuilding(string buildingName)
-        {
-            return await _repository.GetCompanyCountByBuilding(buildingName).ToListAsync();
-        }
-
 
         // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
         [HttpGet("[action]")]
