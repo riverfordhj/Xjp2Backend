@@ -156,6 +156,7 @@ namespace ModelCompany.DataHelper
                            年份 = tax.Year,
                            税收 = tax.Tax,
                            营收 = tax.Revenue,
+                           产业类型 = company.IndustryCode,
                        };
 
             return data;
@@ -181,6 +182,7 @@ namespace ModelCompany.DataHelper
                            年份 = tax.Year,
                            税收 = tax.Tax,
                            营收 = tax.Revenue,
+                           产业类型 = companyBD.IndustryCode,
                        };
 
 
@@ -251,7 +253,8 @@ namespace ModelCompany.DataHelper
                            {
                                g.Key,
                                tTax = g.Sum(tt => tt.Tax),
-                               tRevenue = g.Sum(tt => tt.Revenue)
+                               tRevenue = g.Sum(tt => tt.Revenue),
+                               comCount = g.Count()
                            };
             return totalTax;
         }
@@ -267,19 +270,6 @@ namespace ModelCompany.DataHelper
                                    companyCount = g.Count(),
                                    industryRevenue = g.Sum(tt => tt.Revenue),
                                    industryTax = g.Sum(tt => tt.Tax)
-                               };
-            return companyCount;
-        }
-
-        //返回指定楼栋总体企业数量
-        public IQueryable<object> GetCompanyCountByBuilding(string buildingName)
-        {
-            var companyCount = from ct in _context.CompanyBasicInfo.Where(cb => cb.CompanyBuildings.BuildingName == buildingName)
-                               group ct by ct.CompanyBuildings.BuildingName into g
-                               select new
-                               {
-                                   g.Key,
-                                   companyCount = g.Count()
                                };
             return companyCount;
         }
