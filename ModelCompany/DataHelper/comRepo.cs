@@ -277,5 +277,53 @@ namespace ModelCompany.DataHelper
                                };
             return companyCount;
         }
+
+        //返回指定楼栋营收分布
+        public IQueryable<object> GetRevenueRoundByBuilding(string buildingName)
+        {
+            int[] i = new int[] { 1, 2, 3, 4, 5, 6, 7 };
+            var revenueRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                               group ct by new
+                               {
+                                   round6 = ct.Revenue >= 5000,
+                                   round5 = ct.Revenue >= 1000 && ct.Revenue < 5000,
+                                   round4 = ct.Revenue >= 500 && ct.Revenue < 1000,
+                                   round3 = ct.Revenue >= 100 && ct.Revenue < 500,
+                                   round2 = ct.Revenue >= 50 && ct.Revenue < 100,
+                                   round1 = ct.Revenue < 50
+                               } into g
+                               select new
+                               {
+                                   rRound = g.Count(),
+                                   //t1 = g.Sum(tt => g.Key.round1 ? 1 : 0),
+                                   //t2 = g.Sum(tt => g.Key.round2 ? 1 : 0),
+                                   //t3 = g.Sum(tt => g.Key.round3 ? 1 : 0),
+                                   //t4 = g.Sum(tt => g.Key.round4 ? 1 : 0),
+                                   //t5 = g.Sum(tt => g.Key.round5 ? 1 : 0),
+                                   //t6 = g.Sum(tt => g.Key.round6 ? 1 : 0)
+                               };
+            return revenueRound;
+        }
+
+        //返回指定楼栋税收分布
+        public IQueryable<object> GetTaxRoundByBuilding(string buildingName)
+        {
+            var taxRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                           group ct by new
+                           {
+                               round7 = ct.Tax >= 1000,
+                               round6 = ct.Tax >= 500 && ct.Tax < 1000,
+                               round5 = ct.Tax >= 300 && ct.Tax < 500,
+                               round4 = ct.Tax >= 100 && ct.Tax < 300,
+                               round3 = ct.Tax >= 50 && ct.Tax < 100,
+                               round2 = ct.Tax >= 30 && ct.Tax < 50,
+                               round1 = ct.Tax < 30
+                           } into g
+                           select new
+                           {
+                               tRound = g.Count()
+                           };
+            return taxRound;
+        }
     }
 }
