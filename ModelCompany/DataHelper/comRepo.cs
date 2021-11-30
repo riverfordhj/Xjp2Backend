@@ -219,49 +219,72 @@ namespace ModelCompany.DataHelper
         //返回指定楼栋税收前十
         public IQueryable<object> GetCountTaxByBuilding(string buildingName)
         {
-            var countTax = (from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
-                            orderby ct.Tax descending
-                            select new
-                            {
-                                ct.CompanyBasicInfo.CompanyName,
-                                cTax = ct.Tax.ToString("F2")
-                            }).Take(10);
-            return countTax;
+            try
+            {
+                var countTax = (from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                                orderby ct.Tax descending
+                                select new
+                                {
+                                    ct.CompanyBasicInfo.CompanyName,
+                                    cTax = ct.Tax.ToString("F2")
+                                }).Take(10);
+                return countTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         //返回指定楼栋营收前十
         public IQueryable<object> GetCountRevenueByBuilding(string buildingName)
         {
-            var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
-                                orderby cr.Revenue descending
-                                select new 
-                                {
-                                    cr.CompanyBasicInfo.CompanyName,
-                                    cRevenue = cr.Revenue.ToString("F2")
-                                }).Take(10);
-            return countRevenue;
+            try
+            {
+                var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                                    orderby cr.Revenue descending
+                                    select new
+                                    {
+                                        cr.CompanyBasicInfo.CompanyName,
+                                        cRevenue = cr.Revenue.ToString("F2")
+                                    }).Take(10);
+                return countRevenue;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
-        //返回指定楼栋总税收、总营收
+        //返回指定楼栋总公司数量、总税收、总营收
         public IQueryable<object> GetTotalTaRByBuilding(string buildingName)
         {
-            var totalTax = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
-                           group tt by tt.Year into g
-                           select new
-                           {
-                               g.Key,              
-                               companyCount = g.Count(),
-                               tTax = g.Sum(tt => tt.Tax).ToString("F2"),
-                               tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
-                           };
-            return totalTax;
+            try
+            {
+                var totalTax = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
+                               group tt by tt.Year into g
+                               select new
+                               {
+                                   g.Key,
+                                   companyCount = g.Count(),
+                                   tTax = g.Sum(tt => tt.Tax).ToString("F2"),
+                                   tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
+                               };
+                return totalTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         //返回指定楼栋产业分类及产业总营收、税收
         public IQueryable<object> GetIndustryTypeByBuilding(string buildingName)
         {
-            string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业", 
-                "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业", 
+            try
+            {
+                string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业",
+                "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业",
                 "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
                 var companyCount = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
                                    group tt by tt.CompanyBasicInfo.IndustryCode into g
@@ -284,49 +307,50 @@ namespace ModelCompany.DataHelper
         //返回指定楼栋营收分布
         public IQueryable<object> GetRevenueRoundByBuilding(string buildingName)
         {
-            int[] i = new int[] { 1, 2, 3, 4, 5, 6, 7 };
-            var revenueRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
-                               group ct by new
-                               {
-                                   round6 = ct.Revenue >= 5000,
-                                   round5 = ct.Revenue >= 1000 && ct.Revenue < 5000,
-                                   round4 = ct.Revenue >= 500 && ct.Revenue < 1000,
-                                   round3 = ct.Revenue >= 100 && ct.Revenue < 500,
-                                   round2 = ct.Revenue >= 50 && ct.Revenue < 100,
-                                   round1 = ct.Revenue < 50
-                               } into g
-                               select new
-                               {
-                                   rRound = g.Count(),
-                                   //t1 = g.Sum(tt => g.Key.round1 ? 1 : 0),
-                                   //t2 = g.Sum(tt => g.Key.round2 ? 1 : 0),
-                                   //t3 = g.Sum(tt => g.Key.round3 ? 1 : 0),
-                                   //t4 = g.Sum(tt => g.Key.round4 ? 1 : 0),
-                                   //t5 = g.Sum(tt => g.Key.round5 ? 1 : 0),
-                                   //t6 = g.Sum(tt => g.Key.round6 ? 1 : 0)
-                               };
-            return revenueRound;
+            try
+            {
+                var revenueRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                                   group ct by ct.Year into g
+                                   select new
+                                   {
+                                       r0 = g.Sum(tt => tt.Revenue < 50 ? 1 : 0),
+                                       r50 = g.Sum(tt => tt.Revenue >= 50 && tt.Revenue < 100 ? 1 : 0),
+                                       r100 = g.Sum(tt => tt.Revenue >= 100 && tt.Revenue < 500 ? 1 : 0),
+                                       r500 = g.Sum(tt => tt.Revenue >= 500 && tt.Revenue < 1000 ? 1 : 0),
+                                       r1000 = g.Sum(tt => tt.Revenue >= 1000 && tt.Revenue < 5000 ? 1 : 0),
+                                       r5000 = g.Sum(tt => tt.Revenue >= 5000 ? 1 : 0)
+                                   };
+                return revenueRound;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
 
         //返回指定楼栋税收分布
         public IQueryable<object> GetTaxRoundByBuilding(string buildingName)
         {
-            var taxRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
-                           group ct by new
-                           {
-                               round7 = ct.Tax >= 1000,
-                               round6 = ct.Tax >= 500 && ct.Tax < 1000,
-                               round5 = ct.Tax >= 300 && ct.Tax < 500,
-                               round4 = ct.Tax >= 100 && ct.Tax < 300,
-                               round3 = ct.Tax >= 50 && ct.Tax < 100,
-                               round2 = ct.Tax >= 30 && ct.Tax < 50,
-                               round1 = ct.Tax < 30
-                           } into g
-                           select new
-                           {
-                               tRound = g.Count()
-                           };
-            return taxRound;
+            try
+            {
+                var taxRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                               group ct by ct.Year into g
+                               select new
+                               {
+                                   t0 = g.Sum(tt => tt.Tax < 30 ? 1 : 0),
+                                   t30 = g.Sum(tt => tt.Revenue >= 30 && tt.Revenue < 50 ? 1 : 0),
+                                   t50 = g.Sum(tt => tt.Revenue >= 50 && tt.Revenue < 100 ? 1 : 0),
+                                   t100 = g.Sum(tt => tt.Revenue >= 100 && tt.Revenue < 300 ? 1 : 0),
+                                   t300 = g.Sum(tt => tt.Revenue >= 300 && tt.Revenue < 500 ? 1 : 0),
+                                   t500 = g.Sum(tt => tt.Revenue >= 500 && tt.Revenue < 1000 ? 1 : 0),
+                                   t1000 = g.Sum(tt => tt.Revenue >= 1000 ? 1 : 0)
+                               };
+                return taxRound;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }
