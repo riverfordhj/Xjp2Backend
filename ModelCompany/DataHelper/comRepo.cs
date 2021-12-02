@@ -24,7 +24,7 @@ namespace ModelCompany.DataHelper
         {
             try
             {
-                var roomsWithCompany = from croom in _context.CompanyRoom.Where(r => r.CompanyBuildings.BuildingName == buildingName && r.Name == roomName)  
+                var roomsWithCompany = from croom in _context.CompanyRoom.Where(r => r.CompanyBuildings.BuildingName == buildingName && r.Name == roomName)
                                        from oth in croom.CompanyBasicInfo.CompanyOtherInfo
                                        select new
                                        {
@@ -36,14 +36,14 @@ namespace ModelCompany.DataHelper
                                            OfficeArea = oth.OfficeArea,
                                            ctax = croom.CompanyBasicInfo.CompanyTax,
                                        };
-         
+
                 return roomsWithCompany;
             }
             catch (Exception e)
             {
                 return null;
             }
-            
+
         }
 
         public IQueryable<object> GetCompanysByBuilding(int id)
@@ -52,7 +52,7 @@ namespace ModelCompany.DataHelper
             var data = from companyBD in _context.CompanyBuildings.Where(b => b.Id == id)
                        from cb in companyBD.CompanyBasicInfo
                        from co in cb.CompanyOtherInfo
-                       //from ctax in cb.CompanyTax
+                           //from ctax in cb.CompanyTax
                        select new
                        {
                            buildingName = companyBD.BuildingName,
@@ -69,13 +69,13 @@ namespace ModelCompany.DataHelper
 
         }
 
-         public IQueryable<object> GetRoomByBuilding(string buildingName)
+        public IQueryable<object> GetRoomByBuilding(string buildingName)
         {
             var roomInfo = from croom in _context.CompanyRoom.Where(cr => cr.CompanyBuildings.BuildingName == buildingName)
-                            select new
-                            {
-                                croom.Name,
-                            };
+                           select new
+                           {
+                               croom.Name,
+                           };
 
             return roomInfo;
 
@@ -95,7 +95,7 @@ namespace ModelCompany.DataHelper
 
         public IEnumerable<object> GetCompanyBySearch(string serchName)
         {
-            var data = from cb in _context.CompanyBasicInfo.Where(c =>c.CompanyName.Contains(serchName) || c.UnifiedSocialCreditCode.Contains(serchName))                     
+            var data = from cb in _context.CompanyBasicInfo.Where(c => c.CompanyName.Contains(serchName) || c.UnifiedSocialCreditCode.Contains(serchName))
                        from co in cb.CompanyOtherInfo
                        select new
                        {
@@ -149,7 +149,7 @@ namespace ModelCompany.DataHelper
                            企业类型 = company.EnterpriseType,
                            注册资本 = company.RegisteredCapital,
                            工商注册地址 = company.RegisteredAddress,
-                          // 税后统计区 = company.TaxStatisticsArea,
+                           // 税后统计区 = company.TaxStatisticsArea,
                            租赁或购买 = company.OfficeSpaceType,
                            楼层 = company.FloorNum,
                            企业面积 = co.OfficeArea,
@@ -221,7 +221,7 @@ namespace ModelCompany.DataHelper
         //返回指定楼栋税收前十
         public IQueryable<object> GetCountTaxByBuilding(string buildingName)
         {
-            try 
+            try
             {
                 var countTax = (from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
                                 orderby ct.Tax descending
@@ -288,7 +288,7 @@ namespace ModelCompany.DataHelper
                 string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业",
                 "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业",
                 "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
-                var companyCount = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                var companyCount = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
                                    group tt by tt.CompanyBasicInfo.IndustryCode into g
                                    select new
                                    {
