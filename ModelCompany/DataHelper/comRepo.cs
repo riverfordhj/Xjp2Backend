@@ -340,12 +340,12 @@ namespace ModelCompany.DataHelper
                                select new
                                {
                                    t0 = g.Sum(tt => tt.Tax < 30 ? 1 : 0),
-                                   t30 = g.Sum(tt => tt.Revenue >= 30 && tt.Revenue < 50 ? 1 : 0),
-                                   t50 = g.Sum(tt => tt.Revenue >= 50 && tt.Revenue < 100 ? 1 : 0),
-                                   t100 = g.Sum(tt => tt.Revenue >= 100 && tt.Revenue < 300 ? 1 : 0),
-                                   t300 = g.Sum(tt => tt.Revenue >= 300 && tt.Revenue < 500 ? 1 : 0),
-                                   t500 = g.Sum(tt => tt.Revenue >= 500 && tt.Revenue < 1000 ? 1 : 0),
-                                   t1000 = g.Sum(tt => tt.Revenue >= 1000 ? 1 : 0)
+                                   t30 = g.Sum(tt => tt.Tax >= 30 && tt.Tax < 50 ? 1 : 0),
+                                   t50 = g.Sum(tt => tt.Tax >= 50 && tt.Tax < 100 ? 1 : 0),
+                                   t100 = g.Sum(tt => tt.Tax >= 100 && tt.Tax < 300 ? 1 : 0),
+                                   t300 = g.Sum(tt => tt.Tax >= 300 && tt.Tax < 500 ? 1 : 0),
+                                   t500 = g.Sum(tt => tt.Tax >= 500 && tt.Tax < 1000 ? 1 : 0),
+                                   t1000 = g.Sum(tt => tt.Tax >= 1000 ? 1 : 0)
                                };
                 return taxRound;
             }
