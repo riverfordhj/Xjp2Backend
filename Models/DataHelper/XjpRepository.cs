@@ -2131,6 +2131,17 @@ namespace Models.DataHelper
         {
             return (_context.SaveChanges() >= 0);
         }
+        public void SaveImgPath( SavepathRowParam rowdata)
+        {
+            Rain targetRainpoint = _context.Rains.SingleOrDefault(rp => rp.Id == rowdata.Id && rp.Name == rowdata.Name);
+            if(targetRainpoint != null)
+            {
+                targetRainpoint.FilePath = rowdata.FilePath;
+            }
+            _context.SaveChanges();
+        }
+
+
 
         //根据楼栋，返回房屋
         public IQueryable<object> GetRainById(int id)

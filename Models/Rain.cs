@@ -19,12 +19,18 @@ namespace Models
         public double Height { get; set; }
         //上报人
         public string Report { get; set; }
+        //上报时间
+        public string ReportTime { get; set; }
         //状态
         public string Status { get; set; }
         //类型
         public string Type { get; set; }
         //地址
         public string Address { get; set; }
+        //文件名称
+        public string FileName { get; set; }
+        //文件路径
+        public string FilePath { get; set; }
         //备注
         public string Note { get; set; }
     }

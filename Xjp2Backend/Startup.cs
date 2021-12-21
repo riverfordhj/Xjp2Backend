@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -44,6 +46,11 @@ namespace Xjp2Backend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDirectoryBrowser();
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = 52428800;
+            });
             //#region Jwt配置
             ////将appsettings.json中的JwtSettings部分文件读取到JwtSettings中，这是给其他地方用的
             //services.Configure<JwtSettings>(Configuration.GetSection("JwtSettings"));
@@ -203,6 +210,23 @@ namespace Xjp2Backend
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseStaticFiles();
+            //app.UseStaticFiles(new StaticFileOptions
+            //{
+            //    FileProvider = new PhysicalFileProvider(
+            //                    Path.Combine(env.ContentRootPath, "UploadFile")),
+            //    RequestPath = "/UploadFile"
+            //});
+            app.UseFileServer(new FileServerOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+                               Path.Combine(env.ContentRootPath.Substring(0,3), "UploadFile")),
+                RequestPath = "/UploadFile",
+                EnableDirectoryBrowsing = true
+            });
+            // using Microsoft.Extensions.FileProviders;
+            // using System.IO;
+
 
             app.UseHttpsRedirection();
 

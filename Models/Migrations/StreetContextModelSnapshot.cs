@@ -485,6 +485,12 @@ namespace Models.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Height")
                         .HasColumnType("float");
 
@@ -501,6 +507,9 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Report")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReportTime")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
