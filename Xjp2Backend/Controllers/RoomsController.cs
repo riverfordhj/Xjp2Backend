@@ -142,5 +142,72 @@ namespace Xjp2Backend.Controllers
         {
             return _context.Rooms.Any(e => e.Id == id);
         }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> UpdateTargetRain([FromBody] RainUpdateParamTesting rainFields)
+        {
+            Rain rain = _context.Rains.FirstOrDefault(cm => cm.Longitude == rainFields.Longitude && cm.Latitude == cm.Latitude );
+            if (rain != null)
+            {
+                rain.Name = rainFields.Name;
+                rain.Longitude = rainFields.Longitude;
+                rain.Latitude = rainFields.Latitude;
+                rain.Height = rainFields.Height;
+                rain.Report = rainFields.Report;
+                rain.Status = rainFields.Status;
+                rain.Type = rainFields.Type;
+                rain.Address = rainFields.Address;
+                rain.Note = rainFields.Note;
+            }
+            else
+            {
+                rain = new Rain
+            {
+                Name = rainFields.Name,
+                Longitude = rainFields.Longitude,
+                Latitude = rainFields.Latitude,
+                Height = rainFields.Height,
+                Report = rainFields.Report,
+                Status = rainFields.Status,
+                Type = rainFields.Type,
+                Address = rainFields.Address,
+                Note = rainFields.Note,
+            };
+            _context.Rains.Add(rain);
+
+            }
+
+            await _context.SaveChangesAsync();
+            return await _repositoty.CreateTargetRain().ToListAsync();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> DeleteTargetRain(RainUpdateParamTesting rainFields)
+        {
+            var rain = await _context.Rains.FindAsync(rainFields.id);
+            return await _repositoty.DeleteTargetRain(rain, rainFields).ToListAsync();
+        }
+
+        [HttpPost("[action]")]
+        public async Task<ActionResult<IEnumerable<object>>> CreateTargetRain([FromBody] RainUpdateParamTesting rainFields)
+        {
+            Rain rain = _context.Rains.FirstOrDefault(cm => cm.Name == rainFields.Name);
+                rain = new Rain
+                {
+                    Name = rainFields.Name,
+                    Longitude = rainFields.Longitude,
+                    Latitude = rainFields.Latitude,
+                    Height = rainFields.Height,
+                    Report = rainFields.Report,
+                    Status = rainFields.Status,
+                    Type = rainFields.Type,
+                    Address = rainFields.Address,
+                    Note = rainFields.Note,
+                };
+                _context.Rains.Add(rain);
+
+        await _context.SaveChangesAsync();
+            return await _repositoty.CreateTargetRain().ToListAsync();
+        }
     }
 }

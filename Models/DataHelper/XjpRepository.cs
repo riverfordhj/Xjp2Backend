@@ -2132,6 +2132,73 @@ namespace Models.DataHelper
             return (_context.SaveChanges() >= 0);
         }
 
-        
+        //根据楼栋，返回房屋
+        public IQueryable<object> GetRainById(int id)
+        {
+            return from b in _context.Rains.Where(b => b.Id == id)
+                   select new
+                   {
+                       b.Id,
+                       b.Name,
+                       b.Longitude,
+                       b.Latitude,
+                       b.Height,
+                       b.Report,
+                       b.Status,
+                       b.Type,
+                       b.Address,
+                       b.Note
+                   };
+        }
+
+        //创建一条rain
+        public IQueryable<object> CreateTargetRain()
+        {
+            var rainpoint = from b in _context.Rains
+                            select new
+                            {
+                                b.Id,
+                                b.Name,
+                                b.Longitude,
+                                b.Latitude,
+                                b.Height,
+                                b.Report,
+                                b.Status,
+                                b.Type,
+                                b.Address,
+                                b.Note
+                            };
+            return rainpoint;
+        }
+
+        public IQueryable<object> DeleteTargetRain(Rain targetRain, RainUpdateParamTesting rainFields)
+        {
+            if (targetRain != null)
+            {
+                _context.Rains.Remove(targetRain);
+                _context.SaveChanges();
+            }
+            return GetRainById(rainFields.id);
+        }
+
+        public IQueryable<object> UpdateTargetRain()
+        {
+            var rainpoint = from b in _context.Rains
+                            select new
+                            {
+                                b.Id,
+                                b.Name,
+                                b.Longitude,
+                                b.Latitude,
+                                b.Height,
+                                b.Report,
+                                b.Status,
+                                b.Type,
+                                b.Address,
+                                b.Note
+                            };
+            return rainpoint;
+        }
+
     }
 }

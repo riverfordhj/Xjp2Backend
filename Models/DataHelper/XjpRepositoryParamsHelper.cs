@@ -142,5 +142,28 @@ namespace Models.DataHelper
         public string phone { get; set; }
     }
 
-
+    public class RainUpdateParamTesting
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+        //经度
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public double Longitude { get; set; }
+        //纬度
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public double Latitude { get; set; }
+        //高程
+        [Required(ErrorMessage = "{0} 不能为空! ")]
+        public double Height { get; set; }
+        //上报人
+        public string Report { get; set; }
+        //状态
+        public string Status { get; set; }
+        //类型
+        public string Type { get; set; }
+        //地址
+        public string Address { get; set; }
+        //备注
+        public string Note { get; set; }
+    }
 }
