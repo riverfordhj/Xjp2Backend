@@ -10,8 +10,8 @@ using Models;
 namespace Models.Migrations
 {
     [DbContext(typeof(StreetContext))]
-    [Migration("20211212032804_InitialCreate12")]
-    partial class InitialCreate12
+    [Migration("20211215122958_AddBlogCreatedTimestamp")]
+    partial class AddBlogCreatedTimestamp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -487,6 +487,12 @@ namespace Models.Migrations
                     b.Property<string>("Address")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("FileName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Height")
                         .HasColumnType("float");
 
@@ -503,6 +509,9 @@ namespace Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Report")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReportTime")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")

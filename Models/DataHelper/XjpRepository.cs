@@ -2131,7 +2131,17 @@ namespace Models.DataHelper
         {
             return (_context.SaveChanges() >= 0);
         }
+        public void SaveImgPath( SavepathRowParam rowdata)
+        {
+            Rain targetRainpoint = _context.Rains.SingleOrDefault(rp => rp.Id == rowdata.Id && rp.Name == rowdata.Name);
+            if(targetRainpoint != null)
+            {
+                targetRainpoint.FilePath = rowdata.FilePath;
+            }
+            _context.SaveChanges();
+        }
 
-        
+
+
     }
 }

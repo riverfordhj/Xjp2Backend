@@ -31,6 +31,13 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
+
+        //path保存
+        //[HttpPost("[action]")]
+        //public void SaveImgPath([FromBody] SavepathRowParam rowdata)
+        //{
+        //    _repository.SaveImgPath(rowdata);
+        //}
         //获取渍水点
         // GET: api/People
         [HttpGet("[action]")]
