@@ -220,7 +220,8 @@ namespace Xjp2Backend
             app.UseFileServer(new FileServerOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                               Path.Combine(env.ContentRootPath.Substring(0,3), "UploadFile")),
+                               //Path.Combine(env.ContentRootPath.Substring(0,3), "UploadFile")),
+                               Path.Combine(env.ContentRootPath, "UploadFile")),
                 RequestPath = "/UploadFile",
                 EnableDirectoryBrowsing = true
             });
