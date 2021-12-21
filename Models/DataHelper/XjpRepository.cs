@@ -473,53 +473,28 @@ namespace Models.DataHelper
         {
             try
             {
-                //根据 room - person 数据
-                var roomsWithPersons = from room in _context.Rooms
-                                       from pr in room.PersonRooms
-                                       select new
-                                       {
-                                           RoomId = room.Id,
-                                           RoomNO = room.Name,
-                                           BulidingName = room.Building.Name,
-                                           SubdivsionName = room.Building.Subdivision.Name,
-                                           CommunityName = room.Building.NetGrid.Community.Name,
-                                           log = room.Longitude,
-                                           lat = room.Latitude,
-                                           floor = room.Name.Substring(2,1),
-                                           age = pr.Person.Age,
-                                           sex = pr.Person.Sex,
-                                           pr.PersonId,
-                                           pr.Person,
-                                           IsOwner = pr.IsOwner ? "是" : "否",
-                                           IsHouseholder = pr.IsHouseholder ? "是" : "否",
-                                           IsLiveHere = pr.IsLiveHere ? "是" : "否",
-                                           pr.RelationWithHouseholder,
-                                           pr.LodgingReason,
-                                           pr.PopulationCharacter
-                                       };
-
-                var psdata = roomsWithPersons.ToList();
-
-                var data = from pr in psdata
-                           join sg in _context.SpecialGroups on pr.PersonId equals sg.PersonId //into psg // 根据身份证关联
+                var data = from sg in _context.SpecialGroups
+                           join p in _context.Persons on sg.PersonId equals p.PersonId
+                           from pr in p.PersonRooms
                            select new
                            {
-                               姓名 = pr.Person.Name,
-                               性别 = pr.sex,
-                               联系电话 = pr.Person.Phone,
-                               户籍地 = pr.Person.DomicileAddress,
-                               居住地址 = pr.BulidingName + '-' +pr.RoomNO,
+                               姓名 = p.Name,
+                               性别 = p.Sex,
+                               联系电话 = p.Phone,
+                               户籍地 = p.DomicileAddress,
+                               居住地址 = pr.Room.Building.Name + '-' + pr.Room.Name,
                                身份证号码 = pr.PersonId,
-                               经度 = pr.log,
-                               纬度 = pr.lat,
-                               楼层 = pr.floor,
-                               年龄 = pr.age,
-                               社区名 = pr.CommunityName,
-                               小区名 = pr.SubdivsionName,
-                               类型 = sg.Type,                       
-                           };
+                               经度 = pr.Room.Longitude,
+                               纬度 = pr.Room.Latitude,
+                               楼层 = pr.Room.Name.Substring(2, 1),
+                               年龄 = p.Age,
+                               社区名 = pr.Room.Building.NetGrid.Community.Name,
+                               小区名 = pr.Room.Building.Subdivision.Name,
+                               类型 = sg.Type,
 
-                return data;
+                           };
+                var psdata = data.ToList();
+                return psdata;
             }
             catch (Exception e)
             {
@@ -2156,7 +2131,85 @@ namespace Models.DataHelper
         {
             return (_context.SaveChanges() >= 0);
         }
+        public void SaveImgPath( SavepathRowParam rowdata)
+        {
+            Rain targetRainpoint = _context.Rains.SingleOrDefault(rp => rp.Id == rowdata.Id && rp.Name == rowdata.Name);
+            if(targetRainpoint != null)
+            {
+                targetRainpoint.FilePath = rowdata.FilePath;
+            }
+            _context.SaveChanges();
+        }
 
-        
+
+
+        //根据楼栋，返回房屋
+        public IQueryable<object> GetRainById(int id)
+        {
+            return from b in _context.Rains.Where(b => b.Id == id)
+                   select new
+                   {
+                       b.Id,
+                       b.Name,
+                       b.Longitude,
+                       b.Latitude,
+                       b.Height,
+                       b.Report,
+                       b.Status,
+                       b.Type,
+                       b.Address,
+                       b.Note
+                   };
+        }
+
+        //创建一条rain
+        public IQueryable<object> CreateTargetRain()
+        {
+            var rainpoint = from b in _context.Rains
+                            select new
+                            {
+                                b.Id,
+                                b.Name,
+                                b.Longitude,
+                                b.Latitude,
+                                b.Height,
+                                b.Report,
+                                b.Status,
+                                b.Type,
+                                b.Address,
+                                b.Note
+                            };
+            return rainpoint;
+        }
+
+        public IQueryable<object> DeleteTargetRain(Rain targetRain, RainUpdateParamTesting rainFields)
+        {
+            if (targetRain != null)
+            {
+                _context.Rains.Remove(targetRain);
+                _context.SaveChanges();
+            }
+            return GetRainById(rainFields.id);
+        }
+
+        public IQueryable<object> UpdateTargetRain()
+        {
+            var rainpoint = from b in _context.Rains
+                            select new
+                            {
+                                b.Id,
+                                b.Name,
+                                b.Longitude,
+                                b.Latitude,
+                                b.Height,
+                                b.Report,
+                                b.Status,
+                                b.Type,
+                                b.Address,
+                                b.Note
+                            };
+            return rainpoint;
+        }
+
     }
 }

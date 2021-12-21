@@ -31,6 +31,20 @@ namespace Xjp2Backend.Controllers
             _repository = new XjpRepository(_context);
         }
 
+
+        //path保存
+        //[HttpPost("[action]")]
+        //public void SaveImgPath([FromBody] SavepathRowParam rowdata)
+        //{
+        //    _repository.SaveImgPath(rowdata);
+        //}
+        //获取渍水点
+        // GET: api/People
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<Rain>>> GetRainPoint()
+        {
+            return await _context.Rains.ToListAsync();
+        }
         // GET: api/Person/GetCommunitys  获取社区人
         [HttpGet("[action]")]
         public  IEnumerable<object> GetCommunityPersons()

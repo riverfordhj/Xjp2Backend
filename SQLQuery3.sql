@@ -1,1 +1,0 @@
-﻿Delete from Rooms where BuildingId >= '2757' and BuildingId<= '2765'
