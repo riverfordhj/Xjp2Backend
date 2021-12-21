@@ -40,7 +40,7 @@ namespace Xjp2Backend.Controllers
             var formFile = Request.Form.Files[0];//获取请求发送过来的文件
             var currentDate = DateTime.Now;
             //var webRootPath = _hostingEnvironment.WebRootPath;//>>>相当于HttpContext.Current.Server.MapPath("") 
-            var webRootPath = _hostingEnvironment.WebRootPath;
+            var webRootPath = _hostingEnvironment.ContentRootPath;
             try
             {
                 var filePath = $"/UploadFile/{currentDate:yyyyMMdd}/";
