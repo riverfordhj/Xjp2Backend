@@ -21,6 +21,18 @@ namespace Xjp2Backend.Controllers
             _context = context;
             _repository = new comRepo(_context);
         }
+        /// <summary>
+        /// 大屏展示
+        /// </summary>
+        /// <returns></returns>
+        /// 
+        //获取街道的营收税收
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetTotalTaR()
+        {
+            return await _repository.GetTotalTaR().ToListAsync();
+        }
+
 
         // GET: api/Combasic
         [HttpGet("[action]")]
