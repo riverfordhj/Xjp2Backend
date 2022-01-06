@@ -188,6 +188,7 @@ namespace Models.DataHelper
         public string Report { get; set; }
         //状态
         public string Status { get; set; }
+        public string ReportTime { get; set; }
         //类型
         public string Type { get; set; }
         //地址

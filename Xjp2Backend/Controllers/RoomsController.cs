@@ -155,6 +155,7 @@ namespace Xjp2Backend.Controllers
                 rain.Height = rainFields.Height;
                 rain.Report = rainFields.Report;
                 rain.Status = rainFields.Status;
+                rain.ReportTime = rainFields.ReportTime;
                 rain.Type = rainFields.Type;
                 rain.Address = rainFields.Address;
                 rain.Note = rainFields.Note;
@@ -169,6 +170,7 @@ namespace Xjp2Backend.Controllers
                 Height = rainFields.Height,
                 Report = rainFields.Report,
                 Status = rainFields.Status,
+                ReportTime = rainFields.ReportTime,
                 Type = rainFields.Type,
                 Address = rainFields.Address,
                 Note = rainFields.Note,
@@ -200,6 +202,7 @@ namespace Xjp2Backend.Controllers
                     Height = rainFields.Height,
                     Report = rainFields.Report,
                     Status = rainFields.Status,
+                    ReportTime = rainFields.ReportTime,
                     Type = rainFields.Type,
                     Address = rainFields.Address,
                     Note = rainFields.Note,
