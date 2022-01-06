@@ -74,9 +74,33 @@ namespace Xjp2Backend.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetTaxTop()
+        {
+            return await _repository.GetTaxTop().ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetTaxTopOnMap()
+        {
+            return await _repository.GetTaxTopOnMap().ToListAsync();
+        }
+
+        [HttpGet("[action]")]
         public async Task<IEnumerable<object>> GetCountRevenueByBuilding(string buildingName)
         {
             return await _repository.GetCountRevenueByBuilding(buildingName).ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetRevenueTop()
+        {
+            return await _repository.GetRevenueTop().ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetRevenueTopOnMap()
+        {
+            return await _repository.GetRevenueTopOnMap().ToListAsync();
         }
 
         [HttpGet("[action]")]
@@ -125,12 +149,6 @@ namespace Xjp2Backend.Controllers
         public async Task<IEnumerable<object>> GetTaxRound()
         {
             return await _repository.GetTaxRound().ToListAsync();
-        }
-
-        [HttpGet("[action]")]
-        public IEnumerable<object> GetTaxTop()
-        {
-            return _repository.GetTaxTop();
         }
 
         // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor

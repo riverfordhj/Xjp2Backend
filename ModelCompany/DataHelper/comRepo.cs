@@ -238,7 +238,27 @@ namespace ModelCompany.DataHelper
             }
         }
 
+        //返回指定街道税收前十
         public IQueryable<object> GetTaxTop()
+        {
+            try
+            {
+                var countTax = (from ct in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                                orderby ct.Tax descending
+                                select new
+                                {
+                                    ct.CompanyBasicInfo.CompanyName,
+                                    cTax = ct.Tax.ToString("F2")
+                                }).Take(10);
+                return countTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public IQueryable<object> GetTaxTopOnMap()
         {
             try
             {
@@ -270,6 +290,45 @@ namespace ModelCompany.DataHelper
             try
             {
                 var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                                    orderby cr.Revenue descending
+                                    select new
+                                    {
+                                        cr.CompanyBasicInfo.CompanyName,
+                                        cRevenue = cr.Revenue.ToString("F2")
+                                    }).Take(10);
+                return countRevenue;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //返回街道营收前十
+        public IQueryable<object> GetRevenueTop()
+        {
+            try
+            {
+                var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                                    orderby cr.Revenue descending
+                                    select new
+                                    {
+                                        cr.CompanyBasicInfo.CompanyName,
+                                        cRevenue = cr.Revenue.ToString("F2")
+                                    }).Take(10);
+                return countRevenue;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        public IQueryable<object> GetRevenueTopOnMap()
+        {
+            try
+            {
+                var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.Year == 2020)
                                     orderby cr.Revenue descending
                                     select new
                                     {
