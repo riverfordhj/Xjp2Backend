@@ -538,29 +538,6 @@ namespace ModelCompany.DataHelper
                 return null;
             }
         }
-        //返回街道总公司数量、总税收、总营收
-        public IQueryable<object> GetTotalTaR()
-        {
-            try
-            {
-                var totalTax = from tt in _context.CompanyBuildings
-                               from ct in tt.CompanyBasicInfo
-                               from rt in ct.CompanyTax.Where(zt => zt.Year == 2020)
-                               group rt by tt.BuildingName into g
-                               select new
-                               {
-                                   g.Key,
-                                   companyCount = g.Count(),
-                                   tTax = g.Sum(tt => tt.Tax).ToString("F2"),
-                                   tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
-                               };
-                return totalTax;
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
-        }
 
     }
 }

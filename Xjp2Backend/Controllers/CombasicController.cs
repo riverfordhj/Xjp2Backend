@@ -121,11 +121,6 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetTotalTaRByBuilding(buildingName).ToListAsync();
         }
 
-        [HttpGet("[action]")]
-        public async Task<IEnumerable<object>> GetTotalTaR()
-        {
-            return await _repository.GetTotalTaR().ToListAsync();
-        }
 
         [HttpGet("[action]")]
         public async Task<IEnumerable<object>> GetIndustryTypeByBuilding(string buildingName)
