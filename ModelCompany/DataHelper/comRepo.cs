@@ -238,6 +238,32 @@ namespace ModelCompany.DataHelper
             }
         }
 
+        public IQueryable<object> GetTaxTop()
+        {
+            try
+            {
+                var CompanyRooms = from s in _context.CompanyRoom
+                                   select s;
+                //CompanyRooms = CompanyRooms.GroupBy(m => m.CompanyBasicInfo.CompanyName).Select(m => m.FirstOrDefault());
+                var countTax = (from ca in CompanyRooms
+                                from da in ca.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
+                                orderby da.Tax descending
+                                select new
+                                {
+                                    name = ca.CompanyBasicInfo.CompanyName,
+                                    longitude = ca.Long,
+                                    latitude = ca.Lat,
+                                    height = ca.Height,
+                                    tax = da.Tax
+                                }).Take(10);
+                return countTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         //返回指定楼栋营收前十
         public IQueryable<object> GetCountRevenueByBuilding(string buildingName)
         {
@@ -280,6 +306,30 @@ namespace ModelCompany.DataHelper
             }
         }
 
+        //返回街道总公司数量、总税收、总营收
+        public IQueryable<object> GetTotalTaR()
+        {
+            try
+            {
+                var totalTax = from tt in _context.CompanyBuildings
+                               from ct in tt.CompanyBasicInfo
+                               from rt in ct.CompanyTax.Where(zt => zt.Year == 2020)
+                               group rt by tt.BuildingName into g
+                               select new
+                               {
+                                   g.Key,
+                                   companyCount = g.Count(),
+                                   tTax = g.Sum(tt => tt.Tax).ToString("F2"),
+                                   tRevenue = g.Sum(tt => tt.Revenue).ToString("F2")
+                               };
+                return totalTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         //返回指定楼栋产业分类及产业总营收、税收
         public IQueryable<object> GetIndustryTypeByBuilding(string buildingName)
         {
@@ -289,6 +339,32 @@ namespace ModelCompany.DataHelper
                 "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业",
                 "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
                 var companyCount = from tt in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
+                                   group tt by tt.CompanyBasicInfo.IndustryCode into g
+                                   select new
+                                   {
+                                       g.Key,
+                                       industryName = industryName[int.Parse(g.Key)],
+                                       industryCompanyCount = g.Count(),
+                                       industryRevenue = g.Sum(tt => tt.Revenue).ToString("F2"),
+                                       industryTax = g.Sum(tt => tt.Tax).ToString("F2")
+                                   };
+                return companyCount;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //返回街道产业分类及产业总营收、税收
+        public IQueryable<object> GetIndustryType()
+        {
+            try
+            {
+                string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业",
+                "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业",
+                "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
+                var companyCount = from tt in _context.CompanyTax.Where(cb => cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
                                    group tt by tt.CompanyBasicInfo.IndustryCode into g
                                    select new
                                    {
@@ -330,12 +406,61 @@ namespace ModelCompany.DataHelper
             }
         }
 
+        //返回街道营收分布
+        public IQueryable<object> GetRevenueRound()
+        {
+            try
+            {
+                var revenueRound = from ct in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                                   group ct by ct.Year into g
+                                   select new
+                                   {
+                                       r0 = g.Sum(tt => tt.Revenue < 50 ? 1 : 0),
+                                       r50 = g.Sum(tt => tt.Revenue >= 50 && tt.Revenue < 100 ? 1 : 0),
+                                       r100 = g.Sum(tt => tt.Revenue >= 100 && tt.Revenue < 500 ? 1 : 0),
+                                       r500 = g.Sum(tt => tt.Revenue >= 500 && tt.Revenue < 1000 ? 1 : 0),
+                                       r1000 = g.Sum(tt => tt.Revenue >= 1000 && tt.Revenue < 5000 ? 1 : 0),
+                                       r5000 = g.Sum(tt => tt.Revenue >= 5000 ? 1 : 0)
+                                   };
+                return revenueRound;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
         //返回指定楼栋税收分布
         public IQueryable<object> GetTaxRoundByBuilding(string buildingName)
         {
             try
             {
                 var taxRound = from ct in _context.CompanyTax.Where(cb => cb.CompanyBasicInfo.CompanyBuildings.BuildingName == buildingName && cb.Year == 2020)
+                               group ct by ct.Year into g
+                               select new
+                               {
+                                   t0 = g.Sum(tt => tt.Tax < 30 ? 1 : 0),
+                                   t30 = g.Sum(tt => tt.Tax >= 30 && tt.Tax < 50 ? 1 : 0),
+                                   t50 = g.Sum(tt => tt.Tax >= 50 && tt.Tax < 100 ? 1 : 0),
+                                   t100 = g.Sum(tt => tt.Tax >= 100 && tt.Tax < 300 ? 1 : 0),
+                                   t300 = g.Sum(tt => tt.Tax >= 300 && tt.Tax < 500 ? 1 : 0),
+                                   t500 = g.Sum(tt => tt.Tax >= 500 && tt.Tax < 1000 ? 1 : 0),
+                                   t1000 = g.Sum(tt => tt.Tax >= 1000 ? 1 : 0)
+                               };
+                return taxRound;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //返回街道税收分布
+        public IQueryable<object> GetTaxRound()
+        {
+            try
+            {
+                var taxRound = from ct in _context.CompanyTax.Where(cb => cb.Year == 2020)
                                group ct by ct.Year into g
                                select new
                                {
