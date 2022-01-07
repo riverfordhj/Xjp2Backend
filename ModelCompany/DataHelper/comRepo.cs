@@ -262,19 +262,23 @@ namespace ModelCompany.DataHelper
         {
             try
             {
-                var CompanyRooms = from s in _context.CompanyRoom
-                                   select s;
-                //CompanyRooms = CompanyRooms.GroupBy(m => m.CompanyBasicInfo.CompanyName).Select(m => m.FirstOrDefault());
-                var countTax = (from ca in CompanyRooms
-                                from da in ca.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
-                                orderby da.Tax descending
+                var countTax = (from tt in _context.CompanyRoom.Where(tt => tt.Id == 2164 || tt.Id == 438 ||
+                                tt.Id == 493 || tt.Id == 900 || tt.Id == 1759 || tt.Id == 2053 ||
+                                tt.Id == 2796 || tt.Id == 481 || tt.Id == 1580 || tt.Id == 230 )
+                                from ct in tt.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
+                                orderby ct.Tax descending
                                 select new
                                 {
-                                    name = ca.CompanyBasicInfo.CompanyName,
-                                    longitude = ca.Long,
-                                    latitude = ca.Lat,
-                                    height = ca.Height,
-                                    tax = da.Tax
+                                    name = ct.CompanyBasicInfo.CompanyName,
+                                    sign = "tax",
+                                    longitude = tt.Long,
+                                    latitude = tt.Lat,
+                                    height = tt.Height,
+                                    tax = ct.Tax.ToString("F2"),
+                                    enterprise = ct.CompanyBasicInfo.EnterpriseType,
+                                    industryname = ct.CompanyBasicInfo.IndustryName,
+                                    contact = ct.CompanyBasicInfo.Contacts,
+                                    phhone = ct.CompanyBasicInfo.Phone
                                 }).Take(10);
                 return countTax;
             }
@@ -328,14 +332,25 @@ namespace ModelCompany.DataHelper
         {
             try
             {
-                var countRevenue = (from cr in _context.CompanyTax.Where(cb => cb.Year == 2020)
-                                    orderby cr.Revenue descending
-                                    select new
-                                    {
-                                        cr.CompanyBasicInfo.CompanyName,
-                                        cRevenue = cr.Revenue.ToString("F2")
-                                    }).Take(10);
-                return countRevenue;
+                var countTax = (from tt in _context.CompanyRoom.Where(tt => tt.Id == 493 || tt.Id == 1639 ||
+                                tt.Id == 937 || tt.Id == 1786 || tt.Id == 2505 || tt.Id == 2164 ||
+                                tt.Id == 20 || tt.Id == 438 || tt.Id == 1277 || tt.Id == 2053)
+                                from ct in tt.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
+                                orderby ct.Revenue descending
+                                select new
+                                {
+                                    name = ct.CompanyBasicInfo.CompanyName,
+                                    sign = "revenue",
+                                    longitude = tt.Long,
+                                    latitude = tt.Lat,
+                                    height = tt.Height,
+                                    revenue = ct.Revenue.ToString("F2"),
+                                    enterprise = ct.CompanyBasicInfo.EnterpriseType,
+                                    industryname = ct.CompanyBasicInfo.IndustryName,
+                                    contact = ct.CompanyBasicInfo.Contacts,
+                                    phhone = ct.CompanyBasicInfo.Phone
+                                }).Take(10);
+                return countTax;
             }
             catch (Exception e)
             {
@@ -532,6 +547,49 @@ namespace ModelCompany.DataHelper
                                    t1000 = g.Sum(tt => tt.Tax >= 1000 ? 1 : 0)
                                };
                 return taxRound;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //街道分行业营收前十名
+        public IQueryable<object> GetIndustryRevenueTop(string industryCode)
+        {
+            try
+            {
+                var industrytop = (from ci in _context.CompanyBasicInfo.Where(r => r.IndustryCode == industryCode)
+                                  from ct in ci.CompanyTax.Where(y => y.Year == 2020)
+                                  orderby ct.Revenue descending
+                                  select new
+                                  {
+                                      industrycode = ci.IndustryCode,
+                                      companyname = ci.CompanyName,
+                                      revenue = ct.Revenue
+                                  }).Take(10);
+                return industrytop;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        //街道分行业税收前十名
+        public IQueryable<object> GetIndustryTaxTop(string industryCode)
+        {
+            try
+            {
+                var industrytop = (from ci in _context.CompanyBasicInfo.Where(r => r.IndustryCode == industryCode)
+                                   from ct in ci.CompanyTax.Where(y => y.Year == 2020)
+                                   orderby ct.Tax descending
+                                   select new
+                                   {
+                                       industrycode = ci.IndustryCode,
+                                       companyname = ci.CompanyName,
+                                       tax = ct.Tax
+                                   }).Take(10);
+                return industrytop;
             }
             catch (Exception e)
             {
