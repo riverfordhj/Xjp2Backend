@@ -158,6 +158,18 @@ namespace Xjp2Backend.Controllers
             return await _repository.GetTaxRound().ToListAsync();
         }
 
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetIndustryRevenueTop(string industryCode)
+        {
+            return await _repository.GetIndustryRevenueTop(industryCode).ToListAsync();
+        }
+
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetIndustryTaxTop(string industryCode)
+        {
+            return await _repository.GetIndustryTaxTop(industryCode).ToListAsync();
+        }
+
         // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
         [HttpGet("[action]")]
         public async Task<IEnumerable<object>> GetInfoByBuildingNameAndFloor(string buildingName, string floor)
