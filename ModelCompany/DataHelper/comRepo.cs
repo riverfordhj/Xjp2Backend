@@ -420,9 +420,9 @@ namespace ModelCompany.DataHelper
         {
             try
             {
-                string[] industryName = new string[]{ "", "农、林、牧、渔业", "采矿业", "制造业", "电力、燃气及水的生产和供应业", "建筑业", "交通运输仓储和邮政业",
-                "信息传输、计算机服务和软件业", "批发和零售业", "住宿和餐饮业", "金融业", "房地产业", "租赁和商务服务业", "科学研究、技术服务和地质勘探业",
-                "水利、环境和公共设施管理业", "居民服务和其他服务业", "教育", "卫生、社会保障和社会福利业", "文化体育和娱乐业" };
+                string[] industryName = new string[]{ "", "农林牧渔", "采矿业", "制造业", "电力燃气水", "建筑业", "运输仓储邮政业",
+                "计算机信息软件业", "批发零售", "住宿餐饮", "金融业", "房地产业", "租赁商务业", "研究技术地质业",
+                "水利环境公共管理", "服务业", "教育", "卫生社会保障业", "文娱体育业" };
                 var companyCount = from tt in _context.CompanyTax.Where(cb => cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
                                    group tt by tt.CompanyBasicInfo.IndustryCode into g
                                    select new
