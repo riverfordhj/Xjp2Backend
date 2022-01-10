@@ -389,6 +389,7 @@ namespace ModelCompany.DataHelper
                                from ct in tt.CompanyBasicInfo
                                from rt in ct.CompanyTax.Where(zt => zt.Year == 2020)
                                group rt by tt.BuildingName into g
+                               orderby g.Sum(tt => tt.Revenue) descending
                                select new
                                {
                                    g.Key,
@@ -440,6 +441,7 @@ namespace ModelCompany.DataHelper
                 "水利环境公共管理", "服务业", "教育", "卫生社会保障业", "文娱体育业" };
                 var companyCount = from tt in _context.CompanyTax.Where(cb => cb.Year == 2020 && cb.CompanyBasicInfo.IndustryCode != "")
                                    group tt by tt.CompanyBasicInfo.IndustryCode into g
+                                   orderby g.Sum(tt => tt.Revenue) descending
                                    select new
                                    {
                                        g.Key,
@@ -564,7 +566,7 @@ namespace ModelCompany.DataHelper
                                   orderby ct.Revenue descending
                                   select new
                                   {
-                                      industrycode = ci.IndustryCode,
+                                      //industrycode = ci.IndustryCode,
                                       companyname = ci.CompanyName,
                                       revenue = ct.Revenue
                                   }).Take(10);
@@ -585,7 +587,7 @@ namespace ModelCompany.DataHelper
                                    orderby ct.Tax descending
                                    select new
                                    {
-                                       industrycode = ci.IndustryCode,
+                                       //industrycode = ci.IndustryCode,
                                        companyname = ci.CompanyName,
                                        tax = ct.Tax
                                    }).Take(10);
