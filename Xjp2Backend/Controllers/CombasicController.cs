@@ -92,9 +92,9 @@ namespace Xjp2Backend.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<object>> GetTaxTopOnMap()
+        public IEnumerable<object> GetTaxTopOnMap()
         {
-            return await _repository.GetTaxTopOnMap().ToListAsync();
+            return _repository.GetTaxTopOnMap();
         }
 
         [HttpGet("[action]")]
@@ -110,9 +110,9 @@ namespace Xjp2Backend.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IEnumerable<object>> GetRevenueTopOnMap()
+        public IEnumerable<object> GetRevenueTopOnMap()
         {
-            return await _repository.GetRevenueTopOnMap().ToListAsync();
+            return _repository.GetRevenueTopOnMap();
         }
 
         [HttpGet("[action]")]

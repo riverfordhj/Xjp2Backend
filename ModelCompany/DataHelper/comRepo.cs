@@ -258,29 +258,31 @@ namespace ModelCompany.DataHelper
             }
         }
 
-        public IQueryable<object> GetTaxTopOnMap()
+        public IEnumerable<object> GetTaxTopOnMap()
         {
             try
             {
-                var countTax = (from tt in _context.CompanyRoom.Where(tt => tt.Id == 2164 || tt.Id == 438 ||
-                                tt.Id == 493 || tt.Id == 900 || tt.Id == 1759 || tt.Id == 2053 ||
-                                tt.Id == 2796 || tt.Id == 481 || tt.Id == 1580 || tt.Id == 230 )
-                                from ct in tt.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
-                                orderby ct.Tax descending
-                                select new
-                                {
-                                    name = ct.CompanyBasicInfo.CompanyName,
-                                    sign = "tax",
-                                    longitude = tt.Long,
-                                    latitude = tt.Lat,
-                                    height = tt.Height,
-                                    tax = ct.Tax.ToString("F2"),
-                                    enterprise = ct.CompanyBasicInfo.EnterpriseType,
-                                    industryname = ct.CompanyBasicInfo.IndustryName,
-                                    contact = ct.CompanyBasicInfo.Contacts,
-                                    phhone = ct.CompanyBasicInfo.Phone
-                                }).Take(10);
-                return countTax;
+                var query = (from a in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                             join b in _context.CompanyRoom
+                             on a.CompanyBasicInfo.Id equals b.CompanyBasicInfo.Id
+                             orderby a.Tax descending
+                             select new
+                             {
+                                 name = a.CompanyBasicInfo.CompanyName,
+                                 longitude = b.Long,
+                                 latitude = b.Lat,
+                                 height = b.Height,
+                                 tax = a.Tax.ToString("F2"),
+                                 enterprise = a.CompanyBasicInfo.EnterpriseType,
+                                 industryname = a.CompanyBasicInfo.IndustryName,
+                                 contact = a.CompanyBasicInfo.Contacts,
+                                 phhone = a.CompanyBasicInfo.Phone
+                             }).ToList();
+                var list = (from p in query
+                            group p by new { p.name }
+                           into mygroup
+                            select mygroup.FirstOrDefault()).Take(10);
+                return list;
             }
             catch (Exception e)
             {
@@ -328,29 +330,31 @@ namespace ModelCompany.DataHelper
             }
         }
 
-        public IQueryable<object> GetRevenueTopOnMap()
+        public IEnumerable<object> GetRevenueTopOnMap()
         {
             try
             {
-                var countTax = (from tt in _context.CompanyRoom.Where(tt => tt.Id == 493 || tt.Id == 1639 ||
-                                tt.Id == 937 || tt.Id == 1786 || tt.Id == 2505 || tt.Id == 2164 ||
-                                tt.Id == 20 || tt.Id == 438 || tt.Id == 1277 || tt.Id == 2053)
-                                from ct in tt.CompanyBasicInfo.CompanyTax.Where(tt => tt.Year == 2020)
-                                orderby ct.Revenue descending
-                                select new
-                                {
-                                    name = ct.CompanyBasicInfo.CompanyName,
-                                    sign = "revenue",
-                                    longitude = tt.Long,
-                                    latitude = tt.Lat,
-                                    height = tt.Height,
-                                    revenue = ct.Revenue.ToString("F2"),
-                                    enterprise = ct.CompanyBasicInfo.EnterpriseType,
-                                    industryname = ct.CompanyBasicInfo.IndustryName,
-                                    contact = ct.CompanyBasicInfo.Contacts,
-                                    phhone = ct.CompanyBasicInfo.Phone
-                                }).Take(10);
-                return countTax;
+                var query = (from a in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                             join b in _context.CompanyRoom
+                             on a.CompanyBasicInfo.Id equals b.CompanyBasicInfo.Id
+                             orderby a.Revenue descending
+                             select new
+                             {
+                                 name = a.CompanyBasicInfo.CompanyName,
+                                 longitude = b.Long,
+                                 latitude = b.Lat,
+                                 height = b.Height,
+                                 revenue = a.Revenue.ToString("F2"),
+                                 enterprise = a.CompanyBasicInfo.EnterpriseType,
+                                 industryname = a.CompanyBasicInfo.IndustryName,
+                                 contact = a.CompanyBasicInfo.Contacts,
+                                 phhone = a.CompanyBasicInfo.Phone
+                             }).ToList();
+                var list = (from p in query
+                            group p by new { p.name }
+                           into mygroup
+                            select mygroup.FirstOrDefault()).Take(10);
+                return list;
             }
             catch (Exception e)
             {
