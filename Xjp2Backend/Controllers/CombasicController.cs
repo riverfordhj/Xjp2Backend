@@ -169,6 +169,12 @@ namespace Xjp2Backend.Controllers
         {
             return await _repository.GetIndustryTaxTop(industryCode).ToListAsync();
         }
+        //返回街道总公司数量、总税收、总营收
+        [HttpGet("[action]")]
+        public async Task<IEnumerable<object>> GetTotalTaRNO()
+        {
+            return await _repository.GetTotalTaRNO().ToListAsync();
+        }
 
         // GET: api/CompanyBuildings/GetInfoByBuildingNameAndFloor
         [HttpGet("[action]")]

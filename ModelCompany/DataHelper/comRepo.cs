@@ -381,6 +381,28 @@ namespace ModelCompany.DataHelper
         }
 
         //返回街道总公司数量、总税收、总营收
+        public IQueryable<object> GetTotalTaRNO()
+        {
+            try
+            {
+                var totalTax = from tt in _context.CompanyTax.Where(cb => cb.Year == 2020)
+                               group tt by tt.Year into g
+                               select new
+                               {
+                                   g.Key,
+                                   companyCount = g.Count(),
+                                   tTax = g.Sum(tt => tt.Tax),
+                                   tRevenue = g.Sum(tt => tt.Revenue)
+                               };
+                return totalTax;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+
+        //返回楼宇总公司数量、总税收、总营收
         public IQueryable<object> GetTotalTaR()
         {
             try
