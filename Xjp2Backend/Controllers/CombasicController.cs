@@ -213,6 +213,12 @@ namespace Xjp2Backend.Controllers
             return await info.ToListAsync();
 
         }
+        //获取所以区外企业
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<OutsideCompany>>> GetOutsideCompanyPoint()
+        {
+            return await _context.OutsideCompany.ToListAsync();
+        }
 
 
 
