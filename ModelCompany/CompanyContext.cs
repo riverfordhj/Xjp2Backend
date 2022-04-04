@@ -36,6 +36,8 @@ namespace ModelCompany
 
         public DbSet<CompanyRoom> CompanyRoom { get; set; }
 
+        //区外企业信息
+        public DbSet<OutsideCompany> OutsideCompany { get; set; }
 
         //权限
         //public DbSet<User> Users { get; set; }

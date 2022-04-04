@@ -258,6 +258,24 @@ namespace ModelCompany.DataHelper
             }
         }
 
+        //public IQueryable<object> Getoutcompoint()
+        //{
+        //    try
+        //    {
+        //        var outsideCompanyPoint = from c in _context.OutsideCompany
+        //                                  select new
+        //                                  {
+        //                                      sign = "outsideCompany",
+        //                                      c
+        //                                  };
+        //        return outsideCompanyPoint;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return null;
+        //    }
+
+        //}
         public IEnumerable<object> GetTaxTopOnMap()
         {
             try
