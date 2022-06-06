@@ -613,7 +613,7 @@ namespace ModelCompany.DataHelper
                                       //industrycode = ci.IndustryCode,
                                       companyname = ci.CompanyName,
                                       revenue = ct.Revenue
-                                  }).Take(3);
+                                  }).Take(5);
                 return industrytop;
             }
             catch (Exception e)
@@ -634,7 +634,7 @@ namespace ModelCompany.DataHelper
                                        //industrycode = ci.IndustryCode,
                                        companyname = ci.CompanyName,
                                        tax = ct.Tax
-                                   }).Take(3);
+                                   }).Take(5);
                 return industrytop;
             }
             catch (Exception e)
